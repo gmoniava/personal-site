@@ -1,3 +1,3 @@
 # Introduction
 
-Personal site.
+Personal web site written on Nextjs.
