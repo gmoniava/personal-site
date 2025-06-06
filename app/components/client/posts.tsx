@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatDate, getBlogPosts } from "app/blog/utils";
+import { formatDate } from "app/blog/utils";
 
 export async function BlogPosts({ blogs }: any) {
   return (

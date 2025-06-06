@@ -89,25 +89,10 @@ type BlogPost = {
   content: string;
 };
 
-export async function getBlogPosts(opts: {
-  tagFilters?: string[];
-  page?: number;
-  limit?: number;
-  withCount: true;
-}): Promise<{ posts: BlogPost[]; total: number }>;
-
-export async function getBlogPosts(opts?: {
-  tagFilters?: string[];
-  page?: number;
-  limit?: number;
-  withCount?: false;
-}): Promise<BlogPost[]>;
-
 export async function getBlogPosts({
   page = 1,
   limit,
   tagFilters = [],
-  withCount = false,
 }: {
   tagFilters?: string[];
   page?: number;
@@ -116,7 +101,7 @@ export async function getBlogPosts({
 } = {}): Promise<any> {
   "use server";
 
-  const allPosts = await getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
+  const allPosts = getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
 
   let filteredPosts = allPosts;
 
@@ -134,7 +119,7 @@ export async function getBlogPosts({
     filteredPosts = filteredPosts.slice(start, start + limit);
   }
 
-  return withCount ? { posts: filteredPosts, total } : filteredPosts;
+  return { posts: filteredPosts, total };
 }
 
 export function formatDate(date: string, includeRelative = false) {

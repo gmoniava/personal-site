@@ -18,7 +18,7 @@ export default async function Page(props: {
   const page = parseInt(searchParams.page ?? "1", 10);
 
   // Pass parsed params to getBlogPosts
-  const result = await getBlogPosts({ tagFilters: tags, page, withCount: true });
+  const result = await getBlogPosts({ tagFilters: tags, page });
 
   // Sort the posts by published date in descending order
   result.posts.sort((a, b) => {
