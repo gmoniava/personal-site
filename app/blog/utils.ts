@@ -6,6 +6,7 @@ type Metadata = {
   publishedAt: string;
   summary: string;
   image?: string;
+  tags: string[];
 };
 
 function parseFrontmatter(fileContent: string) {
@@ -25,14 +26,35 @@ function parseFrontmatter(fileContent: string) {
   let frontMatterLines = frontMatterBlock.trim().split("\n");
 
   // Prepare an empty object to hold metadata key-value pairs
-  let metadata: Partial<Metadata> = {};
+  let metadata: any = {};
 
   // Parse each frontmatter line into key and value, then store in metadata
   frontMatterLines.forEach((line) => {
-    let [key, ...valueArr] = line.split(": "); // Split at first ": "
-    let value = valueArr.join(": ").trim(); // Join back in case value has ":"
-    value = value.replace(/^['"](.*)['"]$/, "$1"); // Remove surrounding quotes
-    metadata[key.trim() as keyof Metadata] = value; // Add to metadata object
+    // Split at first ": "
+    let [key, ...valueArr] = line.split(": ");
+
+    // Join back in case value has ":"
+    let value = valueArr.join(": ").trim();
+
+    // Remove surrounding quotes
+    value = value.replace(/^['"](.*)['"]$/, "$1");
+
+    // Handle array values like ["a", "b"]
+    if (value.startsWith("[") && value.endsWith("]")) {
+      // Try parsing as JSON array
+      try {
+        metadata[key.trim()] = JSON.parse(value);
+      } catch {
+        // If JSON.parse fails, fallback to simple split
+        let items = value
+          .slice(1, -1) // remove [ and ]
+          .split(",")
+          .map((v) => v.trim().replace(/^['"](.*)['"]$/, "$1"));
+        metadata[key.trim()] = items;
+      }
+    } else {
+      metadata[key.trim()] = value;
+    }
   });
 
   // Return parsed metadata and remaining content
@@ -61,9 +83,58 @@ function getMDXData(dir) {
     };
   });
 }
+type BlogPost = {
+  metadata: Metadata;
+  slug: string;
+  content: string;
+};
 
-export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
+export async function getBlogPosts(opts: {
+  tagFilters?: string[];
+  page?: number;
+  limit?: number;
+  withCount: true;
+}): Promise<{ posts: BlogPost[]; total: number }>;
+
+export async function getBlogPosts(opts?: {
+  tagFilters?: string[];
+  page?: number;
+  limit?: number;
+  withCount?: false;
+}): Promise<BlogPost[]>;
+
+export async function getBlogPosts({
+  page = 1,
+  limit,
+  tagFilters = [],
+  withCount = false,
+}: {
+  tagFilters?: string[];
+  page?: number;
+  limit?: number;
+  withCount?: boolean;
+} = {}): Promise<any> {
+  "use server";
+
+  const allPosts = await getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
+
+  let filteredPosts = allPosts;
+
+  if (tagFilters.length > 0) {
+    filteredPosts = filteredPosts.filter((post) => {
+      const postTags = post.metadata.tags ?? [];
+      return postTags.some((tag) => tagFilters.includes(tag));
+    });
+  }
+
+  const total = filteredPosts.length;
+
+  if (limit !== undefined) {
+    const start = (page - 1) * limit;
+    filteredPosts = filteredPosts.slice(start, start + limit);
+  }
+
+  return withCount ? { posts: filteredPosts, total } : filteredPosts;
 }
 
 export function formatDate(date: string, includeRelative = false) {

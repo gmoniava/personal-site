@@ -4,15 +4,15 @@ import { formatDate, getBlogPosts } from "app/blog/utils";
 import { baseUrl } from "app/sitemap";
 
 export async function generateStaticParams() {
-  let posts = getBlogPosts();
+  let posts = await getBlogPosts();
 
   return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
-export function generateMetadata({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
+export async function generateMetadata({ params }) {
+  let post = (await getBlogPosts())?.find((post) => post.slug === params.slug);
   if (!post) {
     return;
   }
@@ -44,8 +44,8 @@ export function generateMetadata({ params }) {
   };
 }
 
-export default function Blog({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
+export default async function Blog({ params }) {
+  let post = (await getBlogPosts())?.find((post) => post.slug === params.slug);
 
   if (!post) {
     notFound();
