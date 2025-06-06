@@ -1,6 +1,5 @@
 import { BlogPosts } from "app/components/client/posts";
-import { getBlogPosts } from "./utils";
-
+import { getBlogPosts } from "app/server/actions";
 export const metadata = {
   title: "Blog",
   description: "Read my blog.",

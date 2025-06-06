@@ -1,9 +1,28 @@
+"use client";
 import Link from "next/link";
-import { formatDate } from "app/blog/utils";
+import { formatDate } from "app/utils";
+import React from "react";
+import Select from "react-select";
+import { topics } from "app/topics";
 
-export async function BlogPosts({ blogs }: any) {
+export function BlogPosts({ blogs }: any) {
+  const [selected, setSelected] = React.useState<{ value: string; label: string }[]>([]);
+
   return (
     <div>
+      <div className="py-4">
+        <Select
+          isMulti
+          options={topics}
+          value={selected}
+          onChange={(value) => setSelected(value as any)}
+          className="text-black"
+          classNamePrefix="react-select"
+          placeholder="Filter posts by topics..."
+        />
+      </div>
+
+      {/* Blog posts */}
       {blogs.map((post) => (
         <Link key={post.slug} className="flex flex-col space-y-1 mb-4" href={`/blog/${post.slug}`}>
           <div className="w-full flex flex-col md:flex-row space-x-0 md:space-x-2">
