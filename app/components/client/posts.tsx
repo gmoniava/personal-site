@@ -23,6 +23,7 @@ export function BlogPosts({ blogs, total }: any) {
   const postsPerPage = constants.LIMIT;
   const totalPages = Math.ceil(total / postsPerPage);
 
+  // Because react-select wants values same type as options
   function getFullValues(values: string[]): any[] {
     return topics.filter((topic) => values.includes(topic.value));
   }
