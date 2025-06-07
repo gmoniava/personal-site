@@ -1,10 +1,14 @@
-import { BlogPosts } from "app/components/client/posts";
+import PostsServer from "app/components/server/posts";
 
-export default function Page() {
+export default async function Page(props: {
+  searchParams?: Promise<{
+    tags?: string;
+    page?: string;
+  }>;
+}) {
   return (
-    <section>
-      <h1 className="mb-8 text-2xl font-semibold ">Welcome to my web site</h1>
-      <p className="mb-4">{`Explore my writings on software engineering, philosophy, psychology, and more.`}</p>
-    </section>
+    <div>
+      <PostsServer searchParams={props.searchParams} />
+    </div>
   );
 }

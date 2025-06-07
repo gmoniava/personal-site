@@ -7,7 +7,7 @@ import { topics } from "app/topics";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import constants from "app/constants";
 
-export function BlogPosts({ blogs, total }: any) {
+export default function BlogPosts({ blogs, total }: any) {
   const selectId = useId();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -56,14 +56,14 @@ export function BlogPosts({ blogs, total }: any) {
 
   return (
     <div>
-      <div className="py-4">
+      <div className="py-4 mb-4">
         <Select
           isMulti
           instanceId={selectId}
           options={topics}
           value={optimisticTags}
           onChange={handleTagChange}
-          className="text-black"
+          className="text-black w-2/3"
           classNamePrefix="react-select"
           placeholder="Filter posts by topics..."
         />

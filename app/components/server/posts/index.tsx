@@ -1,4 +1,4 @@
-import { BlogPosts } from "app/components/client/posts";
+import PostsClient from "app/components/client/posts";
 import { getBlogPosts } from "app/server/actions";
 export const metadata = {
   title: "Blog",
@@ -27,7 +27,9 @@ export default async function Page(props: {
 
   return (
     <section>
-      <BlogPosts blogs={result.posts} currentPage={page} total={result.total} selectedTags={tags} />
+      <h1 className="mb-4 text-2xl font-semibold ">Blog Posts</h1>
+
+      <PostsClient blogs={result.posts} currentPage={page} total={result.total} selectedTags={tags} />
     </section>
   );
 }
