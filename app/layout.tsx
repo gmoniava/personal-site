@@ -11,15 +11,15 @@ import { baseUrl } from "./sitemap";
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl), // make sure baseUrl is set to your personal site URL
   title: {
-    default: "My Personal Blog",
-    template: "%s | My Personal Blog",
+    default: "Personal Website",
+    template: "%s | Personal Website",
   },
-  description: "Welcome to my personal blog where I share my thoughts and projects.",
+  description: "Explore my writings on software engineering, philosophy, psychology, and more.",
   openGraph: {
-    title: "My Personal Blog",
-    description: "Welcome to my personal blog where I share my thoughts and projects.",
+    title: "Personal Website",
+    description: "Explore my writings on software engineering, philosophy, psychology, and more.",
     url: baseUrl,
-    siteName: "My Personal Blog",
+    siteName: "Personal Website",
     locale: "en_US",
     type: "website",
   },
