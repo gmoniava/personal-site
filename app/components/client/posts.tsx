@@ -73,14 +73,14 @@ export function BlogPosts({ blogs, total }: any) {
       ) : (
         blogs.map((post: any) => (
           <Link key={post.slug} className="flex flex-col space-y-1 mb-4" href={`/blog/${post.slug}`}>
-            <div className="w-full flex flex-col md:flex-row space-x-0 md:space-x-2">
+            <div className="w-full flex flex-col md:flex-row gap-2">
               <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
                 {formatDate(post.metadata.publishedAt, false)}
               </p>
-              <div className="flex flex-wrap items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">{post.metadata.title}</p>
                 {post.metadata.tags && post.metadata.tags.length > 0 && (
-                  <div className="flex space-x-1">
+                  <div className="flex">
                     {post.metadata.tags.map((tag: string) => (
                       <span
                         key={tag}
