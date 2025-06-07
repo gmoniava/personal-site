@@ -12,11 +12,9 @@ export default async function Page(props: {
   }>;
 }) {
   const searchParams = (await props.searchParams) ?? {};
-
-  const tags = searchParams.tags?.split(",") ?? [];
+  const tagsParam = searchParams.tags;
+  const tags = Array.isArray(tagsParam) ? tagsParam : tagsParam ? [tagsParam] : [];
   const page = parseInt(searchParams.page ?? "1", 10);
-
-  // Pass parsed params to getBlogPosts
   const result = await getBlogPosts({ tagFilters: tags, page });
 
   // Sort the posts by published date in descending order

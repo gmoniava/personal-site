@@ -1,14 +1,18 @@
 export const topics = [
   {
     label: "Software Engineering",
-    options: [
-      { value: "reactjs", label: "React" },
-      { value: "nextjs", label: "Next.js" },
-      { value: "typescript", label: "TypeScript" },
-    ],
+    value: "software-engineering",
+  },
+  {
+    label: "Phylosophy",
+    value: "phylosophy",
   },
   {
     label: "Psychology",
-    options: [{ value: "cbt", label: "Cognitive Behavioral Therapy" }],
+    value: "psychology",
+  },
+  {
+    label: "Other",
+    value: "Other",
   },
 ];

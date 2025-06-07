@@ -1,6 +1,7 @@
 "use server";
 import fs from "fs";
 import path from "path";
+import constants from "app/constants";
 
 type Metadata = {
   title: string;
@@ -87,7 +88,7 @@ function getMDXData(dir) {
 
 export async function getBlogPosts({
   page = 1,
-  limit,
+  limit = constants.LIMIT,
   tagFilters = [],
 }: {
   tagFilters?: string[];
