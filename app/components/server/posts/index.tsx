@@ -1,5 +1,7 @@
 import PostsClient from "app/components/client/posts";
 import { getBlogPosts } from "app/server/actions";
+import constants from "app/constants";
+
 export const metadata = {
   title: "Blog",
   description: "Read my blog.",
@@ -15,7 +17,7 @@ export default async function Page(props: {
   const tagsParam = searchParams.tags;
   const tags = Array.isArray(tagsParam) ? tagsParam : tagsParam ? [tagsParam] : [];
   const page = parseInt(searchParams.page ?? "1", 10);
-  const result = await getBlogPosts({ tagFilters: tags, page });
+  const result = await getBlogPosts({ tagFilters: tags, page, limit: constants.LIMIT  });
 
   // Sort the posts by published date in descending order
   result.posts.sort((a, b) => {
