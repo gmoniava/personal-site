@@ -76,10 +76,23 @@ export default async function Blog({ params }) {
           }),
         }}
       />
+      {/* Title and date */}
       <h1 className="title font-semibold text-2xl tracking-tighter">{post.metadata.title}</h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
+      <div className="flex justify-between items-center mt-2 mb-3 text-sm">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.publishedAt)}</p>
       </div>
+      {/* Show the tags */}
+      <div className="mb-8">
+        {post.metadata.tags.map((tag: string) => (
+          <span
+            key={tag}
+            className="bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+      {/* Here goes the post itself. It is written in MDX format, so we can use the CustomMDX component to render it. */}
       <article className="prose">
         <CustomMDX source={post.content} />
       </article>
