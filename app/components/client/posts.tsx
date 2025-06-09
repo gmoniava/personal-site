@@ -15,13 +15,11 @@ export default function BlogPosts({ blogs, total }: any) {
   const [isPending, startTransition] = React.useTransition();
 
   const tags = searchParams.getAll("tags") || [];
-  const page = parseInt(searchParams.get("page") || "1", 10);
+  const totalPages = Math.ceil(total / constants.LIMIT);
+  const page = totalPages === 0 ? 0 : parseInt(searchParams.get("page") || "1", 10);
 
   const [optimisticTags, setOptimisticTags] = React.useOptimistic(getFullValues(tags));
   const [optimisticPage, setOptimisticPage] = React.useOptimistic(page);
-
-  const postsPerPage = constants.LIMIT;
-  const totalPages = Math.ceil(total / postsPerPage);
 
   // Because react-select wants values same type as options
   function getFullValues(values: string[]): any[] {
@@ -98,6 +96,7 @@ export default function BlogPosts({ blogs, total }: any) {
       )}
 
       {/* Pagination */}
+
       <div className="flex items-center justify-center mt-6">
         <button
           onClick={() => handlePageChange(optimisticPage - 1)}
