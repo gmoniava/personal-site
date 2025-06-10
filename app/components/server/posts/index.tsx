@@ -6,12 +6,7 @@ export const metadata = {
   description: "Read my blog.",
 };
 
-export default async function Page(props: {
-  searchParams?: Promise<{
-    tags?: string;
-    page?: string;
-  }>;
-}) {
+export default async function Page() {
   const result = await getBlogPosts();
 
   // Sort the posts by published date in descending order

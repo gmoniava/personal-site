@@ -12,21 +12,16 @@ export default function BlogPosts({ blogs }: any) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const [tags, setTags] = React.useState<any[]>([]);
-  const [page, setPage] = React.useState(1);
-
-  // Get initial tags from URL parameters and also page number
-  React.useEffect(() => {
+  const [tags, setTags] = React.useState<any[]>(() => {
     const tagsParam = searchParams.get("tags");
     if (tagsParam) {
       const tagValues = tagsParam.split(",");
       const selected = topics.filter((t) => tagValues.includes(t.value));
-      setTags(selected);
+      return selected;
     }
-
-    const initialPage = Number(searchParams.get("page")) || 1;
-    setPage(initialPage);
-  }, []);
+    return [];
+  });
+  const [page, setPage] = React.useState(Number(searchParams.get("page")) || 1);
 
   const updateURLParams = (newTags: any[], newPage: number) => {
     const params = new URLSearchParams();
