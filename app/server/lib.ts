@@ -84,7 +84,7 @@ function getMDXData(dir) {
   });
 }
 
-export async function getBlogPosts({
+export function getBlogPosts({
   page = 1,
   limit,
   tagFilters = [],
@@ -92,7 +92,7 @@ export async function getBlogPosts({
   tagFilters?: string[];
   page?: number;
   limit?: number;
-} = {}): Promise<any> {
+} = {}) {
   const allPosts = getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
 
   let filteredPosts = allPosts;

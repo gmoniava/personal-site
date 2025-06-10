@@ -6,8 +6,8 @@ export const metadata = {
   description: "Read my blog.",
 };
 
-export default async function Page() {
-  const result = await getBlogPosts();
+export default function Page() {
+  const result = getBlogPosts();
 
   // Sort the posts by published date in descending order
   result.posts.sort((a, b) => {
@@ -26,8 +26,7 @@ export default async function Page() {
   return (
     <section>
       <h1 className="mb-4 text-2xl font-semibold ">Blog Posts</h1>
-
-      <PostsClient blogs={simplifiedPosts} total={result.total} />
+      <PostsClient blogs={simplifiedPosts} />
     </section>
   );
 }

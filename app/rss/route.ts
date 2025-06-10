@@ -4,7 +4,7 @@ import { getBlogPosts } from "app/server/lib";
 export const dynamic = "force-static";
 
 export async function GET() {
-  let allBlogs = (await getBlogPosts())?.posts;
+  let allBlogs = getBlogPosts()?.posts;
 
   const itemsXml = allBlogs
     .sort((a, b) => {
