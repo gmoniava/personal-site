@@ -9,12 +9,39 @@ import constants from "app/constants";
 
 export default function BlogPosts({ blogs }: any) {
   const selectId = useId();
-
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [tags, setTags] = React.useState<any[]>([]);
   const [page, setPage] = React.useState(1);
 
+  // Get initial tags from URL parameters and also page number
+  React.useEffect(() => {
+    const tagsParam = searchParams.get("tags");
+    if (tagsParam) {
+      const tagValues = tagsParam.split(",");
+      const selected = topics.filter((t) => tagValues.includes(t.value));
+      setTags(selected);
+    }
+
+    const initialPage = Number(searchParams.get("page")) || 1;
+    setPage(initialPage);
+  }, []);
+
+  const updateURLParams = (newTags: any[], newPage: number) => {
+    const params = new URLSearchParams();
+    if (newTags.length > 0) {
+      params.set("tags", newTags.map((t) => t.value).join(","));
+    }
+    if (newPage > 1) {
+      params.set("page", String(newPage));
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   function handleTagChange(value: any[]) {
     setTags(value);
+    updateURLParams(value, 1);
   }
 
   let filteredPosts = blogs;
@@ -76,7 +103,10 @@ export default function BlogPosts({ blogs }: any) {
       {/* Pagination */}
       <div className="flex items-center justify-center mt-6">
         <button
-          onClick={() => setPage(page - 1)}
+          onClick={() => {
+            setPage(page - 1);
+            updateURLParams(tags, page - 1);
+          }}
           disabled={page <= 1}
           className="px-3 py-1 cursor-pointer text-sm rounded disabled:opacity-50"
         >
@@ -90,6 +120,7 @@ export default function BlogPosts({ blogs }: any) {
         <button
           onClick={() => {
             setPage(page + 1);
+            updateURLParams(tags, page + 1);
           }}
           disabled={page >= totalFilteredPages}
           className="px-3 py-1 text-sm cursor-pointer rounded disabled:opacity-50"
