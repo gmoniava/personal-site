@@ -22,11 +22,17 @@ export default async function Page(props: {
     return 1;
   });
 
+  // Keep only slug and metadata for the client
+  const simplifiedPosts = result.posts.map((post) => ({
+    slug: post.slug,
+    metadata: post.metadata,
+  }));
+
   return (
     <section>
       <h1 className="mb-4 text-2xl font-semibold ">Blog Posts</h1>
 
-      <PostsClient blogs={result.posts} total={result.total} />
+      <PostsClient blogs={simplifiedPosts} total={result.total} />
     </section>
   );
 }
