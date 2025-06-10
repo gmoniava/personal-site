@@ -1,5 +1,5 @@
 import { baseUrl } from "app/sitemap";
-import { getBlogPosts } from "app/server/actions";
+import { getBlogPosts } from "app/server/lib";
 
 export const dynamic = "force-static";
 

@@ -1,6 +1,5 @@
 import PostsClient from "app/components/client/posts";
-import { getBlogPosts } from "app/server/actions";
-import constants from "app/constants";
+import { getBlogPosts } from "app/server/lib";
 
 export const metadata = {
   title: "Blog",
