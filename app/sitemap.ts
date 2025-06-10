@@ -1,5 +1,7 @@
 import { getBlogPosts } from "app/server/actions";
 
+export const dynamic = "force-static";
+
 export const baseUrl = "https://portfolio-blog-starter.vercel.app";
 
 export default async function sitemap() {

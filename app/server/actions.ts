@@ -93,7 +93,6 @@ export async function getBlogPosts({
   tagFilters?: string[];
   page?: number;
   limit?: number;
-  withCount?: boolean;
 } = {}): Promise<any> {
   const allPosts = getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
 
