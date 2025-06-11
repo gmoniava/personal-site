@@ -70,30 +70,32 @@ export default function BlogPosts({ blogs }: any) {
           placeholder="Filter posts by topics..."
         />
       </div>
-      {postForCurrentPage.map((post: any) => (
-        <Link key={post.slug} className="flex flex-col space-y-1 mb-4" href={`/blog/${post.slug}`}>
-          <div className="w-full flex flex-col md:flex-row gap-2">
-            <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
-              {formatDate(post.metadata.publishedAt, false)}
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">{post.metadata.title}</p>
-              {post.metadata.tags && post.metadata.tags.length > 0 && (
-                <div className="flex">
-                  {post.metadata.tags.map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+      <div className="flex flex-col gap-2 items-start">
+        {postForCurrentPage.map((post: any) => (
+          <Link key={post.slug} className="mb-2" href={`/blog/${post.slug}`}>
+            <div className="inline-flex flex-col md:flex-row gap-2">
+              <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
+                {formatDate(post.metadata.publishedAt, false)}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">{post.metadata.title}</p>
+                {post.metadata.tags && post.metadata.tags.length > 0 && (
+                  <div className="flex">
+                    {post.metadata.tags.map((tag: string) => (
+                      <span
+                        key={tag}
+                        className="bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        ))}
+      </div>
       {/* Show pagination controls if there are multiple pages */}
       {totalFilteredPages > 1 && (
         <div className="flex items-center justify-center mt-6">
