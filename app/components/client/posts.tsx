@@ -4,24 +4,22 @@ import { formatDate } from "app/utils";
 import React, { useId } from "react";
 import Select from "react-select";
 import { topics } from "app/topics";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import constants from "app/constants";
 
 export default function BlogPosts({ blogs }: any) {
   const selectId = useId();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [tags, setTags] = React.useState<any[]>(() => {
-    const tagsParam = searchParams.get("tags");
-    if (tagsParam) {
-      const tagValues = tagsParam.split(",");
-      const selected = topics.filter((t) => tagValues.includes(t.value));
-      return selected;
-    }
-    return [];
-  });
-  const [page, setPage] = React.useState(Number(searchParams.get("page")) || 1);
+  const [tags, setTags] = React.useState<any[]>([]);
+  const [page, setPage] = React.useState(1);
+
+  const parseParams = () => {
+    const params = new URLSearchParams(window.location.search);
+    const tagsParam = params.get("tags");
+    const selectedTags = tagsParam ? topics.filter((t) => tagsParam.split(",").includes(t.value)) : [];
+    const pageParam = parseInt(params.get("page") || "1", 10);
+
+    setTags(selectedTags);
+    setPage(pageParam);
+  };
 
   const updateURLParams = (newTags: any[], newPage: number) => {
     const params = new URLSearchParams();
@@ -31,13 +29,35 @@ export default function BlogPosts({ blogs }: any) {
     if (newPage > 1) {
       params.set("page", String(newPage));
     }
-    router.replace(`${pathname}?${params.toString()}`);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+
+    // Use native history API to update the URL without re-rendering server component
+    window.history.pushState(null, "", newUrl);
   };
 
-  function handleTagChange(value: any[]) {
+  let handleTagChange = (value: any[]) => {
     setTags(value);
+    setPage(1);
     updateURLParams(value, 1);
-  }
+  };
+
+  let handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    updateURLParams(tags, newPage);
+  };
+
+  React.useEffect(() => {
+    // initialize on load
+    parseParams();
+
+    const handlePopState = () => {
+      parseParams();
+    };
+
+    // Listen for popstate events to handle back/forward navigation
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   let filteredPosts = blogs;
 
@@ -97,12 +117,11 @@ export default function BlogPosts({ blogs }: any) {
         ))}
       </div>
       {/* Show pagination controls if there are multiple pages */}
-      {totalFilteredPages > 1 && (
+      {totalFilteredPages > 1 ? (
         <div className="flex items-center justify-center mt-6">
           <button
             onClick={() => {
-              setPage(page - 1);
-              updateURLParams(tags, page - 1);
+              handlePageChange(page - 1);
             }}
             disabled={page <= 1}
             className="px-3 py-1 cursor-pointer text-sm rounded disabled:opacity-50"
@@ -116,8 +135,7 @@ export default function BlogPosts({ blogs }: any) {
           </span>
           <button
             onClick={() => {
-              setPage(page + 1);
-              updateURLParams(tags, page + 1);
+              handlePageChange(page + 1);
             }}
             disabled={page >= totalFilteredPages}
             className="px-3 py-1 text-sm cursor-pointer rounded disabled:opacity-50"
@@ -126,7 +144,9 @@ export default function BlogPosts({ blogs }: any) {
             <span className="inline-block select-none">&rarr;</span>
           </button>
         </div>
-      )}
+      ) : totalFilteredPages === 0 ? (
+        <div className="text-xs text-neutral-600 dark:text-neutral-400">No results</div>
+      ) : null}
     </div>
   );
 }
