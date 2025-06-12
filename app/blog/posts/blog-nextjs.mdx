@@ -1,0 +1,85 @@
+---
+title: "How I created blog using Nextjs"
+publishedAt: "2024-04-09"
+summary: "Describe how I created blog using Nextjs"
+tags: ["software-engineering"]
+---
+
+I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
+The main functionality I added to it which it did not have was filtering of the posts and theme
+switcher. The posts themselves are written using MDX and stored on the
+file system.
+
+The main structure of the blog is you have a server component
+(`app/components/server/posts/index.tsx`) which retrieves the posts and
+passes them as props to the client component
+(`app/components/client/posts.tsx`) which shows the posts.
+
+## Initial server-side filtering approach
+
+Initially, I implemented filtering on the server side. The server
+component would filter the blog posts based on the URL search parameters
+and forward the filtered results to the client component. The user could
+update the filter values using a multi-select component, which would
+update the URL with the new filter values. This triggered a re-render of
+the server component, which would then filter the posts again using the
+updated query parameters and pass the filtered results to the client.
+
+## Why I switched to client side filtering
+
+However, I realized that this approach could potentially cause server multiple
+function invocations whenever the user interacted with the filters (each
+time a filter changed, the server would have to perform filtering).
+While this is usually fine, depending on your hosting plan, you might
+want to limit the number of server function invocations.
+
+To address this, I refactored the client component to handle filtering
+locally using React state. In this updated version, the server component
+simply retrieves all blog posts and sends them to the client (the posts
+being sent are reduced in size — they don’t include the full post
+content — since we are just using them to generate links). This allows
+the server component to be statically generated, avoiding server
+function calls when the user filters posts.
+
+## Keeping URL parameters in sync
+
+Even though filtering now happens on the client side, I still wanted the
+URL parameters and the local filter state to stay in sync.
+
+I decided to use native history API (`pushState`) to push new filter values to the URL,
+instead of using `router.push` from `next/navigation`.
+The reasons for this mainly was that `router.push` causes react to wait on a server
+round trip before it can update the page.
+
+## Sitemap and RSS
+
+The started kit also has a app/sitemap.ts file (which is basically a
+special Route Handler) and route handler (app/rss/route.ts) for
+generating RSS. Both were relying on usage of the method to retrieve
+blog posts from the file system. Again, with the goal to reduce function
+invocations, I added bellow line in both files:
+
+`export const dynamic = "force-static";`
+
+## Adding theme switcher
+
+I also added theme switcher to my blog. The starter kit already had
+theme support in the sense that it was using tailwind classes like
+dark:text-white. But it did not have the ability to manually switch
+between themes. For this, I used the next-themes library, which takes
+care of many common theme management tasks such as persisting the
+selected theme in local storage, applying the appropriate dark or light
+class to the HTML element, etc. The relevant implementation can be found
+in theme-toggle.tsx client component.
+
+Also, I would like to note that, the starter kit comes with packages
+tailwindcss and @tailwindcss/postcss both had version 4.0.0-alpha.13. I
+had to upgrade them to versions 4.1.8 otherwise the themes were not
+working.
+
+## Final notes
+
+Feel free to explore the source code of this blog. I’ve also added
+comments in the code to make it easier to follow the implementation. If
+you're interested in the server-side filtering approach, check out the
+server-side-filtering branch.
