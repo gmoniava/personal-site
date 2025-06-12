@@ -7,8 +7,7 @@ tags: ["software-engineering"]
 
 I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
 The main functionality I added to it was filtering of the posts and theme
-switcher. The posts themselves are written using MDX and stored on the
-file system.
+switcher. The posts themselves are written using MDX and stored as files on the filesystem.
 
 The main structure of the blog is you have a server component
 (`app/components/server/posts/index.tsx`) which retrieves the posts from the filesystem and
@@ -32,6 +31,8 @@ function invocations whenever the user interacted with the filters (each
 time a filter changed, the server would have to perform filtering).
 While this is usually fine, depending on your hosting plan, you might
 want to limit the number of server function invocations.
+Currently I am using Vercel Hobby plan, and they have limitations on such
+function invocations.
 
 To address this, I refactored the client component to handle filtering
 locally using React state. In this updated version, the server component
@@ -41,15 +42,24 @@ content — since we are just using them to generate links). This allows
 the server component to be _statically generated_, avoiding server
 function calls when the user filters posts.
 
-## Keeping URL parameters in sync
+## Keeping URL parameters in sync with filter UI
 
-Even though filtering now happens on the client side, I still wanted the
-URL parameters and the filter in our client component to be in sync.
+Even though filtering now happens on the client side, I still wanted our filter
+panel to support URL parameters.
 
-I decided to use native history API (`pushState`) to push new filter values to the URL,
-instead of using `router.push` from `next/navigation`.
-The reasons for this mainly was that `router.push` causes react to wait on a server
-round trip before it can update the page.
+To achieve this, I chose to use the native History API (`history.pushState`) to update the URL with new filter values, instead of using `router.push` from `next/navigation`.
+
+The main reason for this decision is that `router.push` triggers a server round-trip before updating the page. In our case, this likely wouldn’t be a big problem,
+because our server component is statically generated — meaning no extra server function calls would occur. However, if the server component were dynamically rendered,
+using `router.push` would cause all of its logic to run again.
+
+Only after the server component finishes rendering would the client component update, which maybe undesirable in some cases.
+The `useOptimistic` hook exists to help mitigate such issues. This [post](https://buildui.com/posts/instant-search-params-with-react-server-components) explores well how
+to use `useOptimistic` to have url driven filter panels.
+
+Finally, we also had now to keep track of URL changes, which I implemented by listening to the [popstate](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
+The `popstate` event will be triggered by doing a browser action such as a click on the back or forward button (or calling `history.back` or `history.forward` in JavaScript).
+This event does not get triggered by `history.pushState` or `history.replaceState` calls but this is not a problem in our case.
 
 ## Sitemap and RSS
 
