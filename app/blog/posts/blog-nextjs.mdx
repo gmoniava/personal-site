@@ -53,13 +53,9 @@ round trip before it can update the page.
 
 ## Sitemap and RSS
 
-The starter kit also had a `app/sitemap.ts` file (which is basically a
-special Route Handler) and route handler (`app/rss/route.ts`) for
-generating RSS. Both were relying on usage of the `getBlogPosts` method mentioned above,
-which could potentially increase the number of server function invocations depending how
-often it would be called. To stay on the safe side, I added below line in both files:
-
-`export const dynamic = "force-static";`
+The starter kit also had a `app/sitemap.ts` file and an RSS route handler (`app/rss/route.ts`).
+Both relied on the `getBlogPosts` function, which could potentially trigger additional server
+function invocations. To avoid unnecessary invocations I added `export const dynamic = "force-static"` to both files.
 
 ## Adding theme switcher
 
