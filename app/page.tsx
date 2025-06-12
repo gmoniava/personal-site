@@ -1,9 +1,14 @@
 import PostsServer from "app/components/server/posts";
 
-export default async function Page() {
+export default async function Page(props: {
+  searchParams?: Promise<{
+    tags?: string;
+    page?: string;
+  }>;
+}) {
   return (
     <div>
-      <PostsServer />
+      <PostsServer searchParams={props.searchParams} />
     </div>
   );
 }

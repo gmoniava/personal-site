@@ -4,77 +4,53 @@ import { formatDate } from "app/utils";
 import React, { useId } from "react";
 import Select from "react-select";
 import { topics } from "app/topics";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import constants from "app/constants";
 
-export default function BlogPosts({ blogs }: any) {
+export default function BlogPosts({ blogs, total }: any) {
   const selectId = useId();
-  const [tags, setTags] = React.useState<any[]>([]);
-  const [page, setPage] = React.useState(1);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { push } = useRouter();
+  const [isPending, startTransition] = React.useTransition();
 
-  const parseParams = () => {
-    const params = new URLSearchParams(window.location.search);
-    const tagsParam = params.get("tags");
-    const selectedTags = tagsParam ? topics.filter((t) => tagsParam.split(",").includes(t.value)) : [];
-    const pageParam = parseInt(params.get("page") || "1", 10);
+  const totalPages = Math.ceil(total / constants.LIMIT);
 
-    setTags(selectedTags);
-    setPage(pageParam);
-  };
+  const [optimisticTags, setOptimisticTags] = React.useOptimistic(getFullValues(searchParams.getAll("tags") || []));
+  const [optimisticPage, setOptimisticPage] = React.useOptimistic(
+    totalPages === 0 ? 0 : parseInt(searchParams.get("page") || "1", 10)
+  );
 
-  const updateURLParams = (newTags: any[], newPage: number) => {
+  // Because react-select wants values same type as options
+  function getFullValues(values: string[]): any[] {
+    return topics.filter((topic) => values.includes(topic.value));
+  }
+
+  function buildURLParams(tags: any[], page: number) {
     const params = new URLSearchParams();
-    if (newTags.length > 0) {
-      params.set("tags", newTags.map((t) => t.value).join(","));
+    for (const tag of tags) {
+      params.append("tags", tag.value);
     }
-    if (newPage > 1) {
-      params.set("page", String(newPage));
-    }
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    if (page > 1) params.set("page", String(page));
+    return params.toString();
+  }
 
-    // Use native history API to update the URL without re-rendering server component
-    window.history.pushState(null, "", newUrl);
-  };
-
-  let handleTagChange = (value: any[]) => {
-    setTags(value);
-    setPage(1);
-    updateURLParams(value, 1);
-  };
-
-  let handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    updateURLParams(tags, newPage);
-  };
-
-  React.useEffect(() => {
-    // initialize on load
-    parseParams();
-
-    const handlePopState = () => {
-      parseParams();
-    };
-
-    // Listen for popstate events to handle back/forward navigation
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  let filteredPosts = blogs;
-
-  // If tags are selected, filter the posts
-  if (tags.length > 0) {
-    filteredPosts = filteredPosts.filter((post) => {
-      const postTags = post.metadata.tags ?? [];
-      return postTags.some((tag) => tags?.map((t) => t.value).includes(tag));
+  function handleTagChange(value: any[]) {
+    startTransition(() => {
+      setOptimisticTags(value);
+      setOptimisticPage(1); // Reset to page 1 on tag change
+      const params = buildURLParams(value, 1);
+      push(`${pathname}?${params}`);
     });
   }
 
-  // Compute total pages based on filtered posts
-  const totalFilteredPages = Math.ceil(filteredPosts.length / constants.LIMIT);
-
-  // Now get the posts for the current page
-  const startIndex = (page - 1) * constants.LIMIT;
-  let postForCurrentPage = filteredPosts.slice(startIndex, startIndex + constants.LIMIT);
+  function handlePageChange(newPage: number) {
+    startTransition(() => {
+      setOptimisticPage(newPage);
+      const params = buildURLParams(optimisticTags, newPage);
+      push(`${pathname}?${params}`);
+    });
+  }
 
   return (
     <div>
@@ -83,17 +59,19 @@ export default function BlogPosts({ blogs }: any) {
           isMulti
           instanceId={selectId}
           options={topics}
-          value={tags}
+          value={optimisticTags}
           onChange={handleTagChange}
           className="text-black w-2/3"
           classNamePrefix="react-select"
           placeholder="Filter posts by topics..."
         />
       </div>
-      <div className="flex flex-col gap-2 items-start">
-        {postForCurrentPage.map((post: any) => (
-          <Link key={post.slug} className="mb-2" href={`/blog/${post.slug}`}>
-            <div className="inline-flex flex-col md:flex-row gap-2">
+      {isPending ? (
+        <div className="mb-4 text-neutral-500 dark:text-neutral-400 animate-pulse">Loading blog posts...</div>
+      ) : (
+        blogs.map((post: any) => (
+          <Link key={post.slug} className="flex flex-col space-y-1 mb-4" href={`/blog/${post.slug}`}>
+            <div className="w-full flex flex-col md:flex-row gap-2">
               <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
                 {formatDate(post.metadata.publishedAt, false)}
               </p>
@@ -114,39 +92,33 @@ export default function BlogPosts({ blogs }: any) {
               </div>
             </div>
           </Link>
-        ))}
+        ))
+      )}
+
+      {/* Pagination */}
+
+      <div className="flex items-center justify-center mt-6">
+        <button
+          onClick={() => handlePageChange(optimisticPage - 1)}
+          disabled={optimisticPage <= 1 || isPending}
+          className="px-3 py-1 cursor-pointer text-sm rounded disabled:opacity-50"
+        >
+          <span className="inline-block font-bold cursor-pointer select-none hover:text-gray-700">&larr;</span>
+          Prev
+        </button>
+        <span className="text-center text-sm text-neutral-600 dark:text-neutral-400">
+          {" "}
+          {`${optimisticPage}/${totalPages}`}
+        </span>
+        <button
+          onClick={() => handlePageChange(optimisticPage + 1)}
+          disabled={optimisticPage >= totalPages || isPending}
+          className="px-3 py-1 text-sm cursor-pointer rounded disabled:opacity-50"
+        >
+          Next
+          <span className="inline-block select-none">&rarr;</span>
+        </button>
       </div>
-      {/* Show pagination controls if there are multiple pages */}
-      {totalFilteredPages > 1 ? (
-        <div className="flex items-center justify-center mt-6">
-          <button
-            onClick={() => {
-              handlePageChange(page - 1);
-            }}
-            disabled={page <= 1}
-            className="px-3 py-1 cursor-pointer text-sm rounded disabled:opacity-50"
-          >
-            <span className="inline-block font-bold cursor-pointer select-none hover:text-gray-700">&larr;</span>
-            Prev
-          </button>
-          <span className="text-center text-sm text-neutral-600 dark:text-neutral-400">
-            {" "}
-            {`${page}/${totalFilteredPages}`}
-          </span>
-          <button
-            onClick={() => {
-              handlePageChange(page + 1);
-            }}
-            disabled={page >= totalFilteredPages}
-            className="px-3 py-1 text-sm cursor-pointer rounded disabled:opacity-50"
-          >
-            Next
-            <span className="inline-block select-none">&rarr;</span>
-          </button>
-        </div>
-      ) : totalFilteredPages === 0 ? (
-        <div className="text-xs text-neutral-600 dark:text-neutral-400">No results</div>
-      ) : null}
     </div>
   );
 }
