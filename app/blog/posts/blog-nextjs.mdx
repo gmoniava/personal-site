@@ -7,12 +7,12 @@ tags: ["software-engineering"]
 
 I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
 The main functionality I added to it was filtering of the posts and theme
-switcher. The posts themselves are written using MDX and stored as files on the filesystem.
+switcher. The posts themselves are written using [MDX](https://mdxjs.com/) and stored as files on the filesystem.
 
-The main structure of the blog is you have a server component
-(`app/components/server/posts.tsx`) which retrieves the posts from the filesystem and
-passes them as props to the client component
-(`app/components/client/posts.tsx`) which renders the posts.
+The main structure of the blog is that you have a server component (`app/components/server/posts.tsx`) which retrieves
+the posts from the filesystem and passes them as props to a client component (`app/components/client/posts.tsx`).
+The client component generates links for each post, which the user can click to navigate to the individual post page
+located at `app/blog/[slug]/page.tsx`.
 
 ## Initial server-side filtering approach
 
