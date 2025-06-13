@@ -14,7 +14,7 @@ the filesystem and passes them as props to a client component (`app/components/c
 component generates links for each post, which the user can click to navigate to the individual post page implemented
 in: `app/blog/[slug]/page.tsx`.
 
-## Initial server-side filtering approach
+## Initial Server-Side Filtering Approach
 
 Initially, I implemented filtering on the server side. The server
 component would filter the blog posts based on the URL search parameters (using `getBlogPosts` function)
@@ -24,7 +24,7 @@ update the URL with the new filter values. This triggered a re-render of
 the server component, which would then filter the posts again using the
 updated query parameters and pass the filtered results back to the client.
 
-## Why I switched to client side filtering
+## Why I Switched to Client-Side Filtering
 
 However, I realized that this approach could potentially cause multiple server
 function invocations whenever the user interacted with the filters (each
@@ -41,7 +41,7 @@ we are using these posts to generate links, we are not sending full version
 of the posts). This allows the server component to be _statically rendered_, avoiding server
 function invocation when the user filters posts.
 
-## Keeping URL parameters in sync with filter UI
+## Keeping URL Parameters in Sync with Filter UI
 
 Even though filtering now happens on the client side, I still wanted our filter
 panel to support URL parameters.
@@ -72,7 +72,7 @@ Although the docs say this about the sitemap:
 since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
 function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
 
-## Adding theme switcher
+## Adding Theme Switcher
 
 I also added theme switcher to my blog. The starter kit already had
 theme support in the sense that it was using tailwind classes like
@@ -92,12 +92,12 @@ Finally, I would like to note that, the starter kit comes with packages
 had to upgrade them to versions 4.1.8 otherwise the themes were not
 working.
 
-## Implementation of page to view single blog post
+## Single Blog Post Page
 
 The page which implements showing a single blog post is: `app/blog/[slug]/page.tsx`. You may notice the usage of `generateStaticParams`
 function there. It is there to make sure each blog post is _statically_ rendered.
 
-## Final notes
+## Final Notes
 
 Feel free to explore the [source code](https://github.com/gmoniava/personal-site) of this blog. I’ve also added
 comments in the code to make it easier to follow the implementation. If you're interested in the server-side
