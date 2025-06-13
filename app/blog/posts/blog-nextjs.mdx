@@ -6,10 +6,9 @@ tags: ["software-engineering"]
 ---
 
 I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
-The main functionality I added to it was filtering of the posts and theme
-switcher. The posts themselves are written using [MDX](https://mdxjs.com/) and stored as files on the filesystem.
+There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will describe in this post.
 
-The main structure of the blog is that a server component (`app/components/server/posts.tsx`) retrieves posts from
+The main structure of the blog is that a server component (`app/components/server/posts.tsx`) retrieves posts (which are [MDX](https://mdxjs.com/) files) from
 the filesystem and passes them as props to a client component (`app/components/client/posts.tsx`). The client
 component generates links for each post, which the user can click to navigate to the individual post page implemented
 in: `app/blog/[slug]/page.tsx`.
@@ -94,8 +93,10 @@ working.
 
 ## Single Blog Post Page
 
-The page which implements showing a single blog post is: `app/blog/[slug]/page.tsx`. You may notice the usage of `generateStaticParams`
-function there. It is there to make sure each blog post is _statically_ rendered.
+The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
+which ensures that each blog post is statically generated. There is also usage of `generateMetadata` -
+which should produce output that is also statically generated since the page for each blog post is statically generated.
+Finally, you will see in that file usage of JSON-LD which is used to provide structured data that improves search engine understanding.
 
 ## Final Notes
 
