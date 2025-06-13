@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="antialiased max-w-3xl mx-4 mt-8 lg:mx-auto">
         <main className="mt-6 flex flex-col px-2 md:px-0">
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="personal-website-theme">
             <Navbar />
             {children}
             <Footer />

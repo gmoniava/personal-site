@@ -73,25 +73,27 @@ function invocations, I decided to add `export const dynamic = "force-static"` c
 
 ## Adding Theme Switcher
 
-I also added theme switcher to my blog. The starter kit already had
+I also added theme switcher (`app/components/client/theme-toggle.tsx`) to my blog. The starter kit already had
 theme support in the sense that it was using tailwind classes like
-`dark:text-white`. But it did not have the ability to manually switch
-between themes. For this, I used the `next-themes` library, which takes
-care of many common theme management tasks such as persisting the
-selected theme in local storage, applying the appropriate dark or light
-class to the HTML element, etc. You still have to make the UI switcher component
-which will switch the theme though. The relevant implementation can be found
-in `app/components/client/theme-toggle.tsx` client component.
+`dark:text-white` - which meant it would work with the user’s browser or
+system theme. But it did not have the ability to manually switch
+between themes.
 
-Also there is one thing you have to add to `global.css` to make the theme switcher work, which is
-[this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually): `@custom-variant dark (&:where(.dark, .dark *));`.
+To add manual switcher to your site you mainly need:
 
-Finally, I would like to note that, the starter kit comes with packages
-`tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
-had to upgrade them to versions 4.1.8 otherwise the themes were not
-working.
+- to add a UI switch component (for this I used `react-switch` component),
+- and to take care of common theme management tasks: such as persisting the
+  selected theme in local storage, applying the appropriate dark or light
+  class to the HTML element, etc. (for this I used `next-themes` library)
 
-## Single Blog Post Page
+Also there were few changes I had to do to the existing starter code to make the manual theme switching work:
+
+- You have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *));`,
+  to the `global.css`.
+- the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
+  had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
+
+## Blog Post Page
 
 The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
 which ensures that each blog post is statically generated. There is also usage of `generateMetadata` -

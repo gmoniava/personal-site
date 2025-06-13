@@ -16,6 +16,7 @@ const Toggle = (props: any) => {
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
       {" "}
       <div className="text-neutral-800 dark:text-neutral-100 ">
+        {/* Using currentColor for theme consistency */}
         <svg width="24" height="24" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <circle fill="none" cx="32" cy="32" r="12" stroke="currentColor" strokeWidth="4" />
           <line x1="32" y1="4" x2="32" y2="14" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
@@ -38,6 +39,7 @@ const Toggle = (props: any) => {
         checked={theme === "dark" ? true : false}
       />
       <div className="text-neutral-800 dark:text-neutral-100">
+        {/* Using currentColor for theme consistency */}
         <svg width="24" height="24" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path
             transform="translate(2,0) rotate(20 32 32)"
