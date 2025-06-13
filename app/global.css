@@ -18,7 +18,14 @@
   --sh-entity: #e25a1c;
 }
 
-@media (prefers-color-scheme: dark) {
+.dark {
+  --sh-class: #4c97f8;
+  --sh-identifier: white !important;
+  --sh-keyword: #f47067;
+  --sh-string: #0fa295;
+}
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --sh-class: #4c97f8;
     --sh-identifier: white;
@@ -28,7 +35,7 @@
   html {
     color-scheme: dark;
   }
-}
+} */
 
 html {
   min-width: 360px;
