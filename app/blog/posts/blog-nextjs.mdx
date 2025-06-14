@@ -6,7 +6,7 @@ tags: ["software-engineering"]
 ---
 
 I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
-There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will tell you about in this post.
+There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will explain in this post.
 
 ## Blog Architecture
 
@@ -77,7 +77,9 @@ function invocations, I decided to add `export const dynamic = "force-static"` c
 I also added theme switcher (`app/components/client/theme-toggle.tsx`) to my blog. The starter kit already had
 theme support in the sense that it was using tailwind classes like
 `dark:text-white` - which meant it would work with the user’s browser or
-system theme. But you did not have a theme switcher component. There were certain things I had to do to make the manual theme switching work:
+system theme. But you did not have a theme switcher component.
+
+There were certain things I had to do to make the manual theme switching work:
 
 - you need a UI switch component (for this I used [`react-switch`](https://github.com/markusenglund/react-switch)),
 - you need to take care of common theme management tasks: such as persisting the selected theme in local storage, applying the appropriate dark or light class to the HTML element, etc. (for this I used [`next-themes`](https://github.com/pacocoursey/next-themes))
@@ -90,8 +92,11 @@ system theme. But you did not have a theme switcher component. There were certai
 ## Blog Post Page
 
 The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
-which ensures that each blog post is statically generated. There is also usage of `generateMetadata` -
+which ensures that each blog post is statically generated.
+
+There is also usage of `generateMetadata` -
 which should produce output that is also statically generated since the page for each blog post is statically generated.
+
 Finally, you will see in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
 
 ## Changes for MDX and Code Syntax Highlighter
