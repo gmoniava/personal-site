@@ -48,7 +48,7 @@ function RoundedImage(props) {
 
 function Code({ children, isBlock, ...props }) {
   return (
-    <code className="ui-monospace bg-zinc-100 dark:bg-neutral-800 dark:text-neutral-100" {...props}>
+    <code className="font-mono bg-zinc-100 dark:bg-neutral-800 dark:text-neutral-100" {...props}>
       {children}
     </code>
   );

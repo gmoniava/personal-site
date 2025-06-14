@@ -6,21 +6,21 @@ tags: ["software-engineering"]
 ---
 
 I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
-There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will describe in this post.
+There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will tell you about in this post.
 
 ## Blog Architecture
 
-The way this blog works is there is a server component (`app/components/server/posts.tsx`) which retrieves posts (which are [MDX](https://mdxjs.com/) files) from
+The way this blog works is there is a server component (`app/components/server/posts.tsx`) which retrieves posts (which are [MDX](https://nextjs.org/docs/app/guides/mdx) files) from
 the filesystem and passes them as props to the client component (`app/components/client/posts.tsx`). The client
 component generates links for each post, which the user can click to navigate to the individual post page
-(`app/blog/[slug]/page.tsx`). The client component also allows filtering of the posts.
+(`app/blog/[slug]/page.tsx`).
 
 ## Initial Server-Side Filtering Approach
 
 Initially, I implemented filtering on the server side. The server
 component would filter the blog posts based on the URL search parameters (using `getBlogPosts` function)
 and forward the filtered results to the client component. The user could
-update the filter values using a multi-select component, which would
+update the filter values using a select component, which would
 update the URL with the new filter values. This triggered a re-render of
 the server component, which would then filter the posts again using the
 updated query parameters and pass the filtered results back to the client component.
@@ -59,13 +59,15 @@ offers a great exploration of how to use `useOptimistic` to build URL-driven fil
 Actually my initial server side filtering approach was using `useOptimistic` based implementation of the client component, if you are interested in this,
 you can check the `server-side-filtering` branch.
 
-Finally, we also had to keep track of URL changes to update our filters, which I implemented by listening to the [popstate](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
+Finally, we also had to keep track of URL changes to update our filters, which I implemented by listening to the [`popstate`](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
 The `popstate` event will be triggered by doing a browser action such as a click on the back or forward button (or calling `history.back` or `history.forward` in JavaScript).
 This event does not get triggered by `history.pushState` or `history.replaceState` calls but this is not a problem in our case.
 
 ## Sitemap and RSS
 
-The starter kit also had a `app/sitemap.ts` file and an RSS route handler (`app/rss/route.ts`).
+The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site,
+and an RSS route handler (`app/rss/route.ts`), which provides an RSS feed (XML file for distributing updates to subscribers).
+
 Although the docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option),
 since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
 function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
@@ -75,14 +77,12 @@ function invocations, I decided to add `export const dynamic = "force-static"` c
 I also added theme switcher (`app/components/client/theme-toggle.tsx`) to my blog. The starter kit already had
 theme support in the sense that it was using tailwind classes like
 `dark:text-white` - which meant it would work with the user’s browser or
-system theme. But you did not have a theme switcher component.
+system theme. But you did not have a theme switcher component. There were certain things I had to do to make the manual theme switching work:
 
-There were certain things I had to do to make the manual theme switching work:
-
-- you need a UI switch component (for this I used `react-switch` component),
-- you need to take care of common theme management tasks: such as persisting the selected theme in local storage, applying the appropriate dark or light class to the HTML element, etc. (for this I used `next-themes` library)
-- you have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *));`,
-  to the `global.css`. It will enable `dark:` utilities to be applied when dark class is present in HTML tree, instead of
+- you need a UI switch component (for this I used [`react-switch`](https://github.com/markusenglund/react-switch)),
+- you need to take care of common theme management tasks: such as persisting the selected theme in local storage, applying the appropriate dark or light class to the HTML element, etc. (for this I used [`next-themes`](https://github.com/pacocoursey/next-themes))
+- you have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *))`,
+  to the `global.css`, which will enable `dark:` utilities to be applied when dark class is present in HTML tree, instead of
   based on the `prefers-color-scheme`.
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
@@ -92,7 +92,18 @@ There were certain things I had to do to make the manual theme switching work:
 The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
 which ensures that each blog post is statically generated. There is also usage of `generateMetadata` -
 which should produce output that is also statically generated since the page for each blog post is statically generated.
-Finally, you will in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
+Finally, you will see in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
+
+## Changes for MDX and Code Syntax Highlighter
+
+There were also few changes related to MDX and code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) used by the starter kit.
+
+I had to add custom component for `pre` tag also in the `components` object (`app/components/server/mdx.tsx`),
+otherwise it was not differentiating between inline and block level code.
+
+The starter code had also some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
+but it was using the `@media (prefers-color-scheme: dark)` selector. Since we switched to manual
+theme management, I added `.dark` selector for the overrides instead.
 
 ## Source Code
 
