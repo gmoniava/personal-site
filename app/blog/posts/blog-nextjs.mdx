@@ -1,5 +1,5 @@
 ---
-title: "How to Create a Blog using Next.js"
+title: "How I Built This Blog Using Nextjs"
 publishedAt: "2024-04-09"
 summary: "Describe how I created blog using Nextjs."
 tags: ["software-engineering"]
@@ -8,10 +8,12 @@ tags: ["software-engineering"]
 I created this blog using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
 There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will describe in this post.
 
-The main structure of the blog is that a server component (`app/components/server/posts.tsx`) retrieves posts (which are [MDX](https://mdxjs.com/) files) from
-the filesystem and passes them as props to a client component (`app/components/client/posts.tsx`). The client
+## Blog Architecture
+
+The way this blog works is there is a server component (`app/components/server/posts.tsx`) which retrieves posts (which are [MDX](https://mdxjs.com/) files) from
+the filesystem and passes them as props to the client component (`app/components/client/posts.tsx`). The client
 component generates links for each post, which the user can click to navigate to the individual post page
-(`app/blog/[slug]/page.tsx`).
+(`app/blog/[slug]/page.tsx`). The client component also allows filtering of the posts.
 
 ## Initial Server-Side Filtering Approach
 
@@ -21,12 +23,12 @@ and forward the filtered results to the client component. The user could
 update the filter values using a multi-select component, which would
 update the URL with the new filter values. This triggered a re-render of
 the server component, which would then filter the posts again using the
-updated query parameters and pass the filtered results back to the client.
+updated query parameters and pass the filtered results back to the client component.
 
 ## Why I Switched to Client-Side Filtering
 
 However, I realized that this approach could potentially cause multiple server
-function invocations whenever the user interacted with the filters (each
+_function invocations_ whenever the user interacted with the filters (each
 time a filter changed, the server would have to perform filtering).
 While this is usually fine, depending on your hosting plan, you might
 want to limit the number of server function invocations.
@@ -43,9 +45,7 @@ function invocation when the user filters posts.
 ## Keeping URL Parameters in Sync with Filter UI
 
 Even though filtering now happens on the client side, I still wanted our filter
-panel to support URL parameters.
-
-As a first step to achieve this, I decided to use the native History API (`history.pushState`) to update the URL
+panel to support URL parameters. As a first step to achieve this, I decided to use the native History API (`history.pushState`) to update the URL
 with new filter values, instead of using `router.push` from `next/navigation`.
 The main reason for this decision is that `router.push` triggers a server round-trip before updating the page.
 This means the server must respond — which may involve a server component executing its logic — and only then
@@ -53,9 +53,11 @@ does React update the URL and display the new page. While this might not be a ma
 create a poor user experience when a client component’s UI depends on values returned by the server in response
 to the new URL, since changes won’t be visible immediately.
 
-There is hook [`useOptimistic`](https://react.dev/reference/react/useOptimistic) which can helps mitigate issues mentioned in the previous paragraph.
+There is hook [`useOptimistic`](https://react.dev/reference/react/useOptimistic) which can help mitigate issues mentioned in the previous paragraph.
 This [post](https://buildui.com/posts/instant-search-params-with-react-server-components)
 offers a great exploration of how to use `useOptimistic` to build URL-driven filter panels which respond quickly to user actions.
+Actually my initial server side filtering approach was using `useOptimistic` based implementation of the client component, if you are interested in this,
+you can check the `server-side-filtering` branch.
 
 Finally, we also had to keep track of URL changes to update our filters, which I implemented by listening to the [popstate](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
 The `popstate` event will be triggered by doing a browser action such as a click on the back or forward button (or calling `history.back` or `history.forward` in JavaScript).
@@ -64,10 +66,7 @@ This event does not get triggered by `history.pushState` or `history.replaceStat
 ## Sitemap and RSS
 
 The starter kit also had a `app/sitemap.ts` file and an RSS route handler (`app/rss/route.ts`).
-Although the docs say this about the sitemap:
-
-> sitemap.js is a special Route Handler that is cached by default unless it uses a Dynamic API or dynamic config option.
-
+Although the docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option),
 since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
 function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
 
@@ -76,16 +75,15 @@ function invocations, I decided to add `export const dynamic = "force-static"` c
 I also added theme switcher (`app/components/client/theme-toggle.tsx`) to my blog. The starter kit already had
 theme support in the sense that it was using tailwind classes like
 `dark:text-white` - which meant it would work with the user’s browser or
-system theme. But it did not have the ability to manually switch
-between themes.
+system theme. But you did not have a theme switcher component.
 
-There were certain things I had to do make the manual theme switching work:
+There were certain things I had to do to make the manual theme switching work:
 
 - you need a UI switch component (for this I used `react-switch` component),
 - you need to take care of common theme management tasks: such as persisting the selected theme in local storage, applying the appropriate dark or light class to the HTML element, etc. (for this I used `next-themes` library)
-- You have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *));`,
-  to the `global.css`. Which based on the docs does this:
-  > Now instead of dark:\* utilities being applied based on prefers-color-scheme, they will be applied whenever the dark class is present earlier in the HTML tree
+- you have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *));`,
+  to the `global.css`. It will enable `dark:` utilities to be applied when dark class is present in HTML tree, instead of
+  based on the `prefers-color-scheme`.
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
 
@@ -94,11 +92,8 @@ There were certain things I had to do make the manual theme switching work:
 The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
 which ensures that each blog post is statically generated. There is also usage of `generateMetadata` -
 which should produce output that is also statically generated since the page for each blog post is statically generated.
-Finally, you will see in that file usage of JSON-LD which is used to provide structured data that improves search engine understanding.
+Finally, you will in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
 
-## Final Notes
+## Source Code
 
-Feel free to explore the [source code](https://github.com/gmoniava/personal-site) of this blog. I’ve also added
-comments in the code to make it easier to follow the implementation. If you're interested in the server-side
-filtering approach which I used initially (which also contains `useOptimistic` based implementation of the
-client component), check out the `server-side-filtering` branch.
+You can find the source code [here](https://github.com/gmoniava/personal-site).
