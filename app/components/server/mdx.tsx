@@ -58,8 +58,8 @@ function Pre({ children, ...props }) {
   const codeChild = React.Children.only(children);
   const codeString = codeChild.props.children;
 
-  // Highlight the code using sugar-high and remove newlines
-  const highlightedHTML = highlight(codeString);
+  // Highlight the code and remove newlines
+  const highlightedHTML = highlight(codeString).replace(/\n/g, "");
 
   return <pre {...props} className="" dangerouslySetInnerHTML={{ __html: highlightedHTML }} />;
 }
