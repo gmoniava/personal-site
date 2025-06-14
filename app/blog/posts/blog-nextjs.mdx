@@ -88,9 +88,6 @@ There were certain things I had to do make the manual theme switching work:
   > Now instead of dark:\* utilities being applied based on prefers-color-scheme, they will be applied whenever the dark class is present earlier in the HTML tree
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
-- The starter kit also comes with a code syntax highlighter, and it was overriding some theme colors for it for the dark mode,
-  using media query: `@media (prefers-color-scheme: dark)`. Since we use a manual theme switcher now, this media query would not work,
-  and I had to change that too and use a `.dark` selector instead.
 
 ## Blog Post Page
 

@@ -46,9 +46,22 @@ function RoundedImage(props) {
   return <Image alt={props.alt} className="rounded-lg" {...props} />;
 }
 
-function Code({ children, ...props }) {
-  let codeHTML = highlight(children);
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />;
+function Code({ children, isBlock, ...props }) {
+  return (
+    <code className="ui-monospace bg-zinc-100 dark:bg-neutral-800 dark:text-neutral-100" {...props}>
+      {children}
+    </code>
+  );
+}
+
+function Pre({ children, ...props }) {
+  const codeChild = React.Children.only(children);
+  const codeString = codeChild.props.children;
+
+  // Highlight the code using sugar-high and remove newlines
+  const highlightedHTML = highlight(codeString);
+
+  return <pre {...props} className="" dangerouslySetInnerHTML={{ __html: highlightedHTML }} />;
 }
 
 function slugify(str) {
@@ -97,6 +110,7 @@ let components = {
   h6: createHeading(6),
   Image: RoundedImage,
   a: CustomLink,
+  pre: Pre,
   code: Code,
   Table,
   blockquote: Blockquote,
