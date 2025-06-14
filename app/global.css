@@ -20,7 +20,7 @@
 
 .dark {
   --sh-class: #4c97f8;
-  --sh-identifier: white !important;
+  --sh-identifier: white;
   --sh-keyword: #f47067;
   --sh-string: #0fa295;
 }
