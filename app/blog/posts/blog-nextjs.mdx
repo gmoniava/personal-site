@@ -10,14 +10,14 @@ There were some changes I made and functionality I added (filtering of the posts
 
 The main structure of the blog is that a server component (`app/components/server/posts.tsx`) retrieves posts (which are [MDX](https://mdxjs.com/) files) from
 the filesystem and passes them as props to a client component (`app/components/client/posts.tsx`). The client
-component generates links for each post, which the user can click to navigate to the individual post page implemented
-in: `app/blog/[slug]/page.tsx`.
+component generates links for each post, which the user can click to navigate to the individual post page
+(`app/blog/[slug]/page.tsx`).
 
 ## Initial Server-Side Filtering Approach
 
 Initially, I implemented filtering on the server side. The server
 component would filter the blog posts based on the URL search parameters (using `getBlogPosts` function)
-and forward the filtered results to the client component. The user then could
+and forward the filtered results to the client component. The user could
 update the filter values using a multi-select component, which would
 update the URL with the new filter values. This triggered a re-render of
 the server component, which would then filter the posts again using the
@@ -36,8 +36,8 @@ function invocations.
 To address this, I refactored the client component to handle filtering
 locally using React state. In this updated version, the server component
 simply retrieves _all_ blog posts and sends them to the client component (since
-we are using these posts to generate links, we are not sending full version
-of the posts). This allows the server component to be _statically rendered_, avoiding server
+we are using these posts to generate links, we are not sending full versions
+of the posts). This allows the server component to be _statically generated_, avoiding server
 function invocation when the user filters posts.
 
 ## Keeping URL Parameters in Sync with Filter UI
@@ -45,8 +45,8 @@ function invocation when the user filters posts.
 Even though filtering now happens on the client side, I still wanted our filter
 panel to support URL parameters.
 
-To achieve this, I chose to use the native History API (`history.pushState`) to update the URL with new filter values, instead of using `router.push` from `next/navigation`.
-
+As a first step to achieve this, I decided to use the native History API (`history.pushState`) to update the URL
+with new filter values, instead of using `router.push` from `next/navigation`.
 The main reason for this decision is that `router.push` triggers a server round-trip before updating the page.
 This means the server must respond — which may involve a server component executing its logic — and only then
 does React update the URL and display the new page. While this might not be a major issue in our case, it can
@@ -57,7 +57,7 @@ There is hook [`useOptimistic`](https://react.dev/reference/react/useOptimistic)
 This [post](https://buildui.com/posts/instant-search-params-with-react-server-components)
 offers a great exploration of how to use `useOptimistic` to build URL-driven filter panels which respond quickly to user actions.
 
-Finally, we also had now to keep track of URL changes, which I implemented by listening to the [popstate](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
+Finally, we also had to keep track of URL changes to update our filters, which I implemented by listening to the [popstate](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
 The `popstate` event will be triggered by doing a browser action such as a click on the back or forward button (or calling `history.back` or `history.forward` in JavaScript).
 This event does not get triggered by `history.pushState` or `history.replaceState` calls but this is not a problem in our case.
 
@@ -79,19 +79,18 @@ theme support in the sense that it was using tailwind classes like
 system theme. But it did not have the ability to manually switch
 between themes.
 
-To add manual switcher to your site you mainly need:
+There were certain things I had to do make the manual theme switching work:
 
-- to add a UI switch component (for this I used `react-switch` component),
-- and to take care of common theme management tasks: such as persisting the
-  selected theme in local storage, applying the appropriate dark or light
-  class to the HTML element, etc. (for this I used `next-themes` library)
-
-Also there were few changes I had to do to the existing starter code to make the manual theme switching work:
-
+- you need a UI switch component (for this I used `react-switch` component),
+- you need to take care of common theme management tasks: such as persisting the selected theme in local storage, applying the appropriate dark or light class to the HTML element, etc. (for this I used `next-themes` library)
 - You have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *));`,
-  to the `global.css`.
+  to the `global.css`. Which based on the docs does this:
+  > Now instead of dark:\* utilities being applied based on prefers-color-scheme, they will be applied whenever the dark class is present earlier in the HTML tree
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
+- The starter kit also comes with a code syntax highlighter, and it was overriding some theme colors for it for the dark mode,
+  using media query: `@media (prefers-color-scheme: dark)`. Since we use a manual theme switcher now, this media query would not work,
+  and I had to change that too and use a `.dark` selector instead.
 
 ## Blog Post Page
 
