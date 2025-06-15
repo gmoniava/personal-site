@@ -32,7 +32,7 @@ export default function Page(props) {
           href="https://stackoverflow.com/users/3963067/gmoniava"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400"
+          className="underline transition-all text-blue-600 dark:dark:text-blue-400 underline-offset-2 decoration-[0.1em]"
           style={{ display: "flex", alignItems: "center", gap: "4px" }}
         >
           Stack Overflow
@@ -50,7 +50,7 @@ export default function Page(props) {
           href="https://github.com/gmoniava"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400"
+          className="underline transition-all text-blue-600 dark:dark:text-blue-400 underline-offset-2 decoration-[0.1em]"
           style={{ display: "flex", alignItems: "center", gap: "4px" }}
         >
           GitHub
@@ -68,7 +68,7 @@ export default function Page(props) {
           href="https://www.linkedin.com/in/giorgi-moniava-1797a42"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400"
+          className="underline transition-all text-blue-600 dark:dark:text-blue-400 underline-offset-2 decoration-[0.1em]"
           style={{ display: "flex", alignItems: "center", gap: "4px" }}
         >
           LinkedIn
