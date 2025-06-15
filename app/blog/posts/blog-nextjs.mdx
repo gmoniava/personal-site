@@ -1,5 +1,5 @@
 ---
-title: "How I Built This Blog Using Nextjs"
+title: "How I Built This Blog Using Nextjs App Router"
 publishedAt: "2024-04-09"
 summary: "Describe how I created blog using Nextjs."
 tags: ["software-engineering"]
@@ -20,7 +20,7 @@ component generates links for each post, which the user can click to navigate to
 Initially, I implemented filtering on the server side. The server
 component would filter the blog posts based on the URL search parameters (using `getBlogPosts` function)
 and forward the filtered results to the client component. The user could
-update the filter values using a select component, which would
+update the filter values using a select component ([`react-select`](https://react-select.com/)), which would
 update the URL with the new filter values. This triggered a re-render of
 the server component, which would then filter the posts again using the
 updated query parameters and pass the filtered results back to the client component.
@@ -45,12 +45,11 @@ function invocation when the user filters posts.
 ## Keeping URL Parameters in Sync with Filter UI
 
 Even though filtering now happens on the client side, I still wanted our filter
-panel to support URL parameters. As a first step to achieve this, I decided to use the native History API (`history.pushState`) to update the URL
+to support URL parameters. I decided to use the native History API (`history.pushState`) to update the URL
 with new filter values, instead of using `router.push` from `next/navigation`.
-The main reason for this decision is that `router.push` triggers a server round-trip before updating the page.
+The main reason for this is that `router.push` triggers a server round-trip before updating the page.
 This means the server must respond — which may involve a server component executing its logic — and only then
-does React update the URL and display the new page. While this might not be a major issue in our case, it can
-create a poor user experience when a client component’s UI depends on values returned by the server in response
+does React update the URL and display the new page. This can create a poor user experience when a client component’s UI depends on values returned by the server in response
 to the new URL, since changes won’t be visible immediately.
 
 There is hook [`useOptimistic`](https://react.dev/reference/react/useOptimistic) which can help mitigate issues mentioned in the previous paragraph.
