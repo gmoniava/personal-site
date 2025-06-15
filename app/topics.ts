@@ -13,7 +13,7 @@ export const topics = [
   },
   {
     label: "Medical science",
-    value: "medicine",
+    value: "medical-science",
   },
   {
     label: "Other",
