@@ -6,8 +6,6 @@ Personal web site written on Nextjs.
 
 First install the dependencies using package manager of your choice.
 
-For example:
-
 ```bash
 pnpm install
 ```
