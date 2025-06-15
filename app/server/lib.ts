@@ -84,32 +84,7 @@ function getMDXData(dir) {
   });
 }
 
-export function getBlogPosts({
-  page = 1,
-  limit,
-  tagFilters = [],
-}: {
-  tagFilters?: string[];
-  page?: number;
-  limit?: number;
-} = {}) {
+export function getBlogPosts(props) {
   const allPosts = getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
-
-  let filteredPosts = allPosts;
-
-  if (tagFilters.length > 0) {
-    filteredPosts = filteredPosts.filter((post) => {
-      const postTags = post.metadata.tags ?? [];
-      return postTags.some((tag) => tagFilters.includes(tag));
-    });
-  }
-
-  const total = filteredPosts.length;
-
-  if (limit !== undefined) {
-    const start = (page - 1) * limit;
-    filteredPosts = filteredPosts.slice(start, start + limit);
-  }
-
-  return { posts: filteredPosts, total };
+  return { posts: allPosts, total: allPosts.length };
 }
