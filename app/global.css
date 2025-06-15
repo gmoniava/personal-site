@@ -6,7 +6,7 @@
   color: #fefefe;
 }
 
-// Override default classes for syntax highlighting
+// Override default classes for code syntax highlighting
 :root {
   --sh-class: #2d5e9d;
   --sh-identifier: #354150;
@@ -19,7 +19,7 @@
   --sh-entity: #e25a1c;
 }
 
-// Override default classes for syntax highlighting for dark theme
+// Override default classes for code syntax highlighting for dark theme
 .dark {
   --sh-class: #4c97f8;
   --sh-identifier: white;
