@@ -84,7 +84,7 @@ function getMDXData(dir) {
   });
 }
 
-export function getBlogPosts(props) {
+export function getBlogPosts() {
   const allPosts = getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
   return { posts: allPosts, total: allPosts.length };
 }
