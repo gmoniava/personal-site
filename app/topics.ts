@@ -12,6 +12,10 @@ export const topics = [
     value: "psychology",
   },
   {
+    label: "Medical science",
+    value: "medicine",
+  },
+  {
     label: "Other",
     value: "Other",
   },

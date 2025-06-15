@@ -12,7 +12,7 @@ import { ThemeProvider } from "next-themes";
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl), // make sure baseUrl is set to your personal site URL
   title: {
-    default: "Personal Website",
+    default: "Welcome",
     template: "%s | Personal Website",
   },
   description: "Explore my writings on software engineering, philosophy, psychology, and more.",

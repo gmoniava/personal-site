@@ -1,16 +1,33 @@
-export const metadata = {
-  title: "About",
-  description: "About the web site and its author.",
-};
+"use client";
+import React from "react";
 
-export default async function Page(props) {
+// Display email on the client side to avoid spam bots
+function ClientSideEmail() {
+  const [email, setEmail] = React.useState("");
+
+  React.useEffect(() => {
+    setEmail(`moniava [dot] g [at] gmail [dot] com`);
+  }, []);
+
+  return (
+    <div>
+      {email ? (
+        <p>{`If you have questions or comments feel free to get in touch (${email}).`}</p>
+      ) : (
+        <span>Loading email...</span>
+      )}
+    </div>
+  );
+}
+
+export default function Page(props) {
   return (
     <div>
       {" "}
       <h1 className="mb-4 text-2xl font-semibold ">About</h1>
       <p className="mb-4">{`I am software developer (mostly front end) from Tbilisi, Georgia. On this web site you can explore my writings on software engineering, philosophy, psychology, and more.`}</p>
-      <div></div>
-      <div style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
+      <ClientSideEmail />
+      <div className="mt-4 inline-flex items-center gap-3">
         <a
           href="https://stackoverflow.com/users/3963067/gmoniava"
           target="_blank"
