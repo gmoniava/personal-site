@@ -11,7 +11,7 @@ export default function Page() {
 
   // Sort the posts by published date in descending order
   result.posts.sort((a, b) => {
-    if (new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)) {
+    if (new Date(a.metadata.date) > new Date(b.metadata.date)) {
       return -1;
     }
     return 1;

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
     return;
   }
 
-  let { title, publishedAt: publishedTime, summary: description, image } = post.metadata;
+  let { title, date: publishedTime, summary: description, image } = post.metadata;
   let ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
 
   return {
@@ -62,8 +62,8 @@ export default async function Blog({ params }) {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
+            datePublished: post.metadata.date,
+            dateModified: post.metadata.date,
             description: post.metadata.summary,
             image: post.metadata.image
               ? `${baseUrl}${post.metadata.image}`
@@ -79,7 +79,7 @@ export default async function Blog({ params }) {
       {/* Title and date */}
       <h1 className="title font-semibold text-2xl tracking-tighter">{post.metadata.title}</h1>
       <div className="flex justify-between items-center my-4 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.publishedAt)}</p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
       </div>
       {/* Show the tags */}
       <div className="mb-8">
