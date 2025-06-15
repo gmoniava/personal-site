@@ -88,7 +88,7 @@ There were certain things I had to do to make the manual theme switching work:
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
 
-## Blog Post Page
+## Individual Blog Post Page
 
 The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
 which ensures that each blog post is statically generated.
@@ -98,14 +98,16 @@ which should produce output that is also statically generated since the page for
 
 Finally, you will see in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
 
-## Changes for MDX and Code Syntax Highlighter
+## MDX
 
-There were also few changes related to MDX and code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) used by the starter kit.
+I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
+That object lists custom components that should be used in place of one of the default components that MDX automatically renders for different HTML tags.
+I had to make this addition otherwise MDX library was not differentiating between inline and block level code.
 
-I had to add custom component for `pre` tag also in the `components` object (`app/components/server/mdx.tsx`),
-otherwise it was not differentiating between inline and block level code.
+## Code Syntax Highlighter
 
-The starter code had also some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
+The starter code also uses a code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) to highlight code blocks.
+It had some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
 but it was using the `@media (prefers-color-scheme: dark)` selector. Since we switched to manual
 theme management, I added `.dark` selector for the overrides instead.
 
