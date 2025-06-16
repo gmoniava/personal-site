@@ -70,7 +70,11 @@ This event does not get triggered by `history.pushState` or `history.replaceStat
 
 ## Individual Blog Post Page
 
-The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
+The page which renders a single blog post is: `app/blog/[slug]/page.tsx`.
+This file was already present in the starter kit, I made minimal changes there.
+Below I will simply explain some things that were already there.
+
+You may notice usage of `generateStaticParams` inside that file,
 which ensures that each blog post is statically generated.
 
 There is also usage of `generateMetadata` -
