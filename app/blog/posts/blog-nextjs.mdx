@@ -79,18 +79,24 @@ function invocations, I decided to add `export const dynamic = "force-static"` c
 
 ## Adding Theme Switcher
 
-I also added theme switcher (`app/components/client/theme-toggle.tsx`) to my blog. The starter kit already had
-theme support in the sense that it was using tailwind classes like
-`dark:text-white` - which meant it would work with the user’s browser or
-system theme. But you did not have a theme switcher component.
+The starter kit already had theme support in the sense that it was using
+tailwind classes like `dark:text-white` - which meant it would work with
+the user’s browser or system theme (it would detect them using
+`prefers-color-scheme` CSS media feature). But since I wanted to have a
+manual theme switcher, I had to add such component
+(`app/components/client/theme-toggle.tsx`).
 
 There were certain things I had to do to make the manual theme switching work:
 
 - you need a UI switch component (for this I used [`react-switch`](https://github.com/markusenglund/react-switch)),
 - you need to take care of common theme management tasks: such as persisting the selected theme in local storage, applying the appropriate dark or light class to the HTML element, etc. (for this I used [`next-themes`](https://github.com/pacocoursey/next-themes))
-- you have to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line: `@custom-variant dark (&:where(.dark, .dark *))`,
-  to the `global.css`, which will enable `dark:` utilities to be applied when dark class is present in HTML tree, instead of
-  based on the `prefers-color-scheme`.
+- As I mentioned currently the site would detect theme using the
+`prefers-color-scheme` media feature. When you want to allow users to
+toggle theme manually from the site, you want the dark theme to be
+driven using a CSS selector instead of the `prefers-color-scheme`. For
+that you need to add this line to `global.css`: `@custom-variant dark
+(&:where(.dark, .dark ));`. Now `dark:*` utilities will be applied
+whenever the `dark` class is present earlier in the HTML tree.
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
 
