@@ -1,6 +1,7 @@
 # Introduction
 
 Personal web site written on Nextjs.
+The web site currently mainly consists of blog (here is post explaining how I created the blog: https://www.gmoniava.com/blog/blog-nextjs).
 
 # Getting Started
 
