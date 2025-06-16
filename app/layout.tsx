@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       suppressHydrationWarning
       className={cx(
-        "text-neutral-800 bg-white dark:text-neutral-200 dark:bg-black",
+        "text-neutral-800 bg-white dark:text-neutral-200 dark:bg-gray-900",
         GeistSans.variable,
         GeistMono.variable
       )}
