@@ -71,7 +71,10 @@ function readMDXFile(filePath) {
 }
 
 function getMDXData(dir) {
+  // Get all MDX files in the specified directory
   let mdxFiles = getMDXFiles(dir);
+
+  // Read each MDX file, parse its frontmatter and content
   return mdxFiles.map((file) => {
     let { metadata, content } = readMDXFile(path.join(dir, file));
     let slug = path.basename(file, path.extname(file));
