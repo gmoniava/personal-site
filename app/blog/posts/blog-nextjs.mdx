@@ -68,14 +68,15 @@ Finally, we also had to keep track of URL changes to update our filters, which I
 The `popstate` event will be triggered by doing a browser action such as a click on the back or forward button (or calling `history.back` or `history.forward` in JavaScript).
 This event does not get triggered by `history.pushState` or `history.replaceState` calls but this is not a problem in our case.
 
-## Sitemap and RSS
+## Individual Blog Post Page
 
-The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site,
-and an RSS route handler (`app/rss/route.ts`), which provides an RSS feed (XML file for distributing updates to subscribers).
+The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
+which ensures that each blog post is statically generated.
 
-Although the docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option),
-since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
-function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
+There is also usage of `generateMetadata` -
+which should produce output that is also statically generated since the page for each blog post is statically generated.
+
+Finally, you will see in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
 
 ## Adding Theme Switcher
 
@@ -100,23 +101,16 @@ whenever the `dark` class is present earlier in the HTML tree.
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
   had to upgrade them to versions 4.1.8 otherwise the manual theme switching was not working.
 
-## Individual Blog Post Page
+## Other Changes
 
-The page which renders a single blog post is: `app/blog/[slug]/page.tsx`. You may notice usage of `generateStaticParams` inside that file,
-which ensures that each blog post is statically generated.
-
-There is also usage of `generateMetadata` -
-which should produce output that is also statically generated since the page for each blog post is statically generated.
-
-Finally, you will see in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
-
-## MDX
+The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site,
+and an RSS route handler (`app/rss/route.ts`), which provides an RSS feed (XML file for distributing updates to subscribers). Although the docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option),
+since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
+function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
 
 I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
 That object lists custom components that should be used in place of one of the default components that MDX automatically renders for different HTML tags.
 I had to make this addition otherwise MDX library was not differentiating between inline and block level code.
-
-## Code Syntax Highlighter
 
 The starter code also uses a code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) to highlight code blocks.
 It had some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
