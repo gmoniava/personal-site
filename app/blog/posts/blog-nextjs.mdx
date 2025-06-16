@@ -70,17 +70,23 @@ This event does not get triggered by `history.pushState` or `history.replaceStat
 
 ## Individual Blog Post Page
 
-The page which renders a single blog post is: `app/blog/[slug]/page.tsx`.
-This file was already present in the starter kit, I made minimal changes there.
-Below I will simply explain some things that were already there.
+The file responsible for rendering an individual blog post is located
+at:
+`app/blog/[slug]/page.tsx`.
+This file was already part of the starter kit; I have only made minimal
+changes to it. Below is a brief explanation of some existing
+functionality within it:
 
-You may notice usage of `generateStaticParams` inside that file,
-which ensures that each blog post is statically generated.
+- Static Generation with `generateStaticParams`: This function ensures
+that each blog post is statically generated at build time.
 
-There is also usage of `generateMetadata` -
-which should produce output that is also statically generated since the page for each blog post is statically generated.
+- Metadata Generation with `generateMetadata: This function is used to
+dynamically generate metadata (such as title, description, etc.) for each blog post. Since the blog
+pages are statically generated, the metadata is also generated at build
+time.
 
-Finally, you will see in that page usage of JSON-LD which is used to provide structured data that improves search engine understanding.
+- Structured Data with JSON-LD: The page includes structured data in the
+form of JSON-LD which improves search engine understanding.
 
 ## Adding Theme Switcher
 
@@ -107,16 +113,16 @@ whenever the `dark` class is present earlier in the HTML tree.
 
 ## Other Changes
 
-The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site,
+- Sitemap and RSS: The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site,
 and an RSS route handler (`app/rss/route.ts`), which provides an RSS feed (XML file for distributing updates to subscribers). Although the docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option),
 since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
 function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
 
-I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
+- Custom MDX Component: I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
 That object lists custom components that should be used in place of one of the default components that MDX automatically renders for different HTML tags.
 I had to make this addition otherwise MDX library was not differentiating between inline and block level code.
 
-The starter code also uses a code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) to highlight code blocks.
+- Code Syntax Highlighting Theme Fix: The starter code also uses a code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) to highlight code blocks.
 It had some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
 but it was using the `@media (prefers-color-scheme: dark)` selector. Since we switched to manual
 theme management, I added `.dark` selector for the overrides instead.
