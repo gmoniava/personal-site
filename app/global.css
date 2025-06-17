@@ -6,6 +6,18 @@
   color: #fefefe;
 }
 
+/* code,
+kbd,
+samp,
+pre {
+  font-size: 14px;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+} */
+
 :root {
   --sh-class: #2d5e9d;
   --sh-identifier: #354150;
@@ -24,18 +36,6 @@
   --sh-keyword: #f47067;
   --sh-string: #0fa295;
 }
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --sh-class: #4c97f8;
-    --sh-identifier: white;
-    --sh-keyword: #f47067;
-    --sh-string: #0fa295;
-  }
-  html {
-    color-scheme: dark;
-  }
-} */
 
 html {
   min-width: 360px;
