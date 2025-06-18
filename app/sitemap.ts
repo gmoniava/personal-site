@@ -2,7 +2,7 @@ import { getBlogPosts } from "app/server/lib";
 
 export const dynamic = "force-static";
 
-export const baseUrl = "https://www.gmoniava.com/";
+export const baseUrl = "https://www.gmoniava.com";
 
 export default async function sitemap() {
   let blogs = getBlogPosts()?.posts?.map((post) => ({
