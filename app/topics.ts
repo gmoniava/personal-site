@@ -1,6 +1,6 @@
 export const topics = [
   {
-    label: "Software Engineering",
+    label: "Software Development",
     value: "software-development",
   },
   {
