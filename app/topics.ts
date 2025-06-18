@@ -1,7 +1,7 @@
 export const topics = [
   {
     label: "Software Engineering",
-    value: "software-engineering",
+    value: "software-development",
   },
   {
     label: "Phylosophy",
