@@ -25,7 +25,7 @@ export default function Page(props) {
     <div>
       {" "}
       <h1 className="mb-4 text-2xl font-semibold ">About</h1>
-      <p className="mb-4">{`I am software developer (mostly front end) from Tbilisi, Georgia. On this web site you can explore my writings on software development, philosophy, psychology, and more.`}</p>
+      <p className="mb-4">{`I am a software developer (mostly front end) from Tbilisi, Georgia.`}</p>
       <ClientSideEmail />
       <div className="mt-4 inline-flex items-center gap-3">
         <a

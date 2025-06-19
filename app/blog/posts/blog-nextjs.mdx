@@ -101,7 +101,7 @@ There were certain things I had to do to make the manual theme switching work:
   `prefers-color-scheme` media feature. When you want to allow users to
   toggle theme manually from the site, you want the dark theme to be
   driven using a CSS selector instead of the `prefers-color-scheme`. For
-  that you need to add this line to `global.css`: `@custom-variant dark
+  that you need to add [this](https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually) line to `global.css`: `@custom-variant dark
 (&:where(.dark, .dark ));`. Now `dark:*` utilities will be applied
   whenever the `dark` class is present earlier in the HTML tree.
 - the starter kit comes with packages `tailwindcss` and `@tailwindcss/postcss` and both had version 4.0.0-alpha.13. I
