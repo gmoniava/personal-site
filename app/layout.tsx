@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     template: "%s | Personal Website",
   },
   description: "Explore my writings on software engineering, philosophy, psychology, and more.",
+  verification: {
+    google: "<meta name='google-site-verification' content='pNDfTdL2dVKXA9gG2n-yto_St-_2xe8zLBG9kjbccpk' />",
+  },
   openGraph: {
     title: "Personal Website",
     description: "Explore my writings on software engineering, philosophy, psychology, and more.",
