@@ -17,11 +17,7 @@ component generates links for each post, which the user can click to navigate to
 
 ## Filtering of the Posts
 
-The starter kit did not include functionality for filtering blog posts, which I wanted.
-In MDX, frontmatter refers to a block of metadata that appears at the very top of the file.
-It is written in YAML format and enclosed between triple dashes (---).
-The current metadata, such as the blog post title, is stored using this approach.
-Since I wanted filtering based on tags, I added tag information for each post in the frontmatter and modified the function that parses the frontmatter to also read tags.
+The starter kit did not include functionality for filtering blog posts. Since I wanted filtering based on tags, I added tag information for each post in the _frontmatter_ (this is a block of metadata that appears at the very top of MDX file) and modified the function that parses the frontmatter to also read tags.
 
 Initially, I implemented filtering on the server side. The server
 component would filter the blog posts based on the URL search parameters (using `getBlogPosts` function)
