@@ -74,8 +74,8 @@ changes to it. Below is a brief explanation of some existing
 functionality within it:
 
 - `generateStaticParams` is used to ensure that each blog post is statically generated at build time.
-- `generateMetadata` can be used to dynamically generate metadata of a page. Since the blog
-  pages are statically generated, it appears the metadata is also generated at build time.
+- `generateMetadata` can be used to dynamically generate metadata of a page. 
+In our case since the page is generated at build and since `generateMetadata` does not use dynamic API (such as `cookies`, `headers`, etc.), metadata is also generated at build time.
 - The page includes structured data in the
   form of JSON-LD which improves search engine understanding.
 
@@ -83,7 +83,7 @@ functionality within it:
 
 The starter kit already had theme support in the sense that it was using
 tailwind classes like `dark:text-white` - which meant it would work with
-the user’s browser or system theme (it would detect them using
+the user’s browser or system theme (it would detect theme using
 `prefers-color-scheme` CSS media feature). But since I wanted to have a
 manual theme switcher, I had to add such component
 (`app/components/client/theme-toggle.tsx`).
