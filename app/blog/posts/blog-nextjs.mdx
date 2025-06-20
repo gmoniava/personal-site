@@ -104,10 +104,8 @@ There were certain things I had to do to make the manual theme switching work:
 
 ## Other Changes
 
-The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site,
-and an RSS route handler (`app/rss/route.ts`), which provides an RSS feed (XML file for distributing updates to subscribers). Although the docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option),
-since both files relied on the `getBlogPosts` function, which could potentially trigger additional server
-function invocations, I decided to add `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to both files to err on the side of caution.
+The starter kit also had a sitemap (`app/sitemap.ts`), a file which has information to help search engines crawl the site and an RSS route handler (`app/rss/route.ts`), which provides an RSS feed (XML file for distributing updates to subscribers). The docs say `sitemap.js` is a special route handler that is cached by default (unless it uses a dynamic API or dynamic config option).
+RSS route however, is normal route which is not cached by default, so I added `export const dynamic = "force-static"` config [option](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config) to it to avoid possible function invocations because it relies on `getBlogPosts` function.
 
 I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
 That object lists custom components that should be used in place of one of the default components that MDX automatically renders for different HTML tags.
