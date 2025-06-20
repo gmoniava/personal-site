@@ -5,8 +5,9 @@ summary: "I share my experience of creating a blog using Nextjs App router."
 tags: ["software-development"]
 ---
 
-Currently, my website mainly consists of the blog, which I created using [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
-There were some changes I made and functionality I added (filtering of the posts and theme switcher) which I will explain in this post.
+I built the blog for this website using the [Portfolio Starter Kit](https://vercel.com/templates/next.js/portfolio-starter-kit) from Vercel.
+In this post, I explain some features I added (post filtering and a theme switcher), as well as some decisions and changes I made.
+This is not a step-by-step tutorial, but should be enough to help you recreate a similar blog. Some familiarity with Nextjs is also assumed.
 
 ## Blog Architecture
 
@@ -17,7 +18,9 @@ component generates links for each post, which the user can click to navigate to
 
 ## Filtering of the Posts
 
-The starter kit did not include functionality for filtering blog posts. Since I wanted filtering based on tags, I added tag information for each post in the _frontmatter_ (this is a block of metadata that appears at the very top of MDX file) and modified the function that parses the frontmatter to also read tags.
+The starter kit did not include functionality for filtering blog posts. Since I wanted filtering based on tags,
+I added tag information for each post in the _frontmatter_ (this is a block of metadata that appears at the very top of MDX file)
+and modified the function that parses the frontmatter (`parseFrontmatter`) to also read tags.
 
 Initially, I implemented filtering on the server side. The server
 component would filter the blog posts based on the URL search parameters (using `getBlogPosts` function)
@@ -74,8 +77,8 @@ changes to it. Below is a brief explanation of some existing
 functionality within it:
 
 - `generateStaticParams` is used to ensure that each blog post is statically generated at build time.
-- `generateMetadata` can be used to dynamically generate metadata of a page. 
-In our case since the page is generated at build and since `generateMetadata` does not use dynamic API (such as `cookies`, `headers`, etc.), metadata is also generated at build time.
+- `generateMetadata` can be used to dynamically generate metadata of a page.
+  In our case since the page is generated at build and since `generateMetadata` does not use dynamic API (such as `cookies`, `headers`, etc.), metadata is also generated at build time.
 - The page includes structured data in the
   form of JSON-LD which improves search engine understanding.
 
