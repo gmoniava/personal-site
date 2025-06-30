@@ -20,16 +20,18 @@ export async function generateMetadata({ params }) {
 
   let { title, date: publishedTime, summary: description, image } = post.metadata;
   let ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
+  const url = `${baseUrl}/blog/${post.slug}`;
 
   return {
     title,
     description,
+    alternates: post.slug === "how-i-built-this-blog-using-nextjs" ? { canonical: url } : undefined,
     openGraph: {
       title,
       description,
       type: "article",
       publishedTime,
-      url: `${baseUrl}/blog/${post.slug}`,
+      url: url,
       images: [
         {
           url: ogImage,
