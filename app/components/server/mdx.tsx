@@ -3,6 +3,7 @@ import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { highlight } from "sugar-high";
 import React from "react";
+import TreeWithDescriptions from "app/components/client/tree-with-descriptions";
 
 function Table({ data }) {
   let headers = data.headers.map((header, index) => <th key={index}>{header}</th>);
@@ -114,6 +115,7 @@ let components = {
   code: Code,
   Table,
   blockquote: Blockquote,
+  TreeWithDescriptions,
 };
 
 export function CustomMDX(props) {
