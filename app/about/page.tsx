@@ -1,31 +1,11 @@
-"use client";
-import React from "react";
-
-// Display email on the client side to avoid spam bots
-function ClientSideEmail() {
-  const [email, setEmail] = React.useState("");
-
-  React.useEffect(() => {
-    setEmail(`moniava [dot] g [at] gmail [dot] com`);
-  }, []);
-
-  return (
-    <div>
-      {email ? (
-        <p>{`If you have questions or comments feel free to get in touch (${email}).`}</p>
-      ) : (
-        <span>Loading email...</span>
-      )}
-    </div>
-  );
-}
+import ClientSideEmail from "app/components/client/client-side-email";
 
 export default function Page(props) {
   return (
     <div>
       {" "}
       <h1 className="mb-4 text-2xl font-semibold ">About</h1>
-      <p className="mb-4">{`I am a software developer (mostly front end) from Tbilisi, Georgia.`}</p>
+      <p className="mb-4">{`Software developer from Tbilisi, Georgia.`}</p>
       <ClientSideEmail />
       <div className="mt-4 inline-flex items-center gap-3">
         <a
