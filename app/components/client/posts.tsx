@@ -90,17 +90,23 @@ export default function BlogPosts({ blogs }: any) {
           placeholder="Filter posts by topics..."
         />
       </div>
-      <div className="flex flex-col gap-2 items-start">
+      <div className="flex flex-col gap-4 items-start">
         {postForCurrentPage.map((post: any) => (
-          <Link key={post.slug} className="mb-2" href={`/blog/${post.slug}`}>
-            <div className="inline-flex flex-col md:flex-row gap-2">
-              <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
+          <Link key={post.slug} className="w-full" href={`/blog/${post.slug}`}>
+            <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+              {/* Date */}
+              <p className="text-neutral-600 dark:text-neutral-400 w-[110px] flex-shrink-0">
                 {formatDate(post.metadata.date, false)}
               </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">{post.metadata.title}</p>
+
+              {/* Right section: title + tags */}
+              <div className="flex flex-col">
+                {/* Title */}
+                <p className="text-neutral-900 dark:text-neutral-100">{post.metadata.title}</p>
+
+                {/* Tags */}
                 {post.metadata.tags && post.metadata.tags.length > 0 && (
-                  <div className="flex">
+                  <div className="flex flex-wrap gap-1 mt-1">
                     {post.metadata.tags.map((tag: string) => (
                       <span
                         key={tag}
