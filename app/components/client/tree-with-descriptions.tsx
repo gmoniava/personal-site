@@ -91,11 +91,7 @@ const TreeNode = ({ node, expandTogglePosition }: TreeNodeProps) => {
           ↗
         </a>
 
-        {expandTogglePosition === "right" && (
-          <div className="flex items-center ml-2">
-            <ExpandToggle />
-          </div>
-        )}
+        {expandTogglePosition === "right" && <ExpandToggle />}
       </div>
 
       {expanded && hasChildren && <Tree data={node.children} expandTogglePosition={expandTogglePosition} />}
