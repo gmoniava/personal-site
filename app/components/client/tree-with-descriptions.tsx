@@ -64,12 +64,14 @@ const TreeNode = ({ node, expandTogglePosition }: TreeNodeProps) => {
   return (
     <div className="pl-4 relative before:absolute before:top-0 before:bottom-0 before:left-[7px] before:w-px before:bg-gray-300">
       <div
-        className="flex items-start cursor-pointer dark:hover:text-gray-500 hover:bg-gray-100 rounded p-0.5"
+        className="flex cursor-pointer dark:hover:text-gray-500 hover:bg-gray-100 rounded p-0.5"
         onClick={() => setExpanded(!expanded)}
       >
+        {/* Left expand toggle */}
         {expandTogglePosition === "left" && <ExpandToggle />}
 
-        <div className="flex-1 flex items-start">
+        {/* Container for node icon, title and description */}
+        <div className="flex-1 flex items-start gap-1">
           <div className="h-4">{Icon}</div>
           <div>
             <div className="font-semibold h-4">{node.title}</div>
@@ -77,7 +79,23 @@ const TreeNode = ({ node, expandTogglePosition }: TreeNodeProps) => {
           </div>
         </div>
 
-        {expandTogglePosition === "right" && <ExpandToggle />}
+        {/* GitHub link */}
+        <a
+          href={`https://github.com/gmoniava/movie-app/tree/main/${node.key}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-400 hover:text-blue-500 ml-2"
+          onClick={(e) => e.stopPropagation()}
+          title="View on GitHub"
+        >
+          ↗
+        </a>
+
+        {expandTogglePosition === "right" && (
+          <div className="flex items-center ml-2">
+            <ExpandToggle />
+          </div>
+        )}
       </div>
 
       {expanded && hasChildren && <Tree data={node.children} expandTogglePosition={expandTogglePosition} />}
