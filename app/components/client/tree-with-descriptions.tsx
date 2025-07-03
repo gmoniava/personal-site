@@ -62,7 +62,7 @@ const TreeNode = ({ node, expandTogglePosition }: TreeNodeProps) => {
     );
 
   return (
-    <div className="pl-4 relative before:absolute before:top-0 before:bottom-0 before:left-[7px] before:w-px before:bg-gray-300">
+    <div className="pl-4 relative before:absolute before:top-0 before:bottom-0 before:left-[5px] before:w-px before:bg-gray-300">
       <div
         className="flex cursor-pointer dark:hover:text-gray-500 hover:bg-gray-100 rounded p-0.5"
         onClick={() => setExpanded(!expanded)}
