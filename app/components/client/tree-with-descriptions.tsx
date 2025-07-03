@@ -81,7 +81,7 @@ const TreeNode = ({ node, expandTogglePosition }: TreeNodeProps) => {
 
         {/* GitHub link */}
         <a
-          href={`https://github.com/gmoniava/movie-app/tree/main/${node.key}`}
+          href={`https://github.com/gmoniava/movie-app/tree/main/${encodeURIComponent(node.key)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-blue-500 ml-2"
