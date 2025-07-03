@@ -58,7 +58,7 @@ const TreeNode = ({ node, expandTogglePosition }: TreeNodeProps) => {
         {expanded ? "−" : "+"}
       </div>
     ) : (
-      <div className="w-4 mr-2" /> // spacing placeholder
+      <div className="w-[8px] mr-2" /> // spacing placeholder
     );
 
   return (

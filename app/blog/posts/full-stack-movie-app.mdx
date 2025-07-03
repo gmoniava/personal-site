@@ -50,7 +50,8 @@ _movie-app source code:_
           isFolder: true,
           title: "(main)",
           key: "src/app/(main)",
-          description: `Main app pages and layouts for user-facing routes. It uses route groups as you can see (folder name in parenthesis), which is a Nextjs feature.`,
+          description: `Main app pages and layouts for user-facing routes. It uses route groups (indicated by folder name in parenthesis), which is a Nextjs feature
+          and which allows you to organize files without affecting route's URL path.`,
           children: [
             {
               isFolder: false,
@@ -129,19 +130,6 @@ _movie-app source code:_
                   title: "route.tsx",
                   key: "src/app/api/genres/route.tsx",
                   description: "Returns a list of genres from the database.",
-                },
-              ],
-            },
-            {
-              isFolder: true,
-              title: "movies",
-              key: "src/app/api/movies",
-              children: [
-                {
-                  isFolder: false,
-                  title: "route.ts",
-                  key: "src/app/api/movies/route.ts",
-                  description: "Handles GET requests to search movies.",
                 },
               ],
             },
