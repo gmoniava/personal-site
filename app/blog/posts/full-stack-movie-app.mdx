@@ -87,7 +87,7 @@ _movie-app source code:_
                       isFolder: false,
                       title: "page.tsx",
                       key: "src/app/(main)/edit-movie/[id]/page.tsx",
-                      description: "Loads movie data by ID and renders form for editing a movie.",
+                      description: "Loads movie data by ID and renders page for editing a movie.",
                     },
                   ],
                 },
@@ -102,7 +102,7 @@ _movie-app source code:_
                   isFolder: false,
                   title: "page.tsx",
                   key: "src/app/(main)/search/page.tsx",
-                  description: "Displays a search form and paginated movie results.",
+                  description: "Displays a page with search form and paginated movie results.",
                 },
               ],
             },
@@ -252,7 +252,7 @@ _movie-app source code:_
               isFolder: false,
               title: "loading-overlay.tsx",
               key: "src/components/client/loading-overlay.tsx",
-              description: "Full-screen loading overlay spinner.",
+              description: "Full-screen overlay with loading spinner.",
             },
             {
               isFolder: false,
@@ -344,8 +344,8 @@ _movie-app source code:_
           isFolder: false,
           title: "movies.ts",
           key: "src/lib/movies.ts",
-          description: `Methods for searching movies. These are not server actions because it is not recommended to use server actions for data fetching. Moreover
-          we don't use these methods on the client components, server components use them.`,
+          description: `Methods for searching movies. These are not server actions because it is not recommended to use server actions for data fetching; moreover
+          we don't use these methods in the client components, which is usually the reason to use server actions.`,
         },
       ],
     },
