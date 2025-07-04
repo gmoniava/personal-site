@@ -26,7 +26,7 @@ export default function Page() {
   return (
     <section>
       <h1 className="mb-4 text-2xl font-semibold ">Blog</h1>
-      <p>Writings on software development, philosophy, psychology and more.</p>
+      <p>Some of my writings.</p>
       <PostsClient blogs={simplifiedPosts} />
     </section>
   );
