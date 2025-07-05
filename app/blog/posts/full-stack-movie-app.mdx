@@ -26,32 +26,12 @@ the sections you’re interested in.
 _movie-app source code:_
 
 <TreeWithDescriptions
-  data={[
-    {
-      isFolder: true,
-      title: "actions",
-      key: "src/actions",
-      description: "Contains server actions.",
-      children: [
-        {
-          isFolder: false,
-          title: "auth.tsx",
-          key: "src/actions/auth.tsx",
-          description: "Implements login and logout server actions.",
-        },
-        {
-          isFolder: false,
-          title: "movies.tsx",
-          key: "src/actions/movies.tsx",
-          description: "Implements add, edit, and delete actions for movies.",
-        },
-      ],
-    },
+  data={[    
     {
       isFolder: true,
       title: "app",
       key: "src/app",
-      description: "This is Nextjs app directory. Folders inside it define route structures.",
+      description: `This is the Next.js app directory. The Next.js app directory is essentially a routing system that uses folders and special files (e.g. page.tsx) to define routes. It also supports layouts which is basically a UI that is shared between multiple pages.`,
       children: [
         {
           isFolder: true,
@@ -133,8 +113,8 @@ _movie-app source code:_
               children: [
                 {
                   isFolder: false,
-                  title: "route.tsx",
-                  key: "src/app/api/genres/route.tsx",
+                  title: "route.ts",
+                  key: "src/app/api/genres/route.ts",
                   description: "Returns a list of genres from the database.",
                 },
               ],
@@ -159,8 +139,8 @@ _movie-app source code:_
               children: [
                 {
                   isFolder: false,
-                  title: "route.tsx",
-                  key: "src/app/api/session/route.tsx",
+                  title: "route.ts",
+                  key: "src/app/api/session/route.ts",
                   description: "Returns session authentication status.",
                 },
               ],
@@ -344,8 +324,28 @@ _movie-app source code:_
           isFolder: false,
           title: "movies.ts",
           key: "src/lib/movies.ts",
-          description: `Methods for searching movies. These are not server actions because it is not recommended to use server actions for data fetching; moreover
-          we don't use these methods in the client components, which is usually the reason to use server actions.`,
+          description: `Methods for searching movies. These are not server functions because it is not recommended to use server functions for data fetching; moreover
+          we don't use these methods in the client components, which is usually the reason to use server functions.`,
+        },
+      ],
+    },
+    {
+      isFolder: true,
+      title: "server-functions",
+      key: "src/server-functions",
+      description: `Server functions allow client components to call asynchronous functions that are executed on the server. When that function is called on the client, React will send a request to the server to execute the function, and return the result. They are used for updating data. `,
+      children: [
+        {
+          isFolder: false,
+          title: "auth.tsx",
+          key: "src/server-functions/auth.tsx",
+          description: "Implements login and logout server functions.",
+        },
+        {
+          isFolder: false,
+          title: "movies.tsx",
+          key: "src/server-functions/movies.tsx",
+          description: "Implements server functions to add, edit, and delete movies.",
         },
       ],
     },
