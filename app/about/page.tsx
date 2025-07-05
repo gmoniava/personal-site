@@ -1,5 +1,9 @@
 import ClientSideEmail from "app/components/client/client-side-email";
 
+export const metadata = {
+  title: "About",
+};
+
 export default function Page(props) {
   return (
     <div>
