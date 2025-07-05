@@ -26,27 +26,7 @@ the sections you’re interested in.
 _movie-app source code:_
 
 <TreeWithDescriptions
-  data={[
-    {
-      isFolder: true,
-      title: "actions",
-      key: "src/actions",
-      description: "Contains server actions.",
-      children: [
-        {
-          isFolder: false,
-          title: "auth.tsx",
-          key: "src/actions/auth.tsx",
-          description: "Implements login and logout server actions.",
-        },
-        {
-          isFolder: false,
-          title: "movies.tsx",
-          key: "src/actions/movies.tsx",
-          description: "Implements add, edit, and delete actions for movies.",
-        },
-      ],
-    },
+  data={[    
     {
       isFolder: true,
       title: "app",
@@ -346,6 +326,26 @@ _movie-app source code:_
           key: "src/lib/movies.ts",
           description: `Methods for searching movies. These are not server actions because it is not recommended to use server actions for data fetching; moreover
           we don't use these methods in the client components, which is usually the reason to use server actions.`,
+        },
+      ],
+    },
+    {
+      isFolder: true,
+      title: "server-functions",
+      key: "src/server-functions",
+      description: "Contains server functions. Server functions allow client components to call async functions executed on the server. Such functions are used for data mutations.",
+      children: [
+        {
+          isFolder: false,
+          title: "auth.tsx",
+          key: "src/server-functions/auth.tsx",
+          description: "Implements login and logout server actions.",
+        },
+        {
+          isFolder: false,
+          title: "movies.tsx",
+          key: "src/server-functions/movies.tsx",
+          description: "Implements add, edit, and delete actions for movies.",
         },
       ],
     },
