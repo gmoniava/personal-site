@@ -333,19 +333,19 @@ _movie-app source code:_
       isFolder: true,
       title: "server-functions",
       key: "src/server-functions",
-      description: "Contains server functions. Server functions allow client components to call async functions executed on the server. Such functions are used for data mutations.",
+      description: `Server functions allow client components to call asynchronous functions that are executed on the server. These functions are typically used for data mutations (such as creating, updating, or deleting data). When a server function is called from a client component, a POST request is automatically made behind the scenes to invoke the function on the server.`,
       children: [
         {
           isFolder: false,
           title: "auth.tsx",
           key: "src/server-functions/auth.tsx",
-          description: "Implements login and logout server actions.",
+          description: "Implements login and logout server functions.",
         },
         {
           isFolder: false,
           title: "movies.tsx",
           key: "src/server-functions/movies.tsx",
-          description: "Implements add, edit, and delete actions for movies.",
+          description: "Implements server functions to add, edit, and delete movies.",
         },
       ],
     },
