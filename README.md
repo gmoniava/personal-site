@@ -2,6 +2,8 @@
 
 Personal web site written using Nextjs.
 
+Accompanying blog [post](https://www.gmoniava.com/blog/how-i-built-this-blog-using-nextjs).
+
 # Getting Started
 
 First install the dependencies using package manager of your choice.
