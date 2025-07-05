@@ -31,7 +31,7 @@ _movie-app source code:_
       isFolder: true,
       title: "app",
       key: "src/app",
-      description: `This is the Next.js app directory. The Next.js app directory is essentially a routing system that uses folders and special files like page.tsx and route.ts to define routes. The page.tsx file is used for defining UI pages that users see in the browser, while route.ts is used for defining API routes that handle backend logic. It also supports layouts which is basically a UI that is shared between multiple pages.`,
+      description: `This is the Next.js app directory. The Next.js app directory is essentially a routing system that uses folders and special files (e.g. page.tsx) to define routes. It also supports layouts which is basically a UI that is shared between multiple pages.`,
       children: [
         {
           isFolder: true,
@@ -333,7 +333,7 @@ _movie-app source code:_
       isFolder: true,
       title: "server-functions",
       key: "src/server-functions",
-      description: `Server functions allow client components to call asynchronous functions that are executed on the server. These functions are typically used for data mutations (such as creating, updating, or deleting data). When a server function is called from a client component, a POST request is automatically made behind the scenes to invoke the function on the server.`,
+      description: `Server functions allow client components to call asynchronous functions that are executed on the server. When that function is called on the client, React will send a request to the server to execute the function, and return the result. They are used for updating data. `,
       children: [
         {
           isFolder: false,
