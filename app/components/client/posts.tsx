@@ -95,7 +95,7 @@ export default function BlogPosts({ blogs }: any) {
           <Link key={post.slug} className="w-full" href={`/blog/${post.slug}`}>
             <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
               {/* Date */}
-              <p className="text-neutral-600 dark:text-neutral-400 w-[110px] flex-shrink-0">
+              <p className="text-neutral-600 text-sm dark:text-neutral-400 w-[110px] flex-shrink-0">
                 {formatDate(post.metadata.date, false)}
               </p>
 
