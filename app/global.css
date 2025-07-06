@@ -100,19 +100,19 @@ html {
 }
 
 .prose h1 {
-  @apply text-4xl font-medium tracking-tight my-4;
+  @apply text-4xl font-medium tracking-tight my-6;
 }
 
 .prose h2 {
-  @apply text-xl font-medium tracking-tight my-4;
+  @apply text-xl font-medium tracking-tight my-6;
 }
 
 .prose h3 {
-  @apply text-xl font-medium tracking-tight my-4;
+  @apply text-xl font-medium tracking-tight my-6;
 }
 
 .prose h4 {
-  @apply text-lg font-medium tracking-tight my-4;
+  @apply text-lg font-medium tracking-tight my-6;
 }
 
 .prose strong {
