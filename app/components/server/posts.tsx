@@ -25,7 +25,7 @@ export default function Page() {
 
   return (
     <section>
-      <div className="flex items-center mb-t gap-2">
+      <div className="flex items-center mb-4 gap-2">
         {" "}
         <h1 className="text-2xl font-semibold ">Blog</h1>
         <a className="" rel="noopener noreferrer" target="_blank" title="Subscribe via RSS" href="/rss">
@@ -38,8 +38,8 @@ export default function Page() {
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path d="M5 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
             <path d="M4 4a16 16 0 0 1 16 16" />

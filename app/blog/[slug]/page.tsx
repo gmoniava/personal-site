@@ -84,7 +84,7 @@ export default async function Blog({ params }) {
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
       </div>
       {/* Show the tags */}
-      <div className="mb-8">
+      <div className="mb-4">
         {post.metadata.tags.map((tag: string) => (
           <span
             key={tag}
@@ -95,7 +95,7 @@ export default async function Blog({ params }) {
         ))}
       </div>
       {/* Here goes the post itself. It is written in MDX format, so we can use the CustomMDX component to render it. */}
-      <article className="prose">
+      <article className="prose mt-8">
         <CustomMDX source={post.content} />
       </article>
     </section>
