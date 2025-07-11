@@ -1,6 +1,6 @@
-# Introduction
+# personal-site
 
-Personal web site written using Nextjs.
+Personal website written using Nextjs.
 
 Accompanying blog [post](https://www.gmoniava.com/blog/how-i-built-this-blog-using-nextjs).
 
