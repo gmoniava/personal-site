@@ -11,16 +11,23 @@ export default function BlogPosts({ blogs }: any) {
   const [tags, setTags] = React.useState<any[]>([]);
   const [page, setPage] = React.useState(1);
 
-  const parseParams = () => {
+  // Parse URL parameters to initialize state such as tags and page number
+  const pareURLParams = () => {
     const params = new URLSearchParams(window.location.search);
+
+    // Get the tags from the URL
     const tagsParam = params.get("tags");
     const selectedTags = tagsParam ? topics.filter((t) => tagsParam.split(",").includes(t.value)) : [];
-    const pageParam = parseInt(params.get("page") || "1", 10);
+
+    // Get the page number from the URL, default to 1
+    const parsedPage = parseInt(params.get("page") || "1", 10);
 
     setTags(selectedTags);
-    setPage(pageParam);
+    setPage(parsedPage);
   };
 
+  // Update the URL parameters without reloading the page
+  // This function is called when tags or page changes
   const updateURLParams = (newTags: any[], newPage: number) => {
     const params = new URLSearchParams();
     if (newTags.length > 0) {
@@ -36,22 +43,28 @@ export default function BlogPosts({ blogs }: any) {
   };
 
   let handleTagChange = (value: any[]) => {
+    // Update local state
     setTags(value);
     setPage(1);
+
+    // Also update the URL parameters
     updateURLParams(value, 1);
   };
 
   let handlePageChange = (newPage: number) => {
+    // Update local state
     setPage(newPage);
+
+    // Also update the URL parameters
     updateURLParams(tags, newPage);
   };
 
   React.useEffect(() => {
-    // initialize on load
-    parseParams();
+    // Synchronize the initial state with URL parameters
+    pareURLParams();
 
     const handlePopState = () => {
-      parseParams();
+      pareURLParams();
     };
 
     // Listen for popstate events to handle back/forward navigation
@@ -61,7 +74,7 @@ export default function BlogPosts({ blogs }: any) {
 
   let filteredPosts = blogs;
 
-  // If tags are selected, filter the posts
+  // If tags are selected - filter the posts using the selected tags
   if (tags.length > 0) {
     filteredPosts = filteredPosts.filter((post) => {
       const postTags = post.metadata.tags ?? [];
