@@ -84,6 +84,16 @@ export default function BlogPosts({ blogs }: any) {
           instanceId={selectId}
           options={topics}
           value={tags}
+          styles={{
+            option: (styles, state) => ({
+              ...styles,
+              cursor: "pointer",
+            }),
+            control: (styles) => ({
+              ...styles,
+              cursor: "pointer",
+            }),
+          }}
           onChange={handleTagChange}
           className="text-black w-2/3"
           classNamePrefix="react-select"
