@@ -43,7 +43,6 @@ export default function BlogPosts({ blogs }: any) {
   };
 
   let handleTagChange = (value: any[]) => {
-    // Update local state
     setTags(value);
     setPage(1);
 
@@ -52,7 +51,6 @@ export default function BlogPosts({ blogs }: any) {
   };
 
   let handlePageChange = (newPage: number) => {
-    // Update local state
     setPage(newPage);
 
     // Also update the URL parameters
@@ -114,6 +112,7 @@ export default function BlogPosts({ blogs }: any) {
         />
       </div>
       <div className="flex flex-col gap-4 items-start">
+        {/* Render posts for the current page */}
         {postForCurrentPage.map((post: any) => (
           <Link key={post.slug} className="w-full" href={`/blog/${post.slug}`}>
             <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
@@ -122,7 +121,7 @@ export default function BlogPosts({ blogs }: any) {
                 {formatDate(post.metadata.date, false)}
               </p>
 
-              {/* Right section: title + tags */}
+              {/* Right section: title and tags */}
               <div className="flex flex-col">
                 {/* Title */}
                 <p className="text-neutral-900 dark:text-neutral-100">{post.metadata.title}</p>
