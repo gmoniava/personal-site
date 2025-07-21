@@ -81,10 +81,8 @@ export default function BlogPosts({ blogs }: any) {
     });
   }
 
-  // Compute total pages based on filtered posts
   const totalFilteredPages = Math.ceil(filteredPosts.length / constants.LIMIT);
 
-  // Now get the posts for the current page
   const startIndex = (page - 1) * constants.LIMIT;
   let postForCurrentPage = filteredPosts.slice(startIndex, startIndex + constants.LIMIT);
 
@@ -93,7 +91,7 @@ export default function BlogPosts({ blogs }: any) {
       <div className="py-4 mb-4">
         <Select
           isMulti
-          // AFAIK this was added to silence warning
+          // iirc this was added to silence warning
           // https://stackoverflow.com/questions/61290173/react-select-how-do-i-resolve-warning-prop-id-did-not-match
           instanceId={selectId}
           options={topics}
@@ -114,7 +112,6 @@ export default function BlogPosts({ blogs }: any) {
           placeholder="Filter posts by topics..."
         />
       </div>
-      {/* Posts */}
       <div className="flex flex-col gap-4 items-start">
         {postForCurrentPage.map((post: any) => (
           <Post post={post} key={post.slug} />
