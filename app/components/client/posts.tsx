@@ -1,10 +1,11 @@
 "use client";
-import Link from "next/link";
-import { formatDate } from "app/utils";
+
 import React, { useId } from "react";
 import Select from "react-select";
 import { topics } from "app/topics";
 import constants from "app/constants";
+import Post from "./post";
+import Pagination from "./pagination";
 
 export default function BlogPosts({ blogs }: any) {
   const selectId = useId();
@@ -92,6 +93,8 @@ export default function BlogPosts({ blogs }: any) {
       <div className="py-4 mb-4">
         <Select
           isMulti
+          // AFAIK this was added to silence warning
+          // https://stackoverflow.com/questions/61290173/react-select-how-do-i-resolve-warning-prop-id-did-not-match
           instanceId={selectId}
           options={topics}
           value={tags}
@@ -111,70 +114,13 @@ export default function BlogPosts({ blogs }: any) {
           placeholder="Filter posts by topics..."
         />
       </div>
+      {/* Posts */}
       <div className="flex flex-col gap-4 items-start">
-        {/* Render posts for the current page */}
         {postForCurrentPage.map((post: any) => (
-          <Link key={post.slug} className="w-full" href={`/blog/${post.slug}`}>
-            <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
-              {/* Date */}
-              <p className="text-neutral-600 text-sm dark:text-neutral-400 w-[110px] flex-shrink-0">
-                {formatDate(post.metadata.date, false)}
-              </p>
-
-              {/* Right section: title and tags */}
-              <div className="flex flex-col">
-                {/* Title */}
-                <p className="text-neutral-900 dark:text-neutral-100">{post.metadata.title}</p>
-
-                {/* Tags */}
-                {post.metadata.tags && post.metadata.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {post.metadata.tags.map((tag: string) => (
-                      <span
-                        key={tag}
-                        className="bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </Link>
+          <Post post={post} />
         ))}
       </div>
-      {/* Show pagination controls if there are multiple pages */}
-      {totalFilteredPages > 1 ? (
-        <div className="flex items-center justify-center mt-6">
-          <button
-            onClick={() => {
-              handlePageChange(page - 1);
-            }}
-            disabled={page <= 1}
-            className="px-3 py-1 cursor-pointer text-sm rounded disabled:opacity-50"
-          >
-            <span className="inline-block font-bold cursor-pointer select-none hover:text-gray-700">&larr;</span>
-            Prev
-          </button>
-          <span className="text-center text-sm text-neutral-600 dark:text-neutral-400">
-            {" "}
-            {`${page}/${totalFilteredPages}`}
-          </span>
-          <button
-            onClick={() => {
-              handlePageChange(page + 1);
-            }}
-            disabled={page >= totalFilteredPages}
-            className="px-3 py-1 text-sm cursor-pointer rounded disabled:opacity-50"
-          >
-            Next
-            <span className="inline-block select-none">&rarr;</span>
-          </button>
-        </div>
-      ) : totalFilteredPages === 0 ? (
-        <div className="text-xs text-neutral-600 dark:text-neutral-400">No results</div>
-      ) : null}
+      <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
     </div>
   );
 }
