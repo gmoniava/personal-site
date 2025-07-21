@@ -117,7 +117,7 @@ export default function BlogPosts({ blogs }: any) {
       {/* Posts */}
       <div className="flex flex-col gap-4 items-start">
         {postForCurrentPage.map((post: any) => (
-          <Post post={post} />
+          <Post post={post} key={post.slug} />
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
