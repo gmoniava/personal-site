@@ -4,15 +4,15 @@ export const topics = [
     value: "software-development",
   },
   {
-    label: "Phylosophy",
-    value: "phylosophy",
+    label: "Philosophy",
+    value: "philosophy",
   },
   {
     label: "Psychology",
     value: "psychology",
   },
   {
-    label: "Medical science",
+    label: "Medical Science",
     value: "medical-science",
   },
   {
