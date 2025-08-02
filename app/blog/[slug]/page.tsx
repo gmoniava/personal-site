@@ -78,13 +78,13 @@ export default async function Blog({ params }) {
           }),
         }}
       />
-      {/* Title and date */}
+      {/* Post title and date */}
       <h1 className="title font-semibold text-2xl tracking-tighter">{post.metadata.title}</h1>
-      <div className="flex justify-between items-center my-4 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
+      <div className="flex justify-between items-center my-4">
+        <p className=" text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
       </div>
-      {/* Show the tags */}
-      <div className="mb-4">
+      {/* Tags */}
+      <div className="flex flex-wrap gap-1 mt-1 mb-4">
         {post.metadata.tags.map((tag: string) => (
           <span
             key={tag}
@@ -94,8 +94,8 @@ export default async function Blog({ params }) {
           </span>
         ))}
       </div>
-      {/* Here goes the post itself. It is written in MDX format, so we can use the CustomMDX component to render it. */}
       <article className="prose mt-8">
+        {/* Here goes the post itself. It is written in MDX format, so we can use the CustomMDX component to render it. */}
         <CustomMDX source={post.content} />
       </article>
     </section>
