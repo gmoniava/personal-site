@@ -183,7 +183,8 @@ _movie-app source code:_
       isFolder: true,
       title: "components",
       key: "src/components",
-      description: "React client/server components.",
+      description:
+        "Components that use state, effects, or event handlers go in the client folder and include the 'use client' directive. Components that use async data fetching go in the server folder. Components that use neither can technically work in both contexts (for example if they're imported by a client component, they'll automatically become part of the client bundle) - so they are placed outside of these folders.",
       children: [
         {
           isFolder: true,
@@ -208,7 +209,7 @@ _movie-app source code:_
               title: "button.tsx",
               key: "src/components/client/button.tsx",
               description: "Reusable button component with style variants.",
-            },          
+            },
             {
               isFolder: false,
               title: "delete-button.tsx",
@@ -220,18 +221,6 @@ _movie-app source code:_
               title: "header.tsx",
               key: "src/components/client/header.tsx",
               description: "App header with sidebar toggle and theme switch.",
-            },
-            {
-              isFolder: false,
-              title: "overlay.tsx",
-              key: "src/components/client/overlay.tsx",
-              description: "Full-screen overlay. Can show also loading spinner.",
-            },
-            {
-              isFolder: false,
-              title: "loading.tsx",
-              key: "src/components/client/loading.tsx",
-              description: "Simple loading spinner component.",
             },
             {
               isFolder: false,
@@ -273,17 +262,29 @@ _movie-app source code:_
           children: [
             {
               isFolder: false,
-              title: "movies-list.tsx",
-              key: "src/components/server/movies-list.tsx",
-              description: "Displays a table of movies with actions.",
-            },
-            {
-              isFolder: false,
               title: "paginated-movies-list.tsx",
               key: "src/components/server/paginated-movies-list.tsx",
               description: "Fetches and displays paginated movie results.",
             },
           ],
+        },
+        {
+          isFolder: false,
+          title: "loading.tsx",
+          key: "src/components/loading.tsx",
+          description: "Simple loading spinner component.",
+        },
+        {
+          isFolder: false,
+          title: "movies-list.tsx",
+          key: "src/components/movies-list.tsx",
+          description: "Displays a table of movies with actions.",
+        },
+        {
+          isFolder: false,
+          title: "overlay.tsx",
+          key: "src/components/overlay.tsx",
+          description: "Full-screen overlay. Can show also loading spinner.",
         },
       ],
     },
