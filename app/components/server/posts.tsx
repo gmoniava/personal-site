@@ -6,7 +6,7 @@ export const metadata = {
   description: "Read my blog.",
 };
 
-export default function Page() {
+export default async function Page() {
   const result = getBlogPosts();
 
   // Sort the posts by published date in descending order
