@@ -184,7 +184,7 @@ _movie-app source code:_
       title: "components",
       key: "src/components",
       description:
-        "Inside this folder, components that use state, effects, or event handlers go in the client folder and include the 'use client' directive. Components that use async data fetching go in the server folder. Components that use neither can technically work in both contexts (for example if they're imported by a client component, they'll automatically become part of the client bundle) - so they are placed outside of these folders.",
+        "Inside this folder, components using client-specific features (e.g. state, effects) go in the client folder. Those using server-specific features (e.g. async components) go in the server folder. Components that use neither can technically work in both contexts (for example if they're imported by a client component, they'll automatically become part of the client bundle) -  so they are placed outside of these folders.",
       children: [
         {
           isFolder: true,
@@ -325,7 +325,7 @@ _movie-app source code:_
           title: "movies.ts",
           key: "src/lib/movies.ts",
           description: `Methods for searching movies. These are not server functions because it is not recommended to use server functions for data fetching; moreover
-          we don't use these methods in the client components, which is usually the reason to use server functions.`,
+we don't use these methods in the client components, which is usually the reason to use server functions.`,
         },
       ],
     },
