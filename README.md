@@ -2,7 +2,7 @@
 
 Personal website written using Nextjs.
 
-Accompanying blog [post](https://www.gmoniava.com/blog/how-i-built-this-blog-using-nextjs).
+_Accompanying blog [post](https://www.gmoniava.com/blog/how-i-built-this-blog-using-nextjs)._
 
 # Getting Started
 
