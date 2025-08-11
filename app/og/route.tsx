@@ -16,7 +16,7 @@ export function GET(request: Request) {
       >
         <div tw="flex flex-col border border-slate-300 rounded-2xl p-10 shadow-xl bg-white max-w-4xl w-full">
           <h1 tw="text-6xl font-bold leading-tight tracking-tight">{title}</h1>
-          <p tw="mt-6 text-3xl text-slate-500 text-center">Blog</p>
+          <p tw="mt-6 text-[28px] text-slate-500 text-center">Blog</p>
         </div>
       </div>
     ),

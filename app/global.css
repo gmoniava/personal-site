@@ -100,7 +100,7 @@ html {
 }
 
 .prose h1 {
-  @apply text-3xl font-medium tracking-tight mt-6 mb-2;
+  @apply text-[28px] font-medium tracking-tight mt-6 mb-2;
 }
 
 .prose h2 {

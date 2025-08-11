@@ -79,7 +79,7 @@ export default async function Blog({ params }) {
         }}
       />
       {/* Post title and date */}
-      <h1 className="title font-semibold text-3xl tracking-tighter">{post.metadata.title}</h1>
+      <h1 className="title font-semibold text-[28px] tracking-tighter">{post.metadata.title}</h1>
       <div className="flex justify-between items-center my-2">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
       </div>
