@@ -8,7 +8,7 @@ export default function Page(props) {
   return (
     <div>
       {" "}
-      <h1 className="mb-4 text-[28px] font-semibold ">About</h1>
+      <h1 className="mb-4 font-semibold">About</h1>
       <p className="mb-4">{`Software developer from Tbilisi, Georgia.`}</p>
       <ClientSideEmail />
       <div className="mt-4 inline-flex items-center gap-3">

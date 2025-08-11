@@ -27,7 +27,7 @@ export default async function Page() {
     <section>
       <div className="flex items-center mb-4 gap-2">
         {" "}
-        <h1 className="text-[28px] font-semibold ">Blog</h1>
+        <h1 className="font-semibold ">Blog</h1>
         <a className="" rel="noopener noreferrer" target="_blank" title="Subscribe via RSS" href="/rss">
           <svg
             aria-hidden="true"
