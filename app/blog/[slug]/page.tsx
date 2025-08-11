@@ -80,15 +80,15 @@ export default async function Blog({ params }) {
       />
       {/* Post title and date */}
       <h1 className="title font-semibold text-3xl tracking-tighter">{post.metadata.title}</h1>
-      <div className="flex justify-between items-center my-4">
-        <p className=" text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
+      <div className="flex justify-between items-center my-2">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">{formatDate(post.metadata.date)}</p>
       </div>
       {/* Tags */}
       <div className="flex flex-wrap gap-1 mt-1 mb-4">
         {post.metadata.tags.map((tag: string) => (
           <span
             key={tag}
-            className="bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
+            className=" bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
           >
             {tag}
           </span>
