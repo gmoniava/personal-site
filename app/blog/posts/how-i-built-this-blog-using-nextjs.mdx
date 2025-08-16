@@ -111,7 +111,7 @@ RSS route however, is normal route which is not cached by default, so I added `e
 
 I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
 That object lists custom components that should be used in place of one of the default components that MDX automatically renders for different HTML tags.
-Without this addition, MDX would use the same rendering for both inline and block-level code
+Without this addition, MDX would use the same rendering for both inline and block-level code.
 
 The starter code also uses a code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) to highlight code blocks.
 It had some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
