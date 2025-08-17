@@ -60,7 +60,7 @@ to the new URL, since changes won’t be visible immediately.
 There is hook [`useOptimistic`](https://react.dev/reference/react/useOptimistic) which can help mitigate issues mentioned in the previous paragraph.
 This [post](https://buildui.com/posts/instant-search-params-with-react-server-components)
 offers a great exploration of how to use `useOptimistic` to build URL-driven filter panels which respond quickly to user actions.
-Actually my initial server side filtering approach was using `useOptimistic` based implementation of the client component, if you are interested in this,
+Actually my initial server side filtering approach was using `useOptimistic` based implementation of the client component. If you are interested in this,
 you can check the `server-side-filtering` branch.
 
 Finally, we also had to keep track of URL changes to update our filters, which I implemented by listening to the [`popstate`](https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event) event.
@@ -111,7 +111,7 @@ RSS route however, is normal route which is not cached by default, so I added `e
 
 I had to add custom component for `pre` tag in the `components` object (`app/components/server/mdx.tsx`).
 That object lists custom components that should be used in place of one of the default components that MDX automatically renders for different HTML tags.
-I had to make this addition otherwise MDX library was not differentiating between inline and block level code.
+Without this addition, MDX would use the same rendering for both inline and block-level code.
 
 The starter code also uses a code syntax highlighter ([`sugar-high`](https://github.com/huozhi/sugar-high)) to highlight code blocks.
 It had some overrides in the `global.css` for some tokens of the code syntax highlighter for the dark theme,
