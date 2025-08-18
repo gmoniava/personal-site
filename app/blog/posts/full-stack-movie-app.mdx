@@ -355,13 +355,13 @@ we don't use these methods in the client components, which is usually the reason
   ]}
 />
 
-## Remarks
+## Notes
 
 ### Redirect from middleware not working properly with server functions
 
 During working on this project I encountered one problem.
-Currently even Nextjs docs mention that you can perform authorization checks
-inside middleware (though they mention this should not be your only line of defense).
+Currently even Nextjs docs mention that you can perform auth checks
+inside middleware (though they mention this should _not be your only line_ of defense).
 So you often encounter code like this inside middleware:
 
 ```
@@ -371,22 +371,24 @@ if (isProtectedRoute && !session) {
 ```
 
 This works most of the time but there was one situation where it was causing a problem.
-Imagine we are on a protected route and session expires.
-Then, if I invoke a server function from that protected page:
+
+Suppose we are on a protected page and the session expires.
+If then I invoked a server function from that page:
 
 ```
 startTransition(async () => {
-    // ...
     // Call a server function
     const result = await addMovie(data);
+
     // ...
 });
 ```
 
-the `addMovie` server function call would trigger middleware, which would call `NextResponse.redirect`
-because we are on a protected page and session has expired - however apparently since the middleware was called due to server function,
-the redirect was not working and the `addMovie` was simply returning `undefined` (and the `addMovie` server function
-itself was never run).
+the `addMovie` call triggered the middleware. Because we are on a protected page and the session had expired,
+the middleware attempted to redirect using `NextResponse.redirect` (as shown in the previous `if` check).
+
+However apparently since the middleware was called due to server function, the redirect didn't
+happen. The `addMovie` function itself never ran and simply returned `undefined`.
 
 My current solution is from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
 middleware such that it ignores server functions.
