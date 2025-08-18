@@ -60,8 +60,11 @@ function Pre({ children, ...props }) {
   const codeString = codeChild.props.children;
 
   // Highlight the code and remove newlines
-  const highlightedHTML = highlight(codeString).replace(/\n/g, "");
-
+  let highlightedHTML = highlight(codeString).replace(/\n/g, "");
+  highlightedHTML = highlightedHTML.replace(
+    /<span class="sh__token--string"[^>]*><\/span>/g,
+    '<span class="sh__token--string" style="color: var(--sh-string)">&nbsp;</span>'
+  );
   return <pre {...props} className="" dangerouslySetInnerHTML={{ __html: highlightedHTML }} />;
 }
 
