@@ -60,7 +60,7 @@ function Pre({ children, ...props }) {
   const codeString = codeChild.props.children;
 
   // Highlight the code and remove newlines
-  const highlightedHTML = highlight(codeString).replace(/\n/g, "");
+  const highlightedHTML = highlight(codeString); //.replace(/\n/g, "");
 
   return <pre {...props} className="" dangerouslySetInnerHTML={{ __html: highlightedHTML }} />;
 }
