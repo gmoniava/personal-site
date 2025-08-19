@@ -4,7 +4,7 @@ import React, { useId } from "react";
 import Select from "react-select";
 import { topics } from "app/topics";
 import constants from "app/constants";
-import Post from "./post";
+import PostPreview from "../post-preview";
 import Pagination from "./pagination";
 
 export default function BlogPosts({ blogs }: any) {
@@ -13,7 +13,7 @@ export default function BlogPosts({ blogs }: any) {
   const [page, setPage] = React.useState(1);
 
   // Parse URL parameters to initialize state such as tags and page number
-  const pareURLParams = () => {
+  const parseURLParams = () => {
     const params = new URLSearchParams(window.location.search);
 
     // Get the tags from the URL
@@ -60,10 +60,10 @@ export default function BlogPosts({ blogs }: any) {
 
   React.useEffect(() => {
     // Synchronize the initial state with URL parameters
-    pareURLParams();
+    parseURLParams();
 
     const handlePopState = () => {
-      pareURLParams();
+      parseURLParams();
     };
 
     // Listen for popstate events to handle back/forward navigation
@@ -114,7 +114,7 @@ export default function BlogPosts({ blogs }: any) {
       </div>
       <div className="flex flex-col gap-4 items-start">
         {postForCurrentPage.map((post: any) => (
-          <Post post={post} key={post.slug} />
+          <PostPreview post={post} key={post.slug} />
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />

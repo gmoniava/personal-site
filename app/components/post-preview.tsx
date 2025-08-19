@@ -14,7 +14,7 @@ type BlogPostPreviewProps = {
   post: Post;
 };
 
-export default function Post({ post }: BlogPostPreviewProps) {
+export default function PostPreview({ post }: BlogPostPreviewProps) {
   return (
     <Link key={post.slug} className="w-full" href={`/blog/${post.slug}`}>
       <div className="flex flex-col gap-1 sm:gap-0.5 mb-2">
