@@ -385,7 +385,6 @@ startTransition(async () => {
 
 the `addMovie` call triggered the middleware. Because we are on a protected page and the session had expired,
 the middleware attempted to redirect using `NextResponse.redirect` (as shown in the previous `if` check).
-
 However apparently since the middleware was called due to server function, the redirect didn't
 happen. The `addMovie` function itself never ran and simply returned `undefined`.
 
