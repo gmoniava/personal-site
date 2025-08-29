@@ -388,7 +388,7 @@ the middleware attempted to redirect using `NextResponse.redirect` (as shown in 
 However apparently since the middleware was called due to server function, the redirect didn't
 happen. The `addMovie` function itself never ran and simply returned `undefined`.
 
-My current solution is from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
+It seems others have also encountered this issue, so my solution if from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
 middleware such that it ignores server functions. I do auth checks in server functions though.
 
 ## Source Code
