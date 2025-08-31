@@ -391,6 +391,26 @@ happen. The `addMovie` function itself never ran and simply returned `undefined`
 My current solution is from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
 middleware such that it ignores server functions. I do auth checks in server functions though.
 
+### How I Dealt With Local Storage
+
+In my app I am storing the state of the side bar (whether it is opened or not) in local storage.
+Initially I decided to use `useLocalStorage` hook from `@uidotdev/usehooks` package. But it was giving me this error:
+
+> Error: useLocalStorage is a client-only hook
+
+despite using it in a component which had `"use client"`.
+There is a [solution](https://github.com/uidotdev/usehooks/issues/218#issuecomment-1835624086) to this which looks like this:
+
+```
+<ClientOnly>
+  <MyComponentThatUsesHooks />
+</ClientOnly>
+```
+
+But in my case the component that was using the hook was a layout, so if used my layout as shown above (instead of `MyComponentThatUsesHooks`),
+it would mean the whole app beneath my layout would skip SSR (due to the way `ClientOnly` hook works).
+So I ended using a different [implementation](https://github.com/gmoniava/movie-app/blob/main/src/hooks/useLocalStorage.ts).
+
 ## Source Code
 
 You can find the source code [here](https://github.com/gmoniava/movie-app).
