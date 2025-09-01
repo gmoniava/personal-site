@@ -408,7 +408,7 @@ There is a [solution](https://github.com/uidotdev/usehooks/issues/218#issuecomme
 ```
 
 But in my case the component that was using the hook was a layout, so if used my layout as shown above (instead of `MyComponentThatUsesHooks`),
-it would mean the whole app beneath my layout would skip SSR (due to the way `ClientOnly` hook works).
+it would mean the whole app beneath my layout would skip server side rendering (SSR) - due to the way `ClientOnly` hook works.
 So I ended up using a different [implementation](https://github.com/gmoniava/movie-app/blob/main/src/hooks/useLocalStorage.ts).
 
 ## Source Code
