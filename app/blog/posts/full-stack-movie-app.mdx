@@ -390,17 +390,17 @@ middleware such that it ignores server functions. I do auth checks in server fun
 
 I am storing the sidebar state in local storage so that the app can remember whether it’s open or
 closed. If I tried reading this value directly in the `useState` initializer function, it could
-cause a hydration error: on the server, `localStorage` is not available, so React would fall back
+cause a hydration error: on the server, local storage is not available, so React would fall back
 to a default value (like `false`). On the client, the initializer would read the actual value from
 local storage (like `true`), causing a mismatch between the server-rendered DOM and what the
 client expects during hydration. Besides I wasn’t sure if reading local storage directly in the
 `useState` initializer function would be considered pure, so I avoided it.
 
-Initially I had fixed this by reading the sidebar value from `localStorage` in `useEffect` instead,
+Initially I had fixed this by reading the sidebar value from local storage in `useEffect` instead,
 it avoided the hydration error because `useEffect` runs after hydration, so there was no difference
 between the server-rendered DOM and what client expected on hydration,
-but it caused a brief “flicker” on the initial render as the sidebar state updated when switching from
-closed to open state.
+but it caused a brief “flicker” on the initial render as the sidebar state updated when switching say from
+closed to open.
 
 Finally, I ended up with a solution, which had neither the flicker problem nor hydration error.
 I added an inline script that runs before React hydrates, immediately applying the correct sidebar state to
