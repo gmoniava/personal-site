@@ -407,7 +407,8 @@ I added an inline script that runs before React hydrates, immediately applying t
 the DOM - now the user doesn’t see the flicker. And also there is no hydration error because
 I made sure there was no difference between the server-rendered DOM (which was modified later by the
 inline script) and what client expected during hydration by making sure the side bar value
-I read during the inline script and `useState` initializer were the same. This solution was based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
+I read during the inline script and `useState` initializer were the same.
+The solution is in the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>) file and is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
 
 ## Source Code
 
