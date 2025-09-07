@@ -400,7 +400,7 @@ Initially I had fixed this by reading the sidebar value from local storage in `u
 it avoided the hydration error because `useEffect` runs after hydration, so there was no difference
 between the server-rendered DOM and what client expected on hydration,
 but it caused a brief “flicker” on the initial render as the sidebar state updated when switching say from
-closed to open state.
+closed to open.
 
 Finally, I ended up with a solution, which had neither the flicker problem nor hydration error.
 I added an inline script that runs before React hydrates, immediately applying the correct sidebar state to
