@@ -400,7 +400,7 @@ happen. The `addMovie` function itself never ran and simply returned `undefined`
 It seems others have also encountered this issue, so my solution if from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
 middleware such that it ignores server functions. I do auth checks in server functions though.
 
-### Fixing Sidebar Flicker on First Render in React
+### Fixing Sidebar Flicker on First Render
 
 I am storing the sidebar state in local storage so that the app can remember whether it’s open or
 closed. If I tried reading this value directly in the `useState` initializer function, it could
