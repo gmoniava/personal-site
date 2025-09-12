@@ -400,7 +400,7 @@ happen. The `addMovie` function itself never ran and simply returned `undefined`
 It seems others have also encountered this issue, so my solution if from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
 middleware such that it ignores server functions. I do auth checks in server functions though.
 
-## Fixing Hydration Errors and Initial Render Flicker
+### Fixing Hydration Errors and Initial Render Flicker
 
 Sometimes in Next.js you may encounter hydration errors. Before we
 understand what these errors are, let's first briefly review what
@@ -422,7 +422,7 @@ One cause of this error is if your render logic depends on local
 storage. During SSR local storage is not available, hence the render
 result you get during SSR and on client, may differ.
 
-### Basic Client-Only Fix
+#### Basic Client-Only Fix
 
 A simple solution is to skip SSR for the component entirely:
 
@@ -450,15 +450,15 @@ errors, it also disables SSR for the component and all of its children.
 That trade-off can be problematic for components which have many
 children or content important for SEO.
 
-### My Case: Sidebar State
+#### My Case: Sidebar State
 
 I store the sidebar state in local storage and need it in some
 components such as the
-[layout](https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx).
+[`(main)/layout.tsx`](https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx).
 If I tried reading this value directly in the `useState` initializer
 function in my layout, it would cause hydration error. I would also not
 be able to fix this using above client-only fix because it would opt out
-children of layout from SSR, which is my whole app. Besides I am not
+children of layout from SSR, which is basically my whole app. Besides I am not
 sure if reading local storage in `useState` initializer function is ok
 since it has to be pure.
 
@@ -466,7 +466,7 @@ So I decided to use another approach, which was to read the value of the
 sidebar from local storage in `useEffect` instead of `useState` initializer
 function. If you read this value from `useEffect` it will not result in
 hydration error because `useEffect` runs after hydration. However, this
-approach caused a brief “flicker” on the initial render as the sidebar
+approach caused a brief "flicker" on the initial render as the sidebar
 state updated when switching say from closed to open.
 
 Finally, I ended up with a solution, which had neither the flicker
