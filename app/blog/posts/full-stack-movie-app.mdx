@@ -454,7 +454,7 @@ children or content important for SEO.
 
 I store the sidebar state in local storage and need it in some
 components such as the
-[`(main)/layout.tsx`](https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx).
+[`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
 If I tried reading this value directly in the `useState` initializer
 function in my layout, it would cause hydration error. I would also not
 be able to fix this using above client-only fix because it would opt out
@@ -472,7 +472,7 @@ state updated when switching say from closed to open.
 Finally, I ended up with a solution, which had neither the flicker
 problem nor hydration error. I added an inline script that runs before
 React hydrates, immediately applying the correct sidebar state to the
-DOM - now the user doesn’t see the flicker.  And also there is no
+DOM - now the user doesn’t see the flicker. And also there is no
 hydration error because I made sure there was no difference between the
 DOM built from the server HTML (even after inline script is run) and
 what was rendered during hydration. The solution is in the layout file
