@@ -400,9 +400,9 @@ happen. The `addMovie` function itself never ran and simply returned `undefined`
 It seems others have also encountered this issue, so my solution if from [here](https://github.com/vercel/next.js/discussions/64993), to configure the
 middleware such that it ignores server functions. I do auth checks in server functions though.
 
-### Fixing Hydration Errors and Initial Render Flicker
+### Hydration Mismatch Errors, Fixing Initial Render Flicker
 
-Sometimes in Next.js you may encounter hydration errors. Before we
+Sometimes in Next.js you may encounter hydration mismatch errors. Before we
 understand what these errors are, let's first briefly review what
 hydration means.
 
@@ -415,16 +415,15 @@ as quickly as possible. Once this initial HTML arrives in the browser,
 Next.js runs JavaScript on the client to make the page fully interactive
 — a process called hydration.
 
-A hydration error happens when the HTML rendered on the server doesn’t
+A hydration mismatch error happens when the HTML rendered on the server doesn’t
 match what React renders on the client in memory during hydration.
 
-One cause of this error is if your render logic depends on local
-storage. During SSR local storage is not available, hence the render
-result you get during SSR and on client, may differ.
+You can get such error if your rendering process is based on information that is
+only available on the client side (for example local storage); but there can
+also be other reasons. During SSR such information is not available,
+hence the render output you get during SSR may be different from the render output you get on the client.
 
-#### Basic Client-Only Fix
-
-A simple solution is to skip SSR for the component entirely:
+One solution to fix such error is to skip SSR for the component entirely:
 
 ```
 import { useState, useEffect } from 'react'
@@ -452,22 +451,23 @@ children or content important for SEO.
 
 #### My Case: Sidebar State
 
-I store the sidebar state in local storage and need it in some
+In my case I have sidebar state which I store in local storage and need it in some
 components such as the
 [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
-If I tried reading this value directly in the `useState` initializer
-function in my layout, it would cause hydration error. I would also not
-be able to fix this using above client-only fix because it would opt out
-children of layout from SSR, which is basically my whole app. Besides I am not
-sure if reading local storage in `useState` initializer function is ok
-since it has to be pure.
+If I tried reading this value from local storage directly in the
+`useState` initializer function in my layout file, it would cause hydration error.
+I would also not be able to fix this using above fix (which skips SSR)
+because it would opt out children of layout from SSR too, which is
+basically my whole app. Besides I am not sure if reading local storage
+in `useState` initializer function is ok since this function has to be pure.
 
 So I decided to use another approach, which was to read the value of the
 sidebar from local storage in `useEffect` instead of `useState` initializer
-function. If you read this value from `useEffect` it will not result in
-hydration error because `useEffect` runs after hydration. However, this
-approach caused a brief "flicker" on the initial render as the sidebar
-state updated when switching say from closed to open.
+function and then store it in state variable.
+This does not cause hydration error because `useEffect` runs _after_ hydration. You would also have to ensure that
+the initial value of this state variable was the same both in client and server environments.
+However, this approach had another problem, it caused a brief "flicker" on the initial render as the sidebar
+state updated when switching say from closed to open after `useEffect` was run.
 
 Finally, I ended up with a solution, which had neither the flicker
 problem nor hydration error. I added an inline script that runs before
@@ -475,7 +475,7 @@ React hydrates, immediately applying the correct sidebar state to the
 DOM - now the user doesn’t see the flicker. And also there is no
 hydration error because I made sure there was no difference between the
 DOM built from the server HTML (even after inline script is run) and
-what was rendered during hydration. The solution is in the layout file
+what was rendered during hydration. The solution is in the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>) file
 and is based on this
 [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
 
