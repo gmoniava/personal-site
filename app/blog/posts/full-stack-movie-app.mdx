@@ -472,7 +472,7 @@ export default function Layout() {
 
 ```
 
-If I used this approach, it could cause hydration error. During SSR, `sidebarOpen` would be `false`, and
+If I used this approach, it could cause hydration mismatch error: during SSR, `sidebarOpen` would be `false`, and
 on the first render during hydration it could be `true`, which would result in
 different render output. Besides I am not sure if reading local storage
 in `useState` initializer function is ok since this function has to be pure based on the docs.
