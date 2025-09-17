@@ -454,19 +454,57 @@ children or content important for SEO.
 In my case I have sidebar state which I store in local storage and need it in some
 components such as the
 [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
-If I tried reading this value from local storage directly in the
-`useState` initializer function in my layout file, it would cause hydration error.
-I would also not be able to fix this using above fix (which skips SSR)
+Consider below approach of reading this value from local storage directly in the
+`useState` initializer function in my layout file:
+
+```
+export default function Layout() {
+  // I don't recommend this approach. It can cause hydration errors.
+  // Also IMHO reading localStorage here makes the initializer function impure.
+  // Based on the docs, that function should be pure.
+  const [showSidebar, setShowSidebar] = useState(() => {
+    if (typeof window === "undefined") return false; // SSR fallback
+    const stored = localStorage.getItem("sidebarOpen");
+    return stored ? JSON.parse(stored) : false;
+  });
+  //...
+}
+
+```
+
+If I used this approach, it could cause hydration error. During SSR, `sidebarOpen` would be `false`, and
+on the first render during hydration it could be `true`, which would result in
+different render output. Besides I am not sure if reading local storage
+in `useState` initializer function is ok since this function has to be pure based on the docs.
+
+Also I would not be able to fix this using fix from the previous section which skips SSR for the component,
 because it would opt out children of layout from SSR too, which is
-basically my whole app. Besides I am not sure if reading local storage
-in `useState` initializer function is ok since this function has to be pure.
+basically my whole app.
 
 So I decided to use another approach, which was to read the value of the
 sidebar from local storage in `useEffect` instead of `useState` initializer
-function and then store it in state variable.
-This does not cause hydration error because `useEffect` runs _after_ hydration. You would also have to ensure that
-the initial value of this state variable was the same both in client and server environments.
-However, this approach had another problem, it caused a brief "flicker" on the initial render as the sidebar
+function.
+This does not cause hydration error because `useEffect` runs _after_ hydration
+and the initial `false` value is the same during SSR and the first render during hydration.
+
+```
+export default function Layout() {
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  // Read localStorage after the component mounts
+  useEffect(() => {
+    const stored = localStorage.getItem("sidebarOpen");
+    if (stored) {
+      setShowSidebar(JSON.parse(stored));
+    }
+  }, []);
+
+  // ...
+}
+
+```
+
+However, this approach had another problem, it caused a brief "flicker" initially as the sidebar
 state updated when switching say from closed to open after `useEffect` was run.
 
 Finally, I ended up with a solution, which had neither the flicker
