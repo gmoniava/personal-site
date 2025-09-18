@@ -7,7 +7,7 @@ interface TreeProps {
 }
 
 const Tree = ({ data, expandTogglePosition = "left" }: TreeProps) => (
-  <div className="font-sans text-sm leading-snug">
+  <div className="font-sans text-sm leading-snug mt-5">
     {data.map((node: any) => (
       <TreeNode key={node.key} node={node} expandTogglePosition={expandTogglePosition} />
     ))}

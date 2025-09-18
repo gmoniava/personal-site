@@ -5,6 +5,20 @@ import { highlight } from "sugar-high";
 import React from "react";
 import TreeWithDescriptions from "app/components/client/tree-with-descriptions";
 
+const Alert = ({ type = "info", children }) => {
+  const baseStyle = "px-4 py-3 rounded-md mb-4 border";
+
+  const typeStyles = {
+    info: "bg-blue-100  text-blue-800  border-blue-500 dark:bg-blue-700  dark:text-white  dark:border-blue-400",
+    success: "bg-green-100 text-green-800 border-green-500 dark:bg-green-700 dark:text-white dark:border-green-400",
+    warning:
+      "bg-yellow-100 text-yellow-800 border-yellow-500 dark:bg-yellow-600 dark:text-white dark:border-yellow-400",
+    error: "bg-red-100   text-red-800   border-red-500  dark:bg-red-700   dark:text-white  dark:border-red-400",
+  };
+
+  return <div className={`${baseStyle} ${typeStyles[type]}`}>{children}</div>;
+};
+
 function Table({ data }) {
   let headers = data.headers.map((header, index) => <th key={index}>{header}</th>);
   let rows = data.rows.map((row, index) => (
@@ -116,6 +130,7 @@ let components = {
   Table,
   blockquote: Blockquote,
   TreeWithDescriptions,
+  Alert,
 };
 
 export function CustomMDX(props) {
