@@ -16,354 +16,355 @@ It’s assumed that you have a basic familiarity with the Next.js App Router.
 
 ## Project Structure
 
-<TreeWithDescriptions
-  data={[
-    {
-      isFolder: true,
-      title: "app",
-      key: "src/app",
-      description: `This is the Next.js app directory. The Next.js app directory is essentially a routing system that uses folders and special files (e.g. page.tsx) to define routes. It also supports layouts which is basically a UI that is shared between multiple pages.`,
-      children: [
-        {
-          isFolder: true,
-          title: "(main)",
-          key: "src/app/(main)",
-          description: `Contains most application pages. As a route group (indicated by parentheses), it helps organize routes without affecting the URL structure.`,
-          children: [
-            {
-              isFolder: true,
-              title: "add-movie",
-              key: "src/app/(main)/add-movie",
-              children: [
-                {
-                  isFolder: false,
-                  title: "page.tsx",
-                  key: "src/app/(main)/add-movie/page.tsx",
-                  description: "Page which contains form for adding a movie.",
-                },
-              ],
-            },
-            {
-              isFolder: true,
-              title: "edit-movie",
-              key: "src/app/(main)/edit-movie",
-              children: [
-                {
-                  isFolder: true,
-                  title: "[id]",
-                  key: "src/app/(main)/edit-movie/[id]",
-                  description: "Dynamic route for editing a movie by ID.",
-                  children: [
-                    {
-                      isFolder: false,
-                      title: "page.tsx",
-                      key: "src/app/(main)/edit-movie/[id]/page.tsx",
-                      description: "Loads movie data by ID and renders page for editing a movie.",
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              isFolder: true,
-              title: "search",
-              key: "src/app/(main)/search",
-              children: [
-                {
-                  isFolder: false,
-                  title: "page.tsx",
-                  key: "src/app/(main)/search/page.tsx",
-                  description: "Displays a page with search form and paginated movie results.",
-                },
-              ],
-            },
-            {
-              isFolder: false,
-              title: "layout.tsx",
-              key: "src/app/(main)/layout.tsx",
-              description: `Layout for the (main) route group. Applies to all routes inside the group but not outside it.`,
-            },
-            {
-              isFolder: false,
-              title: "page.tsx",
-              key: "src/app/(main)/page.tsx",
-              description: "Home page with a welcome message.",
-            },
-          ],
-        },
-        {
-          isFolder: true,
-          title: "api",
-          key: "src/app/api",
-          description: "API route handlers",
-          children: [
-            {
-              isFolder: true,
-              title: "genres",
-              key: "src/app/api/genres",
-              children: [
-                {
-                  isFolder: false,
-                  title: "route.ts",
-                  key: "src/app/api/genres/route.ts",
-                  description: "Returns a list of genres from the database.",
-                },
-              ],
-            },
-            {
-              isFolder: true,
-              title: "seed",
-              key: "src/app/api/seed",
-              children: [
-                {
-                  isFolder: false,
-                  title: "route.ts",
-                  key: "src/app/api/seed/route.ts",
-                  description: "Seeds genres, movies, and users tables in the database.",
-                },
-              ],
-            },
-            {
-              isFolder: true,
-              title: "session",
-              key: "src/app/api/session",
-              children: [
-                {
-                  isFolder: false,
-                  title: "route.ts",
-                  key: "src/app/api/session/route.ts",
-                  description: "Returns session authentication status.",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          isFolder: true,
-          title: "login",
-          key: "src/app/login",
-          children: [
-            {
-              isFolder: false,
-              title: "page.tsx",
-              key: "src/app/login/page.tsx",
-              description: "Login page, a client component.",
-            },
-          ],
-        },
-        {
-          isFolder: false,
-          title: "favicon.ico",
-          key: "src/app/favicon.ico",
-          description: "Favicon for the application.",
-        },
-        {
-          isFolder: false,
-          title: "globals.css",
-          key: "src/app/globals.css",
-          description: "Global CSS styles and Tailwind customizations.",
-        },
-        {
-          isFolder: false,
-          title: "layout.tsx",
-          key: "src/app/layout.tsx",
-          description: "Root layout for the app, sets up providers and global styles.",
-        },
-      ],
-    },
-    {
-      isFolder: true,
-      title: "components",
-      key: "src/components",
-      description:
-        "Inside this folder, components using client-specific features (e.g. state, effects) go in the client folder. Those using server-specific features (e.g. async components) go in the server folder. Components that use neither can technically work in both contexts (for example if they're imported by a client component, they'll automatically become part of the client bundle) -  so they are placed outside of these folders.",
-      children: [
-        {
-          isFolder: true,
-          title: "client",
-          key: "src/components/client",
-          description: "React client components. ",
-          children: [
-            {
-              isFolder: false,
-              title: "auth-provider.tsx",
-              key: "src/components/client/auth-provider.tsx",
-              description: "Context provider for authentication state and logic.",
-            },
-            {
-              isFolder: false,
-              title: "button-link.tsx",
-              key: "src/components/client/button-link.tsx",
-              description: "Link component styled to look like a button.",
-            },
-            {
-              isFolder: false,
-              title: "button.tsx",
-              key: "src/components/client/button.tsx",
-              description: "Reusable button component with style variants.",
-            },
-            {
-              isFolder: false,
-              title: "delete-button.tsx",
-              key: "src/components/client/delete-button.tsx",
-              description: "Button for deleting a movie, with confirmation and loading overlay.",
-            },
-            {
-              isFolder: false,
-              title: "header.tsx",
-              key: "src/components/client/header.tsx",
-              description: "App header with sidebar toggle and theme switch.",
-            },
-            {
-              isFolder: false,
-              title: "pagination.tsx",
-              key: "src/components/client/pagination.tsx",
-              description: "Pagination controls for navigating movie pages.",
-            },
-            {
-              isFolder: false,
-              title: "providers.tsx",
-              key: "src/components/client/providers.tsx",
-              description: "Wraps the app with authentication and theme providers.",
-            },
-            {
-              isFolder: false,
-              title: "search-form.tsx",
-              key: "src/components/client/search-form.tsx",
-              description: "Form for searching movies with filters.",
-            },
-            {
-              isFolder: false,
-              title: "sidebar.tsx",
-              key: "src/components/client/sidebar.tsx",
-              description: "Sidebar with navigation links and login/logout options.",
-            },
-            {
-              isFolder: false,
-              title: "theme-toggle.tsx",
-              key: "src/components/client/theme-toggle.tsx",
-              description: "Toggle switch for light/dark theme.",
-            },
-            {
-              isFolder: false,
-              title: "overlay.tsx",
-              key: "src/components/client/overlay.tsx",
-              description: "Full-screen overlay. Can show also loading spinner.",
-            },
-          ],
-        },
-        {
-          isFolder: true,
-          title: "server",
-          key: "src/components/server",
-          description: "React server components",
-          children: [
-            {
-              isFolder: false,
-              title: "paginated-movies-list.tsx",
-              key: "src/components/server/paginated-movies-list.tsx",
-              description: "Fetches and displays paginated movie results.",
-            },
-          ],
-        },
-        {
-          isFolder: false,
-          title: "loading.tsx",
-          key: "src/components/loading.tsx",
-          description: "Simple loading spinner component.",
-        },
-        {
-          isFolder: false,
-          title: "movies-list.tsx",
-          key: "src/components/movies-list.tsx",
-          description: "Displays a table of movies with actions.",
-        },
-      ],
-    },
-    {
-      isFolder: true,
-      title: "hooks",
-      key: "src/hooks",
-      description: "Custom React hooks.",
-      children: [
-        {
-          isFolder: false,
-          title: "useOptions.ts",
-          key: "src/hooks/useOptions.ts",
-          description: "Hook to fetch selectable options (e.g., genres) from API.",
-        },
-      ],
-    },
-    {
-      isFolder: true,
-      title: "lib",
-      key: "src/lib",
-      description: "Folder for some server-side logic.",
-      children: [
-        {
-          isFolder: false,
-          title: "auth.ts",
-          key: "src/lib/auth.ts",
-          description: "JWT signing/verification utilities and session token retriever.",
-        },
-        {
-          isFolder: false,
-          title: "movies.ts",
-          key: "src/lib/movies.ts",
-          description: `Methods for searching movies. These are not server functions because it is not recommended to use server functions for data fetching; moreover
+<div className="pt-4">
+  <TreeWithDescriptions
+    data={[
+      {
+        isFolder: true,
+        title: "app",
+        key: "src/app",
+        description: `This is the Next.js app directory. The Next.js app directory is essentially a routing system that uses folders and special files (e.g. page.tsx) to define routes. It also supports layouts which is basically a UI that is shared between multiple pages.`,
+        children: [
+          {
+            isFolder: true,
+            title: "(main)",
+            key: "src/app/(main)",
+            description: `Contains most application pages. As a route group (indicated by parentheses), it helps organize routes without affecting the URL structure.`,
+            children: [
+              {
+                isFolder: true,
+                title: "add-movie",
+                key: "src/app/(main)/add-movie",
+                children: [
+                  {
+                    isFolder: false,
+                    title: "page.tsx",
+                    key: "src/app/(main)/add-movie/page.tsx",
+                    description: "Page which contains form for adding a movie.",
+                  },
+                ],
+              },
+              {
+                isFolder: true,
+                title: "edit-movie",
+                key: "src/app/(main)/edit-movie",
+                children: [
+                  {
+                    isFolder: true,
+                    title: "[id]",
+                    key: "src/app/(main)/edit-movie/[id]",
+                    description: "Dynamic route for editing a movie by ID.",
+                    children: [
+                      {
+                        isFolder: false,
+                        title: "page.tsx",
+                        key: "src/app/(main)/edit-movie/[id]/page.tsx",
+                        description: "Loads movie data by ID and renders page for editing a movie.",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                isFolder: true,
+                title: "search",
+                key: "src/app/(main)/search",
+                children: [
+                  {
+                    isFolder: false,
+                    title: "page.tsx",
+                    key: "src/app/(main)/search/page.tsx",
+                    description: "Displays a page with search form and paginated movie results.",
+                  },
+                ],
+              },
+              {
+                isFolder: false,
+                title: "layout.tsx",
+                key: "src/app/(main)/layout.tsx",
+                description: `Layout for the (main) route group. Applies to all routes inside the group but not outside it.`,
+              },
+              {
+                isFolder: false,
+                title: "page.tsx",
+                key: "src/app/(main)/page.tsx",
+                description: "Home page with a welcome message.",
+              },
+            ],
+          },
+          {
+            isFolder: true,
+            title: "api",
+            key: "src/app/api",
+            description: "API route handlers",
+            children: [
+              {
+                isFolder: true,
+                title: "genres",
+                key: "src/app/api/genres",
+                children: [
+                  {
+                    isFolder: false,
+                    title: "route.ts",
+                    key: "src/app/api/genres/route.ts",
+                    description: "Returns a list of genres from the database.",
+                  },
+                ],
+              },
+              {
+                isFolder: true,
+                title: "seed",
+                key: "src/app/api/seed",
+                children: [
+                  {
+                    isFolder: false,
+                    title: "route.ts",
+                    key: "src/app/api/seed/route.ts",
+                    description: "Seeds genres, movies, and users tables in the database.",
+                  },
+                ],
+              },
+              {
+                isFolder: true,
+                title: "session",
+                key: "src/app/api/session",
+                children: [
+                  {
+                    isFolder: false,
+                    title: "route.ts",
+                    key: "src/app/api/session/route.ts",
+                    description: "Returns session authentication status.",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            isFolder: true,
+            title: "login",
+            key: "src/app/login",
+            children: [
+              {
+                isFolder: false,
+                title: "page.tsx",
+                key: "src/app/login/page.tsx",
+                description: "Login page, a client component.",
+              },
+            ],
+          },
+          {
+            isFolder: false,
+            title: "favicon.ico",
+            key: "src/app/favicon.ico",
+            description: "Favicon for the application.",
+          },
+          {
+            isFolder: false,
+            title: "globals.css",
+            key: "src/app/globals.css",
+            description: "Global CSS styles and Tailwind customizations.",
+          },
+          {
+            isFolder: false,
+            title: "layout.tsx",
+            key: "src/app/layout.tsx",
+            description: "Root layout for the app, sets up providers and global styles.",
+          },
+        ],
+      },
+      {
+        isFolder: true,
+        title: "components",
+        key: "src/components",
+        description:
+          "Inside this folder, components using client-specific features (e.g. state, effects) go in the client folder. Those using server-specific features (e.g. async components) go in the server folder. Components that use neither can technically work in both contexts (for example if they're imported by a client component, they'll automatically become part of the client bundle) -  so they are placed outside of these folders.",
+        children: [
+          {
+            isFolder: true,
+            title: "client",
+            key: "src/components/client",
+            description: "React client components. ",
+            children: [
+              {
+                isFolder: false,
+                title: "auth-provider.tsx",
+                key: "src/components/client/auth-provider.tsx",
+                description: "Context provider for authentication state and logic.",
+              },
+              {
+                isFolder: false,
+                title: "button-link.tsx",
+                key: "src/components/client/button-link.tsx",
+                description: "Link component styled to look like a button.",
+              },
+              {
+                isFolder: false,
+                title: "button.tsx",
+                key: "src/components/client/button.tsx",
+                description: "Reusable button component with style variants.",
+              },
+              {
+                isFolder: false,
+                title: "delete-button.tsx",
+                key: "src/components/client/delete-button.tsx",
+                description: "Button for deleting a movie, with confirmation and loading overlay.",
+              },
+              {
+                isFolder: false,
+                title: "header.tsx",
+                key: "src/components/client/header.tsx",
+                description: "App header with sidebar toggle and theme switch.",
+              },
+              {
+                isFolder: false,
+                title: "pagination.tsx",
+                key: "src/components/client/pagination.tsx",
+                description: "Pagination controls for navigating movie pages.",
+              },
+              {
+                isFolder: false,
+                title: "providers.tsx",
+                key: "src/components/client/providers.tsx",
+                description: "Wraps the app with authentication and theme providers.",
+              },
+              {
+                isFolder: false,
+                title: "search-form.tsx",
+                key: "src/components/client/search-form.tsx",
+                description: "Form for searching movies with filters.",
+              },
+              {
+                isFolder: false,
+                title: "sidebar.tsx",
+                key: "src/components/client/sidebar.tsx",
+                description: "Sidebar with navigation links and login/logout options.",
+              },
+              {
+                isFolder: false,
+                title: "theme-toggle.tsx",
+                key: "src/components/client/theme-toggle.tsx",
+                description: "Toggle switch for light/dark theme.",
+              },
+              {
+                isFolder: false,
+                title: "overlay.tsx",
+                key: "src/components/client/overlay.tsx",
+                description: "Full-screen overlay. Can show also loading spinner.",
+              },
+            ],
+          },
+          {
+            isFolder: true,
+            title: "server",
+            key: "src/components/server",
+            description: "React server components",
+            children: [
+              {
+                isFolder: false,
+                title: "paginated-movies-list.tsx",
+                key: "src/components/server/paginated-movies-list.tsx",
+                description: "Fetches and displays paginated movie results.",
+              },
+            ],
+          },
+          {
+            isFolder: false,
+            title: "loading.tsx",
+            key: "src/components/loading.tsx",
+            description: "Simple loading spinner component.",
+          },
+          {
+            isFolder: false,
+            title: "movies-list.tsx",
+            key: "src/components/movies-list.tsx",
+            description: "Displays a table of movies with actions.",
+          },
+        ],
+      },
+      {
+        isFolder: true,
+        title: "hooks",
+        key: "src/hooks",
+        description: "Custom React hooks.",
+        children: [
+          {
+            isFolder: false,
+            title: "useOptions.ts",
+            key: "src/hooks/useOptions.ts",
+            description: "Hook to fetch selectable options (e.g., genres) from API.",
+          },
+        ],
+      },
+      {
+        isFolder: true,
+        title: "lib",
+        key: "src/lib",
+        description: "Folder for some server-side logic.",
+        children: [
+          {
+            isFolder: false,
+            title: "auth.ts",
+            key: "src/lib/auth.ts",
+            description: "JWT signing/verification utilities and session token retriever.",
+          },
+          {
+            isFolder: false,
+            title: "movies.ts",
+            key: "src/lib/movies.ts",
+            description: `Methods for searching movies. These are not server functions because it is not recommended to use server functions for data fetching; moreover
 we don't use these methods in the client components, which is usually the reason to use server functions.`,
-        },
-      ],
-    },
-    {
-      isFolder: true,
-      title: "server-functions",
-      key: "src/server-functions",
-      description: `Server functions allow client components to call asynchronous functions that are executed on the server. When that function is called on the client, React will send a request to the server to execute the function, and return the result. They are used for updating data. `,
-      children: [
-        {
-          isFolder: false,
-          title: "auth.tsx",
-          key: "src/server-functions/auth.tsx",
-          description: "Implements login and logout server functions.",
-        },
-        {
-          isFolder: false,
-          title: "movies.tsx",
-          key: "src/server-functions/movies.tsx",
-          description: "Implements server functions to add, edit, and delete movies.",
-        },
-      ],
-    },
-    {
-      isFolder: true,
-      title: "types",
-      key: "src/types",
-      description: `TypeScript type definitions.`,
-      children: [
-        {
-          isFolder: false,
-          title: "globals.d.ts",
-          key: "src/types/globals.d.ts",
-          description: "Global TypeScript definitions for project-wide types without the need for explicit imports.",
-        },
-      ],
-    },
-    {
-      isFolder: false,
-      title: "middleware.ts",
-      key: "src/middleware.ts",
-      description: "Middleware for protecting routes based on authentication.",
-    },
-    {
-      isFolder: false,
-      title: "utils.ts",
-      key: "src/utils.ts",
-      description: "Shared utilities for server and client.",
-    },
-  ]}
-/>
-
+          },
+        ],
+      },
+      {
+        isFolder: true,
+        title: "server-functions",
+        key: "src/server-functions",
+        description: `Server functions allow client components to call asynchronous functions that are executed on the server. When that function is called on the client, React will send a request to the server to execute the function, and return the result. They are used for updating data. `,
+        children: [
+          {
+            isFolder: false,
+            title: "auth.tsx",
+            key: "src/server-functions/auth.tsx",
+            description: "Implements login and logout server functions.",
+          },
+          {
+            isFolder: false,
+            title: "movies.tsx",
+            key: "src/server-functions/movies.tsx",
+            description: "Implements server functions to add, edit, and delete movies.",
+          },
+        ],
+      },
+      {
+        isFolder: true,
+        title: "types",
+        key: "src/types",
+        description: `TypeScript type definitions.`,
+        children: [
+          {
+            isFolder: false,
+            title: "globals.d.ts",
+            key: "src/types/globals.d.ts",
+            description: "Global TypeScript definitions for project-wide types without the need for explicit imports.",
+          },
+        ],
+      },
+      {
+        isFolder: false,
+        title: "middleware.ts",
+        key: "src/middleware.ts",
+        description: "Middleware for protecting routes based on authentication.",
+      },
+      {
+        isFolder: false,
+        title: "utils.ts",
+        key: "src/utils.ts",
+        description: "Shared utilities for server and client.",
+      },
+    ]}
+  />
+</div>
 ## Hydration Mismatch Errors, Fixing Initial Render Flicker
 
 Sometimes in Next.js you may encounter hydration mismatch errors. Before we
