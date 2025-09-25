@@ -477,7 +477,7 @@ problem nor hydration error. I added an inline script that runs before
 React hydrates, immediately applying the correct sidebar state to the
 DOM - now the user doesn’t see the flicker. And also there is no
 hydration error because I made sure there was no difference between the
-DOM built from the server HTML (even after inline script is run) and
+DOM built from the server HTML (after inline script is run) and
 what was rendered during hydration. The solution is in the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>) file
 and is based on this
 [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
