@@ -381,7 +381,7 @@ Next.js runs JavaScript on the client to make the page fully interactive
 — a process called hydration.
 
 A hydration mismatch error happens when the HTML produced on the server doesn’t
-match what React renders on the client during hydration.
+match what React renders (in memory) on the client during hydration.
 
 You can get such error if your rendering process is based on information that is
 only available on the client side, such as local storage. But there can
@@ -416,11 +416,10 @@ children or content important for SEO.
 
 ### My Case: Sidebar State
 
-In my case I have sidebar state which I store in local storage and need it in some
-components such as the
-[`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
-Consider below approach of reading this value from local storage directly in the
-`useState` initializer function in my layout file:
+In my case I store information whether sidebar is open or not in local storage
+and need it in some components such as the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
+If I were to read this value from local storage directly in the
+`useState` initializer function in my layout file as shown here:
 
 ```
 export default function Layout() {
@@ -438,10 +437,10 @@ export default function Layout() {
 
 ```
 
-If I used this approach, it could cause hydration mismatch error: during SSR, `sidebarOpen` would be `false`, and
+it could cause hydration mismatch error: during SSR, `sidebarOpen` would be `false`, and
 on the first render during hydration it could be `true`, which would result in
 different render output. Besides I am not sure if reading local storage
-in `useState` initializer function is advised since this function has to be pure based on the docs.
+in `useState` initializer function is considered pure and the initializer has to be pure based on the docs.
 
 Also I would not be able to fix this using fix from the previous section which skips SSR for the component,
 because it would opt out children of layout from SSR too, which is
