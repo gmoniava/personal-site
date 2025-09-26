@@ -445,7 +445,7 @@ result in different render output.
 function should be a pure function and I am not sure if reading local
 storage inside it is considered pure.
 
-Also I would not be able to fix this using fix from the previous section which skips SSR for the component,
+Also I would not be able to fix the hydration error using fix from the previous section which skips SSR for the component,
 because it would opt out children of layout from SSR too, which is
 basically my whole app.
 
