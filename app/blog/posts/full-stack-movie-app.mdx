@@ -380,12 +380,12 @@ as quickly as possible. Once this initial HTML arrives in the browser,
 Next.js runs JavaScript on the client to make the page fully interactive
 — a process called hydration. Hydration mainly happens in two steps:
 
-- React uses the same component tree (that was used during SSR) on the client during hydration and renders it in memory,
-  and then checks that this output matches the HTML sent from the server.
-- React will attach event listeners to the HTML to make it interactive.
+- React uses the same component tree (that was used during SSR) on the
+  client and renders it in memory and then checks that this output matches the HTML sent from the server.
+- React will attach event listeners to the HTML sent by the server to make it interactive.
 
 A hydration mismatch error happens when the first step above is not satisfied:
-the HTML produced on the server doesn’t match what React renders (in memory) on the client during hydration.
+the HTML produced on the server doesn’t match what React renders in memory on the client during hydration.
 
 One of the reasons why such error may happen is if your rendering process
 is based on information that is only available on the client side, such as local storage.
@@ -442,12 +442,13 @@ export default function Layout() {
 ```
 
 However, this approach has two problems:
+
 - Hydration mismatch error: during SSR, `showSidebar` would be `false`,
-and on the first render during hydration it could be `true`, which would
-result in different render output.
+  and on the first render during hydration it could be `true`, which would
+  result in different render output.
 - Purity: According to the React docs, the `useState` initializer
-function should be a pure function and I am not sure if reading local
-storage inside it is considered pure.
+  function should be a pure function and I am not sure if reading local
+  storage inside it is considered pure.
 
 Also I would not be able to fix the hydration error using fix from the previous section which skips SSR for the component,
 because it would opt out children of layout from SSR too, which is
