@@ -378,15 +378,19 @@ page but without the JavaScript logic that makes it interactive. The
 reason this is done is to give the user something meaningful to look at
 as quickly as possible. Once this initial HTML arrives in the browser,
 Next.js runs JavaScript on the client to make the page fully interactive
-— a process called hydration.
+— a process called hydration. Hydration mainly happens in two steps:
 
-A hydration mismatch error happens when the HTML produced on the server doesn’t
-match what React renders (in memory) on the client during hydration.
+- React uses the same component tree (that was used during SSR) on the client during hydration and renders it in memory,
+  and then checks that this output matches the HTML sent from the server.
+- React will attach event listeners to the HTML to make it interactive.
 
-You can get such error if your rendering process is based on information that is
-only available on the client side, such as local storage. But there can
-also be other reasons. During SSR such client information is not available,
-hence the render output you get during SSR may be different from the render output you get on the client.
+A hydration mismatch error happens when the first step above is not satisfied:
+the HTML produced on the server doesn’t match what React renders (in memory) on the client during hydration.
+
+One of the reasons why such error may happen is if your rendering process
+is based on information that is only available on the client side, such as local storage.
+But there can also be other reasons. During SSR such client information is not available, so
+the HTML produced on the server may differ from the in-memory render created during hydration on the client.
 
 One solution to fix such error is to skip SSR for the component entirely:
 
