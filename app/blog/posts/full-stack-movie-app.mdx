@@ -418,8 +418,8 @@ children or content important for SEO.
 
 In my case I store information whether sidebar is open or not in local storage
 and need it in some components such as the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
-If I were to read this value from local storage directly in the
-`useState` initializer function in my layout file as shown here:
+I could read this value from local storage directly in `useState`
+initializer function as shown below::
 
 ```
 export default function Layout() {
@@ -437,10 +437,13 @@ export default function Layout() {
 
 ```
 
-it could cause hydration mismatch error: during SSR, `showSidebar` would be `false`, and
-on the first render during hydration it could be `true`, which would result in
-different render output. Besides I am not sure if reading local storage
-in `useState` initializer function is considered pure and the initializer has to be pure based on the docs.
+However, this approach has two problems:
+- Hydration mismatch error: during SSR, `showSidebar` would be `false`,
+and on the first render during hydration it could be `true`, which would
+result in different render output.
+- Purity: According to the React docs, the `useState` initializer
+function should be a pure function and I am not sure if reading local
+storage inside it is considered pure.
 
 Also I would not be able to fix this using fix from the previous section which skips SSR for the component,
 because it would opt out children of layout from SSR too, which is
