@@ -380,9 +380,13 @@ as quickly as possible. Once this initial HTML arrives in the browser,
 Next.js runs JavaScript on the client to make the page fully interactive
 — a process called hydration. Hydration mainly happens in two steps:
 
-- React uses the same component tree (that was used during SSR) on the
-  client and renders it in memory and then checks that this output matches the HTML sent from the server.
-- React will attach event listeners to the HTML sent by the server to make it interactive.
+- React uses the same component tree that was used during SSR and renders it again
+  on the client in memory (no DOM nodes are generated) and then checks that this output matches the HTML sent from the server.
+  The reason why such check is performed is explained in the [docs](https://react.dev/reference/react-dom/client/hydrateRoot):
+
+  > This is important for the user experience. The user will spend some time looking at the server-generated HTML before your JavaScript code loads. Server rendering creates an illusion that the app loads faster by showing the HTML snapshot of its output. Suddenly showing different content breaks that illusion. This is why the server render output must match the initial render output on the client.
+
+- React will make the HTML sent by the server interactive (e.g. attach event listeners).
 
 A hydration mismatch error happens when the first step above is not satisfied:
 the HTML produced on the server doesn’t match what React renders in memory on the client during hydration.
