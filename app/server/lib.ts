@@ -4,6 +4,7 @@ import path from "path";
 type Metadata = {
   title: string;
   date: string;
+  lastUpdated?: string;
   summary: string;
   image?: string;
   tags: string[];
@@ -88,6 +89,8 @@ function getMDXData(dir) {
 }
 
 export function getBlogPosts() {
-  const allPosts = getMDXData(path.join(process.cwd(), "app", "blog", "posts"));
+  const postsDir = path.join(process.cwd(), "app", "blog", "posts");
+  const allPosts = getMDXData(postsDir);
+
   return { posts: allPosts, total: allPosts.length };
 }
