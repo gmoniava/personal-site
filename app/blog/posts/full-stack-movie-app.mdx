@@ -372,14 +372,14 @@ Sometimes in Next.js you may encounter hydration mismatch errors. Before we
 understand what these errors are, let's first briefly review what
 hydration means.
 
-In a Next.js app, when you visit a page which uses server side rendering
-(SSR), that page is pre-rendered on the server and the resulting HTML is
-sent to the client. This HTML contains the content and structure of the
-page but without the JavaScript logic that makes it interactive. The
-reason this is done is to give the user something meaningful to look at
-as quickly as possible. Once this initial HTML arrives in the browser,
-Next.js runs JavaScript on the client to make the page fully interactive
-— a process called hydration. Hydration mainly happens in two steps:
+In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
+those components are pre-rendered on the server and the resulting HTML is sent to the client.
+This HTML contains the content and structure of the page but without the JavaScript logic that makes it interactive.
+The reason this is done is to give the user something meaningful to look at as quickly as possible. Once
+this initial HTML arrives in the browser, Next.js runs JavaScript for the Client Components to make them
+fully interactive — a process called hydration. For Server Components, however, the story is different:
+they are fully rendered on the server (using special data format) and their JavaScript is never sent to the client.
+Hydration mainly happens in two steps:
 
 - React uses the same component tree that was used during SSR and renders it again
   on the client in memory (no DOM nodes are generated) and then checks that this output matches the HTML sent from the server.
@@ -530,4 +530,4 @@ middleware such that it ignores server functions. I do auth checks in server fun
 
 ## Source Code
 
-You can find the source code [here](https://github.com/gmoniava/movie-app).  
+You can find the source code [here](https://github.com/gmoniava/movie-app).
