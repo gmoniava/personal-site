@@ -374,7 +374,8 @@ hydration means.
 
 In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
 those components are pre-rendered on the server and the resulting HTML is sent to the client.
-This HTML contains the content and structure of the page but without the JavaScript logic that makes it interactive.
+This HTML contains the content and structure of the page but without the JavaScript logic that makes it interactive;
+the JavaScript required for Client Components is downloaded later.
 The reason this is done is to give the user something meaningful to look at as quickly as possible. Once
 this initial HTML arrives in the browser, Next.js runs JavaScript for the Client Components to make them
 fully interactive — a process called hydration. For Server Components, however, the story is different:
