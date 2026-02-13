@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import { compileMDX } from "next-mdx-remote/rsc";
 import { highlight } from "sugar-high";
 import React from "react";
 import TreeWithDescriptions from "app/components/client/tree-with-descriptions";
@@ -103,7 +103,7 @@ function createHeading(level) {
           className: "anchor",
         }),
       ],
-      children
+      children,
     );
   };
 
@@ -133,6 +133,16 @@ let components = {
   Alert,
 };
 
-export function CustomMDX(props) {
-  return <MDXRemote {...props} components={{ ...components, ...(props.components || {}) }} />;
+export async function CustomMDX(props: { source: string; components?: Record<string, any> }) {
+  const { content } = await compileMDX({
+    source: props.source,
+    components: { ...components, ...(props.components || {}) },
+    options: {
+      blockJS: false,
+      blockDangerousJS: true,
+      parseFrontmatter: true,
+    },
+  });
+
+  return content;
 }
