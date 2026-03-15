@@ -50,19 +50,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={cx(
         "text-neutral-800 bg-white dark:text-neutral-200 dark:bg-gray-900",
         GeistSans.variable,
-        GeistMono.variable
+        GeistMono.variable,
       )}
     >
-      <body className="antialiased max-w-[630px] mx-4 mt-8 lg:mx-auto">
-        <main className="mt-6 flex flex-col px-2 md:px-0">
-          <ThemeProvider attribute="class" storageKey="personal-website-theme">
+      <body className="antialiased max-w-[630px] mx-4 lg:mx-auto">
+        <ThemeProvider attribute="class" storageKey="personal-website-theme">
+          <div className="flex min-h-screen flex-col pt-8">
             <Navbar />
-            {children}
+
+            <main className="flex-1 px-2 md:px-0">{children}</main>
+
             <Footer />
             <Analytics />
             <SpeedInsights />
-          </ThemeProvider>
-        </main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
