@@ -1,0 +1,145 @@
+---
+title: "How to Make SQL Easier to Understand for Developers"
+date: "2026-10-13T16:00:00Z"
+summary: "A way to understand SQL concepts by translating queries into familiar JavaScript code."
+tags: ["software-development"]
+---
+
+I have mostly been a frontend developer, but recently I got interested in full-stack work.
+
+Along the way, I discovered a nice way to grasp SQL concepts, which works if you are already a developer: look at the equivalent code (AI can write it for you) for the SQL concept or query you are trying to understand.
+
+## First Example: GROUP BY with SUM and COUNT
+
+Let's take this example:
+
+```sql
+SELECT
+    customer,
+    SUM(amount) AS total_spent,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY customer;
+```
+
+Not sure what this query does?
+It shows, for each customer, how much they spent in total and how many orders they placed.
+Here's the equivalent JavaScript:
+
+```js
+// Let's assume this is the table data
+const orders = [
+  { customer: "Alice", amount: 120 },
+  { customer: "Bob", amount: 80 },
+  { customer: "Alice", amount: 50 },
+  { customer: "Bob", amount: 200 },
+  { customer: "Carol", amount: 75 },
+  { customer: "Alice", amount: 30 },
+];
+
+const groups = {};
+
+for (const order of orders) {
+  // SQL: GROUP BY customer
+  // Create a group the first time we see a customer.
+  if (!groups[order.customer]) {
+    groups[order.customer] = {
+      customer: order.customer,
+      total_spent: 0,
+      order_count: 0,
+    };
+  }
+
+  // SQL: SUM(amount)
+  // Accumulate the total amount spent by this customer.
+  groups[order.customer].total_spent += order.amount;
+
+  // SQL: COUNT(*)
+  // Count how many orders belong to this customer.
+  groups[order.customer].order_count += 1;
+}
+
+// One row per customer, like a query result
+const result = Object.values(groups);
+```
+
+Here is what `result` contains:
+
+```js
+[
+  { customer: "Alice", total_spent: 200, order_count: 3 },
+  { customer: "Bob", total_spent: 280, order_count: 2 },
+  { customer: "Carol", total_spent: 75, order_count: 1 },
+];
+```
+
+So if you are familiar with the JS constructs used here, I hope it was easier to understand what this code does as compared to the query.
+
+## Another Example: LEFT JOIN
+
+Let's look at another SQL concept: `LEFT JOIN`.
+
+Imagine we have two tables: `customers` and `orders`.
+
+Here's the SQL:
+
+```sql
+SELECT
+    customers.name,
+    orders.product
+FROM customers
+LEFT JOIN orders
+    ON customers.id = orders.customer_id;
+```
+
+Not sure what this query does?
+It lists all customers along with the products they ordered, including customers who haven't placed any orders yet.
+Here's the equivalent JavaScript:
+
+```js
+// Let's assume these are our two tables
+const customers = [
+  { id: 1, name: "Alice", email: "alice@example.com" },
+  { id: 2, name: "Bob", email: "bob@example.com" },
+  { id: 3, name: "Carol", email: "carol@example.com" },
+];
+
+const orders = [
+  { customer_id: 1, product: "Keyboard", amount: 120 },
+  { customer_id: 1, product: "Mouse", amount: 50 },
+  { customer_id: 2, product: "Monitor", amount: 80 },
+];
+
+const result = [];
+
+for (const customer of customers) {
+  // SQL: ON customers.id = orders.customer_id
+  const matchingOrders = orders.filter((order) => order.customer_id === customer.id);
+
+  // SQL: LEFT JOIN, keep the customer even with no orders
+  if (matchingOrders.length === 0) {
+    result.push({ name: customer.name, product: null });
+  }
+
+  for (const order of matchingOrders) {
+    result.push({ name: customer.name, product: order.product });
+  }
+}
+```
+
+Here's what `result` contains:
+
+```js
+[
+  { name: "Alice", product: "Keyboard" },
+  { name: "Alice", product: "Mouse" },
+  { name: "Bob", product: "Monitor" },
+  { name: "Carol", product: null },
+];
+```
+
+That's essentially what `LEFT JOIN` does: for each row in the left table, it adds a row to the result for every matching row in the right table. If there are no matches, it still returns one row, with `NULL` values for the columns from the right table.
+
+And here's something interesting: if we remove the `if (matchingOrders.length === 0)` block, we get the equivalent of an `INNER JOIN`. Only customers with matching orders would appear in the result.
+
+These JavaScript examples should give you a good understanding of the SQL concepts, even if a few edge cases work slightly differently. For example, SQL's `SUM()` returns `NULL` when all values are `NULL`, while the JavaScript version above would return `0`.
