@@ -412,16 +412,16 @@ export default function SampleComponent() {
 
    if(!isClient) return null;
 
-   return <h1>Hello World</h1>
+  return <h1>{new Date().toLocaleString()}</h1>
 }
 
 ```
 
-This works because `useEffect` only runs on the client. On the server,
-`isClient` is `false`, so the component returns `null` and effectively
-no HTML is generated. While this approach often resolves hydration
-errors, it also disables SSR for the component and all of its children.
-Such trade-off can be problematic for components which have many
+This works because `useEffect` only runs on the client. On the server
+and during the initial client render, `isClient` is `false`, so the component returns `null`,
+ensuring the HTML matches and avoiding potential hydration mismatches.
+However, this approach also prevents the component and all of its children (if there are any) from being server-rendered.
+Such a trade-off can be problematic for components that have many
 children or content important for SEO.
 
 ### My Case: Sidebar State
