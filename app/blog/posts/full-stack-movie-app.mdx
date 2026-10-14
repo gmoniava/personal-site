@@ -418,8 +418,9 @@ export default function SampleComponent() {
 ```
 
 This works because `useEffect` only runs on the client. On the server
-and during the initial client render, `isClient` is `false`, so the component returns `null`,
-ensuring the HTML matches and avoiding potential hydration mismatches.
+and during the initial client render, `isClient` is `false`,
+so the component renders nothing in both cases. Because the server-rendered output and the initial
+client-rendered output are identical, React can hydrate the component without a hydration mismatch.
 However, this approach also prevents the component and all of its children (if there are any) from being server-rendered.
 Such a trade-off can be problematic for components that have many
 children or content important for SEO.
