@@ -6,7 +6,7 @@ import Toggle from "./theme-toggle";
 
 const navItems = {
   "/": { name: "Home" },
-  "/about": { name: "About" },
+  "/blog": { name: "Blog" },
 };
 
 export function Navbar() {
@@ -18,11 +18,12 @@ export function Navbar() {
         <nav className="flex flex-row items-center relative px-0 pb-0 fade scroll-pr-6 md:relative" id="nav">
           <div className="flex-1">
             {Object.entries(navItems).map(([path, { name }]) => {
-              const isActive = pathname === path;
+              const isActive = pathname === path || (path === "/blog" && pathname.startsWith("/blog/"));
               return (
                 <Link
                   key={path}
                   href={path}
+                  aria-current={isActive ? "page" : undefined}
                   className={`transition-all hover:text-neutral-800 dark:hover:text-neutral-200 relative py-1 px-2 m-1 ${
                     isActive ? "underline underline-offset-4 font-medium" : ""
                   }`}
