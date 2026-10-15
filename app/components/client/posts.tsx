@@ -91,6 +91,7 @@ export default function BlogPosts({ blogs }: any) {
       <div className="py-4 mb-4">
         <Select
           isMulti
+          hideSelectedOptions={false}
           // iirc this was added to silence warning
           // https://stackoverflow.com/questions/61290173/react-select-how-do-i-resolve-warning-prop-id-did-not-match
           instanceId={selectId}
@@ -99,6 +100,7 @@ export default function BlogPosts({ blogs }: any) {
           styles={{
             option: (styles, state) => ({
               ...styles,
+              paddingLeft: state.data.parent ? 32 : 12,
               cursor: "pointer",
             }),
             control: (styles) => ({
