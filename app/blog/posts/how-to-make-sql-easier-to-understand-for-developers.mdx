@@ -75,6 +75,105 @@ Here is what `result` contains:
 
 Hopefully, these examples made the query a little easier to understand if you're familiar with JavaScript.
 
+ ## Next Example: HAVING
+ 
+ Let's use the same `orders` table from the first example and a similar query.
+ 
+ ```sql
+ SELECT
+     customer,
+     SUM(amount) AS total_spent
+ FROM orders
+ GROUP BY customer
+ HAVING SUM(amount) > 100;
+ ```
+ 
+ Not sure what this query does? It groups the orders by customer, calculates each customer's total, and then keeps only the customers whose total is above 100. Here's the equivalent JavaScript:
+ 
+ ```js
+ // Same table data as before
+ const orders = [
+   { customer: "Alice", amount: 120 },
+   { customer: "Bob", amount: 80 },
+   { customer: "Alice", amount: 50 },
+   { customer: "Bob", amount: 200 },
+   { customer: "Carol", amount: 75 },
+   { customer: "Alice", amount: 30 },
+ ];
+ 
+ const groups = {};
+ 
+ for (const order of orders) {
+   // SQL: GROUP BY customer
+   if (!groups[order.customer]) {
+     groups[order.customer] = { customer: order.customer, total_spent: 0 };
+   }
+ 
+   // SQL: SUM(amount)
+   groups[order.customer].total_spent += order.amount;
+ }
+ 
+ // SQL: HAVING SUM(amount) > 100
+ // Filter the groups AFTER they have been built.
+ const result = Object.values(groups).filter((group) => group.total_spent > 100);
+ ```
+ 
+ Here is what `result` contains:
+ 
+ ```js
+ [
+   { customer: "Alice", total_spent: 200 },
+   { customer: "Bob", total_spent: 280 },
+ ];
+ ```
+ 
+ Carol is gone because her total (75) is not above 100.
+ 
+ ### HAVING vs. WHERE
+ 
+ Here's the interesting part. `WHERE` also filters, but it runs at a different moment. Compare this query:
+ 
+ ```sql
+ SELECT
+     customer,
+     SUM(amount) AS total_spent
+ FROM orders
+ WHERE amount > 100
+ GROUP BY customer;
+ ```
+Equivalent JavaScript:
+
+ ```js
+ const groups = {};
+ 
+ for (const order of orders) {
+   // SQL: WHERE amount > 100
+   // Filter the individual rows BEFORE grouping.
+   if (order.amount <= 100) continue;
+ 
+   if (!groups[order.customer]) {
+     groups[order.customer] = { customer: order.customer, total_spent: 0 };
+   }
+ 
+   groups[order.customer].total_spent += order.amount;
+ }
+ 
+ const result = Object.values(groups);
+ ```
+ 
+ Here is what `result` contains:
+ 
+ ```js
+ [
+   { customer: "Alice", total_spent: 120 },
+   { customer: "Bob", total_spent: 200 },
+ ];
+ ```
+ 
+ Notice that Alice's total is now 120 instead of 200, because her orders of 50 and 30 were thrown away before the sum was calculated.
+ 
+ The rule of thumb is simple: `WHERE` filters rows *before* grouping, and `HAVING` filters groups *after* grouping.
+
 ## Another Example: LEFT JOIN
 
 Let's look at another SQL concept: `LEFT JOIN`.
