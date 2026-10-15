@@ -71,10 +71,10 @@ function Code({ children, isBlock, ...props }) {
 
 function Pre({ children, ...props }) {
   const codeChild = React.Children.only(children);
-  const codeString = codeChild.props.children;
+  // Normalize Windows line endings before highlighting to avoid extra rendered lines.
+  const codeString = codeChild.props.children.replace(/\r\n?/g, "\n");
 
-  // Highlight the code and remove newlines
-  const highlightedHTML = highlight(codeString); //.replace(/\n/g, "");
+  const highlightedHTML = highlight(codeString);
 
   return <pre {...props} className="" dangerouslySetInnerHTML={{ __html: highlightedHTML }} />;
 }

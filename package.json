@@ -21,7 +21,7 @@
     "react-dom": "18.2.0",
     "react-select": "^5.10.1",
     "react-switch": "^7.1.0",
-    "sugar-high": "^0.6.0",
+    "sugar-high": "^2.6.0",
     "tailwindcss": "^4.1.8",
     "typescript": "5.3.3"
   }
