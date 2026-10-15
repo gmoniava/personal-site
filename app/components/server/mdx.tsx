@@ -71,7 +71,9 @@ function Code({ children, isBlock, ...props }) {
 
 function Pre({ children, ...props }) {
   const codeChild = React.Children.only(children);
-  // Normalize Windows line endings before highlighting to avoid extra rendered lines.
+  // Windows uses two characters (\r\n) for one line break. Sugar-high separates them
+  // in its HTML, so the browser shows two breaks. Convert them to one \n first;
+  // Linux line breaks are already \n and stay unchanged.
   const codeString = codeChild.props.children.replace(/\r\n?/g, "\n");
 
   const highlightedHTML = highlight(codeString);
