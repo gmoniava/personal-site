@@ -6,12 +6,12 @@ export default function Page() {
     <div>
       <h1 className="mb-4 font-semibold">Hi, I’m Giorgi.</h1>
       <p className="mb-4 leading-relaxed">
-        I’m a software developer based in Tbilisi, Georgia. For now, this site is mainly a blog where I write
-        about software development and other topics that interest me.
+        I’m a software developer based in Tbilisi, Georgia. For now, this site is mainly a blog where I write about
+        software development and other topics that interest me.
       </p>
       <p className="mb-8">
         <Link href="/blog" className="text-blue-600 dark:text-blue-400 underline underline-offset-2">
-          Read my blog →
+          Read my blog
         </Link>
       </p>
       <ClientSideEmail />
