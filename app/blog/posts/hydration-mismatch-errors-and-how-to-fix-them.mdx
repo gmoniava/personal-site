@@ -195,6 +195,8 @@ the user sees the sidebar already open. React then initializes
 `showSidebar` to `true` and renders those same classes. The DOM React hydrates already
 matches its initial render, and there is no effect-driven update from closed to open.
 
+#### Another Issue: The Mobile Backdrop
+
 The mobile sidebar also needed a dark backdrop. Conditionally rendering that backdrop based on the saved sidebar state
 could cause a hydration mismatch: it would be absent from the server HTML but expected on the first client render, while
 the inline script only updates classes. To avoid this, I used a backdrop element that is always present in the HTML and
