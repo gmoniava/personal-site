@@ -1,0 +1,209 @@
+---
+title: "What Is a Hydration Mismatch Error and How Do You Fix It?"
+date: "2026-10-16T10:00:00Z"
+summary: "Understanding hydration mismatch errors and what to do about them."
+tags: ["software-development", "react", "nextjs"]
+---
+
+In React apps that use server-side rendering, you may encounter hydration mismatch errors. We'll use Next.js as an example here.
+
+In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
+those components are pre-rendered on the server and the resulting HTML is sent to the client.
+This HTML contains the content and structure of the page but without the JavaScript logic that makes it interactive;
+the JavaScript required for Client Components is downloaded later.
+The reason this is done is to give the user something meaningful to look at as quickly as possible. Once
+this initial HTML arrives in the browser, Next.js runs JavaScript for the Client Components to make them
+fully interactive - a process called hydration.
+
+For Server Components, however, the story is different:
+they are fully rendered on the server (using special data format) and their JavaScript is never sent to the client.
+
+Hydration mainly happens in two steps:
+
+- React uses the same component tree that was used during SSR and renders it again
+  on the client in memory (no DOM nodes are generated) and then checks that this output matches the HTML sent from the server.
+  The reason why such check is performed is explained in the [docs](https://react.dev/reference/react-dom/client/hydrateRoot):
+
+  > This is important for the user experience. The user will spend some time looking at the server-generated HTML before your JavaScript code loads. Server rendering creates an illusion that the app loads faster by showing the HTML snapshot of its output. Suddenly showing different content breaks that illusion. This is why the server render output must match the initial render output on the client.
+
+- React will make the HTML sent by the server interactive (e.g. attach event listeners).
+
+A hydration mismatch error happens when the first step above is not satisfied:
+the HTML produced on the server doesn’t match what React renders in memory on the client during hydration.
+
+One of the reasons why such error may happen is if your rendering process
+is based on information that is only available on the client side, such as local storage.
+But there can also be other reasons. During SSR such client information is not available, so
+the HTML produced on the server may differ from the in-memory render created during hydration on the client.
+
+One solution is to render nothing on the server and on the first client render,
+then show the real content after the component mounts:
+
+```
+import { useState, useEffect } from 'react'
+
+export default function SampleComponent() {
+   const [isClient, setIsClient] = useState(false)
+
+   useEffect(() => {
+     setIsClient(true)
+   }, [])
+
+   if(!isClient) return null;
+
+  return <h1>{new Date().toLocaleString()}</h1>
+}
+
+```
+
+This works because `useEffect` only runs on the client. On the server
+and during the initial client render, `isClient` is `false`,
+so the component renders nothing in both cases. Because the server-rendered output and the initial
+client-rendered output are identical, React can hydrate the component without a hydration mismatch.
+However, this approach also prevents the component and all of its children (if there are any) from being server-rendered.
+Such a trade-off can be problematic for components that have many
+children or content important for SEO.
+
+### My Case: Sidebar State
+
+I encountered this issue while building a [full-stack movie app with Next.js and PostgreSQL](/blog/full-stack-movie-app).
+In that app, I store whether the sidebar is open or not in local storage
+and need it in some components such as the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
+I could read this value from local storage directly in `useState`
+initializer function as shown below:
+
+```
+export default function Layout() {
+  // I don't recommend this approach. It can cause hydration errors.
+  // Also IMHO reading localStorage here makes the initializer function impure.
+  // Based on the docs, that function should be pure.
+  const [showSidebar, setShowSidebar] = useState(() => {
+    if (typeof window === "undefined") return false; // SSR fallback
+    const stored = localStorage.getItem("sidebarOpen");
+    return stored ? JSON.parse(stored) : false;
+  });
+
+  // ...
+}
+
+```
+
+However, this approach has two problems:
+
+- Hydration mismatch error: during SSR, `showSidebar` would be `false`,
+  and on the first render during hydration it could be `true`, which would
+  result in different render output.
+- Purity: According to the React docs, the `useState` initializer
+  function should be a pure function and I am not sure if reading local
+  storage inside it is considered pure.
+
+Also I would not be able to fix the hydration error using fix from the previous section which skips SSR for the component,
+because it would opt out children of layout from SSR too, which is
+basically my whole app.
+
+So I decided to use another approach, which was to read the value of the
+sidebar from local storage in `useEffect` instead of `useState` initializer
+function.
+This does not cause hydration error because `useEffect` runs _after_ hydration
+and the initial `false` value is the same during SSR and the first render during hydration.
+
+```
+export default function Layout() {
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  // Read localStorage after the component mounts
+  useEffect(() => {
+    const stored = localStorage.getItem("sidebarOpen");
+    if (stored) {
+      setShowSidebar(JSON.parse(stored));
+    }
+  }, []);
+
+  // ...
+}
+
+```
+
+However, this approach had another problem, it caused a brief "flicker" initially as the sidebar
+state updated from closed to open after `useEffect` was run.
+
+The approach I used was to apply the saved sidebar state with an inline script before
+React hydrates, then have React use that same state for its initial render.
+It is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
+Here are the main parts of the solution.
+
+#### Apply the Saved State Before Hydration
+
+The inline script reads local storage, updates the relevant classes, and saves the value
+on `window` for React to read later.
+
+```jsx
+function initializeSidebar() {
+  const showSidebar = localStorage.getItem("movie-app-sidebar") === "true";
+
+  // Get layout and sidebar elements
+  const layout = document.querySelector("[data-layout]");
+  const sidebar = document.querySelector("[data-sidebar]");
+
+  if (layout && sidebar) {
+    if (showSidebar) {
+      // Apply sidebar open styles
+      layout.classList.add("sm:ml-64");
+      sidebar.classList.add("left-0", "opacity-100");
+    } else {
+      // Apply sidebar closed styles
+      layout.classList.remove("sm:ml-64");
+      sidebar.classList.remove("left-0", "opacity-100");
+    }
+  }
+  // Store sidebar state for react to read later
+  window._INITIAL_SIDEBAR_STATE_ = showSidebar;
+}
+
+function InlineScript() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `(${initializeSidebar.toString()})()`,
+      }}
+    />
+  );
+}
+```
+
+The `InlineScript` component is then rendered in `Layout`.
+
+#### Use the Same State in React
+
+In `Layout`, this is how we read the initial sidebar state now:
+
+```jsx
+const [showSidebar, setShowSideBar] = React.useState(() => {
+  // During server side rendering there is no window
+  if (typeof window === "undefined") {
+    return false;
+  }
+  // Read the sidebar state that we used during the inline script.
+  // We stored the sidebar state in window._INITIAL_SIDEBAR_STATE_ because it is considered pure imho
+  // to read from it here because window._INITIAL_SIDEBAR_STATE_ will not be modified after we read it
+  // (see here also: https://gist.github.com/sebmarkbage/75f0838967cd003cd7f9ab938eb1958f#forbidden).
+  // I am not sure if reading local storage instead here would also be considered pure.
+  // This way now the rendered page after inline script and what react expects during hydration match.
+  return window._INITIAL_SIDEBAR_STATE_;
+});
+```
+
+For example, if the saved value is `true`, the server sends the closed-sidebar markup,
+but the script adds the open-sidebar classes before hydration. When this happens before the browser's first paint,
+the user sees the sidebar already open. React then initializes
+`showSidebar` to `true` and renders those same classes. The DOM React hydrates already
+matches its initial render, and there is no effect-driven update from closed to open.
+
+The mobile sidebar also needed a dark backdrop. Conditionally rendering that backdrop based on the saved sidebar state
+could cause a hydration mismatch: it would be absent from the server HTML but expected on the first client render, while
+the inline script only updates classes. To avoid this, I used a backdrop element that is always present in the HTML and
+whose visibility is controlled by CSS. Adding `group` to the sidebar and `hidden group-[.left-0]:block` to the backdrop
+makes it appear when the inline script adds `left-0` to the sidebar. The backdrop stays hidden on medium screens
+and larger, where it is not needed.
+
+You can find the rest of the implementation in [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).

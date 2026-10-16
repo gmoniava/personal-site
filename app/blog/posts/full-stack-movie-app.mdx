@@ -1,7 +1,7 @@
 ---
 title: "Full Stack Web App Built with Next.js App Router and PostgreSQL"
 date: "2025-07-03T10:00:00Z"
-lastUpdated: "2025-10-09T10:00:00Z"
+lastUpdated: "2026-10-16T10:00:00Z"
 summary: "Overview of a full-stack Next.js web app implementaton and some issues faced."
 tags: ["software-development", "react", "nextjs", "postgresql"]
 ---
@@ -368,134 +368,9 @@ we don't use these methods in the client components, which is usually the reason
 </div>
 ## Hydration Mismatch Errors, Fixing Initial Render Flicker
 
-Sometimes in Next.js you may encounter hydration mismatch errors. Before we
-understand what these errors are, let's first briefly review what
-hydration means.
-
-In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
-those components are pre-rendered on the server and the resulting HTML is sent to the client.
-This HTML contains the content and structure of the page but without the JavaScript logic that makes it interactive;
-the JavaScript required for Client Components is downloaded later.
-The reason this is done is to give the user something meaningful to look at as quickly as possible. Once
-this initial HTML arrives in the browser, Next.js runs JavaScript for the Client Components to make them
-fully interactive — a process called hydration. For Server Components, however, the story is different:
-they are fully rendered on the server (using special data format) and their JavaScript is never sent to the client.
-Hydration mainly happens in two steps:
-
-- React uses the same component tree that was used during SSR and renders it again
-  on the client in memory (no DOM nodes are generated) and then checks that this output matches the HTML sent from the server.
-  The reason why such check is performed is explained in the [docs](https://react.dev/reference/react-dom/client/hydrateRoot):
-
-  > This is important for the user experience. The user will spend some time looking at the server-generated HTML before your JavaScript code loads. Server rendering creates an illusion that the app loads faster by showing the HTML snapshot of its output. Suddenly showing different content breaks that illusion. This is why the server render output must match the initial render output on the client.
-
-- React will make the HTML sent by the server interactive (e.g. attach event listeners).
-
-A hydration mismatch error happens when the first step above is not satisfied:
-the HTML produced on the server doesn’t match what React renders in memory on the client during hydration.
-
-One of the reasons why such error may happen is if your rendering process
-is based on information that is only available on the client side, such as local storage.
-But there can also be other reasons. During SSR such client information is not available, so
-the HTML produced on the server may differ from the in-memory render created during hydration on the client.
-
-One solution to fix such error is to skip SSR for the component entirely:
-
-```
-import { useState, useEffect } from 'react'
-
-export default function SampleComponent() {
-   const [isClient, setIsClient] = useState(false)
-
-   useEffect(() => {
-     setIsClient(true)
-   }, [])
-
-   if(!isClient) return null;
-
-  return <h1>{new Date().toLocaleString()}</h1>
-}
-
-```
-
-This works because `useEffect` only runs on the client. On the server
-and during the initial client render, `isClient` is `false`,
-so the component renders nothing in both cases. Because the server-rendered output and the initial
-client-rendered output are identical, React can hydrate the component without a hydration mismatch.
-However, this approach also prevents the component and all of its children (if there are any) from being server-rendered.
-Such a trade-off can be problematic for components that have many
-children or content important for SEO.
-
-### My Case: Sidebar State
-
-In my case I store information whether sidebar is open or not in local storage
-and need it in some components such as the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
-I could read this value from local storage directly in `useState`
-initializer function as shown below:
-
-```
-export default function Layout() {
-  // I don't recommend this approach. It can cause hydration errors.
-  // Also IMHO reading localStorage here makes the initializer function impure.
-  // Based on the docs, that function should be pure.
-  const [showSidebar, setShowSidebar] = useState(() => {
-    if (typeof window === "undefined") return false; // SSR fallback
-    const stored = localStorage.getItem("sidebarOpen");
-    return stored ? JSON.parse(stored) : false;
-  });
-
-  // ...
-}
-
-```
-
-However, this approach has two problems:
-
-- Hydration mismatch error: during SSR, `showSidebar` would be `false`,
-  and on the first render during hydration it could be `true`, which would
-  result in different render output.
-- Purity: According to the React docs, the `useState` initializer
-  function should be a pure function and I am not sure if reading local
-  storage inside it is considered pure.
-
-Also I would not be able to fix the hydration error using fix from the previous section which skips SSR for the component,
-because it would opt out children of layout from SSR too, which is
-basically my whole app.
-
-So I decided to use another approach, which was to read the value of the
-sidebar from local storage in `useEffect` instead of `useState` initializer
-function.
-This does not cause hydration error because `useEffect` runs _after_ hydration
-and the initial `false` value is the same during SSR and the first render during hydration.
-
-```
-export default function Layout() {
-  const [showSidebar, setShowSidebar] = useState(false);
-
-  // Read localStorage after the component mounts
-  useEffect(() => {
-    const stored = localStorage.getItem("sidebarOpen");
-    if (stored) {
-      setShowSidebar(JSON.parse(stored));
-    }
-  }, []);
-
-  // ...
-}
-
-```
-
-However, this approach had another problem, it caused a brief "flicker" initially as the sidebar
-state updated from closed to open after `useEffect` was run.
-
-Finally, I ended up with a solution, which had neither the flicker
-problem nor hydration error. I added an inline script that runs before
-React hydrates, immediately applying the correct sidebar state to the
-DOM - now the user doesn’t see the flicker. And also there is no
-hydration error because I made sure there was no difference between the
-DOM built from the server HTML (after inline script is run) and
-what was rendered during hydration. The solution is in the [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>) file
-and is based on this
-[post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
+While building this app, I encountered hydration mismatch errors.
+I explain the problem and solution in more detail in
+[What Is a Hydration Mismatch Error and How Do You Fix It?](/blog/hydration-mismatch-errors-and-how-to-fix-them).
 
 ## Redirect From Middleware Not Working Properly With Server Functions
 
