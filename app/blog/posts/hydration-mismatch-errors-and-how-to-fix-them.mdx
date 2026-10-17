@@ -130,6 +130,7 @@ state updated from closed to open after `useEffect` was run.
 
 The approach I used was to apply the saved sidebar state with an inline script before
 React hydrates, then have React use that same state for its initial render.
+This applies the saved state without waiting for React to hydrate, avoiding the later "flicker" caused by updating state in `useEffect`.
 It is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
 Here are the main parts of the solution.
 
@@ -185,11 +186,8 @@ const [showSidebar, setShowSideBar] = React.useState(() => {
 });
 ```
 
-For example, if the saved value is `true`, the server sends the closed-sidebar markup,
-but the script adds the open-sidebar classes before hydration. When this happens before the browser's first paint,
-the user sees the sidebar already open. React then initializes
-`showSidebar` to `true` and renders those same classes. The DOM React hydrates already
-matches its initial render, and there is no effect-driven update from closed to open.
+For example, if the saved value is `true`, the inline script adds the open-sidebar classes before hydration.
+React then initializes `showSidebar` to `true` and renders those same classes, so its initial render matches the updated DOM.
 
 #### Another Issue: The Theme Toggle
 
