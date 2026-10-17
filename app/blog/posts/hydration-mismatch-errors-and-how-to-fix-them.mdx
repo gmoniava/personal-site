@@ -129,10 +129,10 @@ export default function Layout() {
 However, this approach had another problem, it caused a brief "flicker" initially as the sidebar
 state updated from closed to open after `useEffect` was run.
 
-To avoid the "flicker", I used an inline script to apply the saved sidebar state as the page loads,
+To avoid the "flicker", I used an inline script to apply the saved sidebar state directly to the DOM as the page loads,
 without waiting for React to hydrate. The idea is to apply it early enough that the sidebar doesn’t
-briefly appear open when the user left it closed, or vice versa. React then starts with that same
-state (so it matches the updated HTML and avoids a hydration mismatch).
+briefly appear open when the user left it closed, or vice versa. React then uses the same saved sidebar state
+for its initial client render (so it matches the updated HTML and avoids a hydration mismatch).
 This approach is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
 Here are the main parts of the solution.
 
