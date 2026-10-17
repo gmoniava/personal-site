@@ -219,3 +219,12 @@ and `hidden group-[.left-0]:block` to the backdrop makes it appear when the side
 on medium screens and larger, where it is not needed.
 
 You can find the rest of the implementation in [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
+
+### A Newer Alternative: `use(browser())`
+
+[React 19.3](https://react.dev/blog/2026/09/09/react-19-3) introduced
+[`browser`](https://react.dev/reference/react-dom/browser) from `react-dom`.
+Calling `use(browser())` in a Client Component skips its server rendering and leaves the nearest
+`<Suspense>` fallback in the initial HTML. This is an alternative to the earlier approach of using
+`useEffect` to set `isClient` to `true` and rendering nothing until the component mounts.
+My understanding is that using it in the layout would prevent the layout and its children from being server-rendered, just like the earlier `useEffect` approach.
