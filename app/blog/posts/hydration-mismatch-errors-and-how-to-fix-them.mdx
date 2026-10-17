@@ -5,7 +5,8 @@ summary: "Understanding hydration mismatch errors and what to do about them."
 tags: ["software-development", "react", "nextjs"]
 ---
 
-In React apps that use server-side rendering, you may encounter hydration mismatch errors. We'll use Next.js as an example here.
+In React apps that use server-side rendering, you may encounter hydration mismatch error.
+Before explaining the error and the solutions, let's explain hydration first. We'll use Next.js as an example here.
 
 In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
 those components are pre-rendered on the server and the resulting HTML is sent to the client.
@@ -18,7 +19,7 @@ fully interactive - a process called hydration.
 For Server Components, however, the story is different:
 they are fully rendered on the server (using special data format) and their JavaScript is never sent to the client.
 
-Hydration mainly happens in two steps:
+Hydration on the client mainly happens in two steps:
 
 - React uses the same component tree that was used during SSR and renders it again
   on the client in memory (no DOM nodes are generated) and then checks that this output matches the HTML sent from the server.
@@ -36,7 +37,7 @@ is based on information that is only available on the client side, such as local
 But there can also be other reasons. During SSR such client information is not available, so
 the HTML produced on the server may differ from the in-memory render created during hydration on the client.
 
-One solution is to render nothing on the server and on the first client render,
+One common solution to this problem is to render nothing on the server and on the first client render,
 then show the real content after the component mounts:
 
 ```
@@ -128,10 +129,11 @@ export default function Layout() {
 However, this approach had another problem, it caused a brief "flicker" initially as the sidebar
 state updated from closed to open after `useEffect` was run.
 
-The approach I used was to apply the saved sidebar state with an inline script before
-React hydrates, then have React use that same state for its initial render.
-This applies the saved state without waiting for React to hydrate, avoiding the later "flicker" caused by updating state in `useEffect`.
-It is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
+To avoid the "flicker", I used an inline script to apply the saved sidebar state as the page loads,
+without waiting for React to hydrate. The idea is to apply it early enough that the sidebar doesn’t
+briefly appear open when the user left it closed, or vice versa. React then starts with that same
+state (so it matches the updated HTML and avoids a hydration mismatch).
+This approach is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
 Here are the main parts of the solution.
 
 #### Apply the Saved State Before Hydration
