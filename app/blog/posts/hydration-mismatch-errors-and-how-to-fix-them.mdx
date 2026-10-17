@@ -204,14 +204,15 @@ content wrapped by that layout. The toggle appears slightly later, but that is a
 
 #### Another Issue: The Mobile Backdrop
 
-The mobile sidebar also needed a dark backdrop. Conditionally rendering that backdrop based on the saved sidebar state
-could cause a hydration mismatch: it would be absent from the server HTML but expected on the first client render.
+The mobile sidebar also needed a dark backdrop. Conditionally rendering it based on the saved sidebar state could
+cause the same hydration mismatch described earlier.
 
-I could also have used this approach for the mobile backdrop, accepting that it would appear after mounting.
-I chose CSS there to demonstrate another approach and let the backdrop appear together with the sidebar, without that delay.
-To avoid this, I used a backdrop element that is always present in the HTML and
-whose visibility is controlled by CSS. Adding `group` to the sidebar and `hidden group-[.left-0]:block` to the backdrop
-makes it appear when the inline script adds `left-0` to the sidebar. The backdrop stays hidden on medium screens
-and larger, where it is not needed.
+I could also have used the approach from the previous section with the toggle, accepting that the backdrop would
+appear after mounting. Instead, I used CSS to take advantage of the `left-0` class already applied by the inline script,
+letting the backdrop appear together with the sidebar.
+
+The backdrop element is always present in the HTML, with its visibility controlled by CSS. Adding `group` to the sidebar
+and `hidden group-[.left-0]:block` to the backdrop makes it appear when the sidebar has `left-0`. The backdrop stays hidden
+on medium screens and larger, where it is not needed.
 
 You can find the rest of the implementation in [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
