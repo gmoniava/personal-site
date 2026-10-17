@@ -12,7 +12,7 @@ function ClientSideEmail() {
   return (
     <div>
       {email ? (
-        <p>{`If you have questions or comments feel free to get in touch (${email}).`}</p>
+        <p>{`If you have questions or comments, feel free to get in touch: ${email}.`}</p>
       ) : (
         <span>Loading email...</span>
       )}
