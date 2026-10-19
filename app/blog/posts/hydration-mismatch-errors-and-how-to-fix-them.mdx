@@ -205,6 +205,8 @@ This is an acceptable trade-off for a small, isolated control because only the t
 while the rest of the page is still server-rendered. Using the same approach in `Layout` would also omit the page
 content wrapped by that layout. The toggle appears slightly later, but that is acceptable here.
 
+`next-themes` also helps prevent theme flickering by injecting a script that applies the saved theme early in the page-loading process, similar to the approach described above.
+
 #### Another Issue: The Mobile Backdrop
 
 The mobile sidebar also needed a dark backdrop. Conditionally rendering it based on the saved sidebar state could
