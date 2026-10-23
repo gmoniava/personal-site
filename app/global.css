@@ -158,6 +158,21 @@ table {
   white-space: nowrap;
 }
 
+.prose table {
+  @apply my-6 text-sm;
+  white-space: normal;
+}
+
+.prose th,
+.prose td {
+  @apply border border-neutral-200 px-3 py-2 text-left align-top dark:border-neutral-700;
+  min-width: 8rem;
+}
+
+.prose th {
+  @apply bg-neutral-50 font-medium dark:bg-neutral-800;
+}
+
 .title {
   /* text-wrap: balance; */
 }

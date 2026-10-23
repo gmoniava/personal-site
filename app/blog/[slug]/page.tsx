@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { CustomMDX } from "app/components/server/mdx";
+import { PostSeries } from "app/components/server/post-series";
 import { getBlogPosts } from "app/server/lib";
 import { formatDate } from "app/utils";
 import { baseUrl } from "app/sitemap";
@@ -94,6 +95,7 @@ export default async function Blog({ params }) {
           </span>
         ))}
       </div>
+      <PostSeries slug={post.slug} />
       <article className="prose mt-8">
         {/* Here goes the post itself. It is written in MDX format, so we can use the CustomMDX component to render it. */}
         <CustomMDX source={post.content} />

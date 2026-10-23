@@ -1,0 +1,227 @@
+---
+title: "SQL Explained Through JavaScript - Part 2"
+date: "2026-10-23T16:00:00Z"
+summary: "Understand SQL concepts through familiar JavaScript examples."
+tags: ["software-development", "javascript", "sql"]
+---
+
+In the [first part](/blog/how-to-make-sql-easier-to-understand-for-developers),
+we looked at how SQL concepts like `GROUP BY`, `HAVING`, and `LEFT JOIN`
+can be understood through equivalent JavaScript code.
+
+Let's continue with the same approach and cover other examples.
+
+## Example: Limiting Comments per Hour with UPSERT and CASE WHEN
+
+Let's say we want to stop users from spamming comments.
+
+Here's the SQL:
+
+```sql
+INSERT INTO comment_limits (user_id, comments_count, expires_at)
+VALUES ($1, 1, now() + interval '1 hour')
+ON CONFLICT (user_id) DO UPDATE
+SET
+  comments_count = CASE
+    WHEN comment_limits.expires_at <= now() THEN 1
+    ELSE comment_limits.comments_count + 1
+  END,
+  expires_at = CASE
+    WHEN comment_limits.expires_at <= now() THEN now() + interval '1 hour'
+    ELSE comment_limits.expires_at
+  END
+RETURNING comments_count;
+```
+
+Not sure what this query does?
+
+We keep a `comment_limits` table with one row per user. It counts how many comments a user posted within a one-hour window, so you can block spammers. The first comment starts a one-hour timer with a count of 1. Every comment before the timer runs out adds 1 and returns the new count. Once the hour is over, the next comment starts a fresh timer and the count goes back to 1.
+
+Here's the equivalent JavaScript:
+
+```js
+const HOUR = 60 * 60 * 1000;
+
+// Let's assume this is the table data: one row per user
+const table = {};
+
+function recordComment(userId) {
+  const now = Date.now();
+
+  const row = table[userId];
+
+  // SQL: INSERT ... VALUES ($1, 1, now() + interval '1 hour')
+  // $1 is userId. No row yet, so create one.
+  if (!row) {
+    table[userId] = { commentsCount: 1, expiresAt: now + HOUR };
+    return table[userId].commentsCount;
+  }
+
+  // SQL: ON CONFLICT (user_id) DO UPDATE
+  // A row already exists, so update it.
+  const expired = row.expiresAt <= now;
+
+  // SQL: CASE WHEN expired THEN 1 ELSE comments_count + 1 END
+  row.commentsCount = expired ? 1 : row.commentsCount + 1;
+
+  // SQL: CASE WHEN expired THEN now() + interval '1 hour' ELSE expires_at END
+  row.expiresAt = expired ? now + HOUR : row.expiresAt;
+
+  // SQL: RETURNING comments_count
+  return row.commentsCount;
+}
+```
+
+Hopefully it's clearer now what the query does, line by line.
+
+### Why RETURNING comments_count?
+
+`RETURNING` gives back the new comment count. That's the only value the caller needs to decide what to do next, and it comes from the same statement, so there's no second `SELECT` needed:
+
+```js
+const count = recordComment(userId);
+
+if (count > 5) {
+  // too many comments this hour, reject
+}
+```
+
+## Using Two Counters
+
+The query above has a drawback: it only counts per user. A spammer can register 100 accounts and post 5 comments from each, and no single account ever passes 5.
+
+The fix is to keep two counters. When someone comments, we increase the counter for their user and the counter for their IP address.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Spammer behavior</th>
+      <th scope="col">User counter</th>
+      <th scope="col">IP counter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 account, comments from 100 different IPs</td>
+      <td>
+        Reaches the limit, <strong>blocked</strong>
+      </td>
+      <td>100 counters with 1 comment each, not blocked</td>
+    </tr>
+    <tr>
+      <td>100 accounts, all from the same IP</td>
+      <td>100 counters with 1 comment each, not blocked</td>
+      <td>
+        Reaches the limit, <strong>blocked</strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Each counter catches the case the other one misses. So we block if **either** one is over the limit.
+
+To store both kinds of counters in the same `comment_limits` table, we replace the `user_id` column with a `key` column. A key is a string that names one counter, like `user:42` or `ip:1.2.3.4`. Here `42` is the `user_id` from the previous example. For example, after the first comment, the two counters might look like this:
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">key</th>
+      <th scope="col">comments_count</th>
+      <th scope="col">expires_at</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>user:42</code>
+      </td>
+      <td>1</td>
+      <td>15:00</td>
+    </tr>
+    <tr>
+      <td>
+        <code>ip:1.2.3.4</code>
+      </td>
+      <td>1</td>
+      <td>15:00</td>
+    </tr>
+  </tbody>
+</table>
+
+Here's the SQL:
+
+```sql
+INSERT INTO comment_limits (key, comments_count, expires_at)
+SELECT key, 1, now() + interval '1 hour'
+FROM unnest($1::text[]) AS key
+ORDER BY key
+ON CONFLICT (key) DO UPDATE
+SET
+  comments_count = CASE
+    WHEN comment_limits.expires_at <= now() THEN 1
+    ELSE comment_limits.comments_count + 1
+  END,
+  expires_at = CASE
+    WHEN comment_limits.expires_at <= now() THEN now() + interval '1 hour'
+    ELSE comment_limits.expires_at
+  END
+RETURNING comments_count;
+```
+
+Not sure what this query does?
+
+The query takes the user and IP keys as an array and uses `unnest` to turn them into separate rows. The `INSERT` then processes those rows, creating a counter for each key if one doesn't exist, or updating the existing counter if it does. When updating, it resets the count to 1 if the time window has expired, or increments it otherwise. Finally, it returns the updated count for each key so we can check whether either limit has been exceeded.
+
+Here's the equivalent JavaScript:
+
+```js
+function recordComment(keys) {
+  const now = Date.now();
+
+  // SQL: SELECT key ... FROM unnest($1::text[]) AS key
+  // One row per key, so everything below runs once for each key.
+  return keys.map((key) => {
+    const row = table[key];
+
+    // SQL: INSERT ... SELECT key, 1, now() + interval '1 hour'
+    // No row for this key yet, so create one.
+    if (!row) {
+      table[key] = { commentsCount: 1, expiresAt: now + HOUR };
+      return 1;
+    }
+
+    // SQL: ON CONFLICT (key) DO UPDATE
+    // A row already exists, so update it.
+    const expired = row.expiresAt <= now;
+
+    // SQL: CASE WHEN expired THEN 1 ELSE comments_count + 1 END
+    row.commentsCount = expired ? 1 : row.commentsCount + 1;
+
+    // SQL: CASE WHEN expired THEN now() + interval '1 hour' ELSE expires_at END
+    row.expiresAt = expired ? now + HOUR : row.expiresAt;
+
+    // SQL: RETURNING comments_count (one per key)
+    return row.commentsCount;
+  });
+}
+```
+
+Hopefully it's clearer now how one query updates several counters at once.
+
+> Note: `ORDER BY key` helps prevent deadlocks by ensuring concurrent requests
+> process keys in the same order. Without it, two requests could lock the same
+> rows in opposite orders, each waiting for the other to release a lock.
+> Sorting the keys avoids this particular situation, though it doesn't
+> prevent every possible deadlock.
+
+### Using the result
+
+The caller checks that every counter is under the limit:
+
+```js
+const counts = recordComment([`user:${userId}`, `ip:${ip}`]);
+
+if (!counts.every((count) => count <= 5)) {
+  // either the user or the IP commented too much, reject
+}
+```
