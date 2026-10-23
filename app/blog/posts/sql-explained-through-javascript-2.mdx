@@ -43,18 +43,24 @@ Here's the equivalent JavaScript:
 const HOUR = 60 * 60 * 1000;
 
 // Let's assume this is the table data: one row per user
-const table = {};
+const table = [];
 
 function recordComment(userId) {
   const now = Date.now();
 
-  const row = table[userId];
+  const row = table.find((row) => row.userId === userId);
 
   // SQL: INSERT ... VALUES ($1, 1, now() + interval '1 hour')
   // $1 is userId. No row yet, so create one.
   if (!row) {
-    table[userId] = { commentsCount: 1, expiresAt: now + HOUR };
-    return table[userId].commentsCount;
+    const newRow = {
+      userId,
+      commentsCount: 1,
+      expiresAt: now + HOUR,
+    };
+
+    table.push(newRow);
+    return newRow.commentsCount;
   }
 
   // SQL: ON CONFLICT (user_id) DO UPDATE
@@ -175,19 +181,29 @@ The query takes the user and IP keys as an array and uses `unnest` to turn them 
 Here's the equivalent JavaScript:
 
 ```js
+const HOUR = 60 * 60 * 1000;
+
+// Table data: one row per user or IP key.
+const table = [];
+
 function recordComment(keys) {
   const now = Date.now();
 
-  // SQL: SELECT key ... FROM unnest($1::text[]) AS key
-  // One row per key, so everything below runs once for each key.
-  return keys.map((key) => {
-    const row = table[key];
+  // SQL: SELECT key ... FROM unnest($1::text[]) AS key ORDER BY key
+  return [...keys].sort().map((key) => {
+    const row = table.find((row) => row.key === key);
 
     // SQL: INSERT ... SELECT key, 1, now() + interval '1 hour'
     // No row for this key yet, so create one.
     if (!row) {
-      table[key] = { commentsCount: 1, expiresAt: now + HOUR };
-      return 1;
+      const newRow = {
+        key,
+        commentsCount: 1,
+        expiresAt: now + HOUR,
+      };
+
+      table.push(newRow);
+      return newRow.commentsCount;
     }
 
     // SQL: ON CONFLICT (key) DO UPDATE
