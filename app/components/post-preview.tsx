@@ -14,9 +14,18 @@ type BlogPostPreviewProps = {
   post: Post;
 };
 
+// Set to true to opt into the subtle background card effect on hover and keyboard focus.
+const enableHoverCard = false;
+const hoverCardClasses =
+  "rounded-lg -mx-3 px-3 py-2 transition-colors duration-200 ease-out hover:bg-neutral-100 focus-visible:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus-visible:bg-neutral-800 motion-reduce:transition-none";
+
 export default function PostPreview({ post }: BlogPostPreviewProps) {
   return (
-    <Link key={post.slug} className="w-full" href={`/blog/${post.slug}`}>
+    <Link
+      key={post.slug}
+      className={`block w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${enableHoverCard ? hoverCardClasses : ""}`}
+      href={`/blog/${post.slug}`}
+    >
       <div className="flex flex-col gap-1 sm:gap-0.5 mb-2">
         <p className="text-neutral-900 dark:text-neutral-100">{post.metadata.title}</p>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 w-[110px] flex-shrink-0">
