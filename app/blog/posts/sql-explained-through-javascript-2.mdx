@@ -13,7 +13,9 @@ Let's continue with the same approach and cover other examples.
 
 ## Example: Limiting Comments per Hour with UPSERT and CASE WHEN
 
-Let's say we want to stop users from spamming comments.
+We want to track how many comments each user posts within a one-hour window, so we can reject comments once they exceed the hourly limit.
+
+To track this, we keep a `comment_limits` table with one row per user. Each row stores the user's ID (`user_id`), comment count (`comments_count`), and the time their current window ends (`expires_at`).
 
 Here's the SQL:
 
@@ -32,10 +34,6 @@ SET
   END
 RETURNING comments_count;
 ```
-
-Not sure what this query does?
-
-We keep a `comment_limits` table with one row per user. It counts how many comments a user posted within a one-hour window, so you can block spammers. The first comment starts a one-hour timer with a count of 1. Every comment before the timer runs out adds 1 and returns the new count. Once the hour is over, the next comment starts a fresh timer and the count goes back to 1.
 
 Here's the equivalent JavaScript:
 
@@ -78,7 +76,8 @@ function recordComment(userId) {
 }
 ```
 
-Hopefully it's clearer now what the query does, line by line.
+The first comment starts a one-hour window with a count of 1. Each comment within that window adds 1.
+The first comment after the window ends starts a new window with a count of 1. The updated count is returned each time.
 
 ### Why RETURNING comments_count?
 
@@ -154,6 +153,8 @@ To store both kinds of counters in the same `comment_limits` table, we replace t
   </tbody>
 </table>
 
+We want to limit comments by both user and IP address, so switching accounts or IPs alone won't bypass the limit.
+
 Here's the SQL:
 
 ```sql
@@ -173,10 +174,6 @@ SET
   END
 RETURNING comments_count;
 ```
-
-Not sure what this query does?
-
-The query takes the user and IP keys as an array and uses `unnest` to turn them into separate rows. The `INSERT` then processes those rows, creating a counter for each key if one doesn't exist, or updating the existing counter if it does. When updating, it resets the count to 1 if the time window has expired, or increments it otherwise. Finally, it returns the updated count for each key so we can check whether either limit has been exceeded.
 
 Here's the equivalent JavaScript:
 
@@ -222,7 +219,9 @@ function recordComment(keys) {
 }
 ```
 
-Hopefully it's clearer now how one query updates several counters at once.
+Each comment adds to two counts: one for the user and one for the IP address. Each counter has its own
+one-hour window and starts over when a comment arrives after that window ends. Both updated counts are returned,
+so the comment can be rejected if either is above the limit.
 
 > Note: `ORDER BY key` helps prevent deadlocks by ensuring concurrent requests
 > process keys in the same order. Without it, two requests could lock the same

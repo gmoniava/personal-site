@@ -75,6 +75,8 @@ Here is what `result` contains:
 ];
 ```
 
+Each customer's orders are grouped together, their amounts are added up, and the orders are counted. The result is one row per customer with their total spending and number of orders.
+
 Hopefully, the JavaScript example made the query a little easier to understand.
 
 ## Next Example: HAVING
@@ -121,7 +123,7 @@ Here is what `result` contains:
 ];
 ```
 
-Carol is gone because her total (75) is not above 100.
+Each customer's spending is added up first, then only customers with totals above 100 are kept. Carol is left out because her total is 75.
 
 ### HAVING vs. WHERE
 
@@ -167,7 +169,7 @@ Here is what `result` contains:
 ];
 ```
 
-Notice that Alice's total is now 120 instead of 200, because her orders of 50 and 30 were thrown away before the sum was calculated.
+This time, individual orders of 100 or less are removed before each customer's spending is added up. Alice's total is now 120 instead of 200 because her orders of 50 and 30 no longer contribute.
 
 The rule of thumb is simple: `WHERE` filters rows _before_ grouping, and `HAVING` filters groups _after_ grouping.
 
@@ -232,7 +234,7 @@ Here's what `result` contains:
 ];
 ```
 
-That's essentially what `LEFT JOIN` does: for each row in the left table, it adds a row to the result for every matching row in the right table. If there are no matches, it still returns one row, with `NULL` values for the columns from the right table.
+Each customer is paired with every order that belongs to them, producing one result row per match. Customers with no orders still appear, with an empty product value (`null`). That's why Alice appears twice and Carol still appears once.
 
 And here's something interesting: if we remove the `if (matchingOrders.length === 0)` block, we get the equivalent of an `INNER JOIN`. Only customers with matching orders would appear in the result.
 
