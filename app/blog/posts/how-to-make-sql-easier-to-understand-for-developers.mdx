@@ -11,7 +11,11 @@ Along the way, I discovered a nice way to grasp SQL concepts, which works if you
 
 ## First Example: GROUP BY with SUM and COUNT
 
-Let's take this example:
+Suppose we have an `orders` table with a `customer` and an `amount` column.
+
+We want to find, for each customer, how much they spent in total and how many orders they placed.
+
+Here's the SQL:
 
 ```sql
 SELECT
@@ -22,12 +26,10 @@ FROM orders
 GROUP BY customer;
 ```
 
-Not sure what this query does?
-It shows, for each customer, how much they spent in total and how many orders they placed.
 Here's the equivalent JavaScript:
 
 ```js
-// Let's assume this is the table data
+// Sample table data
 const orders = [
   { customer: "Alice", amount: 120 },
   { customer: "Bob", amount: 80 },
@@ -73,11 +75,13 @@ Here is what `result` contains:
 ];
 ```
 
-Hopefully, these examples made the query a little easier to understand if you're familiar with JavaScript.
+Hopefully, the JavaScript example made the query a little easier to understand.
 
 ## Next Example: HAVING
 
-Let's use the same `orders` table from the first example and a similar query.
+Using the same `orders` table, we want to find each customer's total spending and keep only customers whose total is above 100.
+
+Here's the SQL:
 
 ```sql
 SELECT
@@ -88,19 +92,9 @@ GROUP BY customer
 HAVING SUM(amount) > 100;
 ```
 
-Not sure what this query does? It groups the orders by customer, calculates each customer's total, and then keeps only the customers whose total is above 100. Here's the equivalent JavaScript:
+Here's the equivalent JavaScript:
 
 ```js
-// Same table data as before
-const orders = [
-  { customer: "Alice", amount: 120 },
-  { customer: "Bob", amount: 80 },
-  { customer: "Alice", amount: 50 },
-  { customer: "Bob", amount: 200 },
-  { customer: "Carol", amount: 75 },
-  { customer: "Alice", amount: 30 },
-];
-
 const groups = {};
 
 for (const order of orders) {
@@ -131,7 +125,9 @@ Carol is gone because her total (75) is not above 100.
 
 ### HAVING vs. WHERE
 
-Here's the interesting part. `WHERE` also filters, but it runs at a different moment. Compare this query:
+`WHERE` also filters, but it runs at a different moment.
+
+Here's the SQL:
 
 ```sql
 SELECT
@@ -142,7 +138,7 @@ WHERE amount > 100
 GROUP BY customer;
 ```
 
-Equivalent JavaScript:
+Here's the equivalent JavaScript:
 
 ```js
 const groups = {};
@@ -177,9 +173,9 @@ The rule of thumb is simple: `WHERE` filters rows _before_ grouping, and `HAVING
 
 ## Another Example: LEFT JOIN
 
-Let's look at another SQL concept: `LEFT JOIN`.
+Suppose we have two tables: `customers`, with customer details, and `orders`, with each ordered product and the ID of the customer who ordered it.
 
-Imagine we have two tables: `customers` and `orders`.
+We want to list all customers along with the products they ordered, including customers who haven't placed any orders yet.
 
 Here's the SQL:
 
@@ -192,12 +188,10 @@ LEFT JOIN orders
     ON customers.id = orders.customer_id;
 ```
 
-Not sure what this query does?
-It lists all customers along with the products they ordered, including customers who haven't placed any orders yet.
 Here's the equivalent JavaScript:
 
 ```js
-// Let's assume these are our two tables
+// Sample data for the two tables
 const customers = [
   { id: 1, name: "Alice", email: "alice@example.com" },
   { id: 2, name: "Bob", email: "bob@example.com" },
