@@ -34,7 +34,7 @@ export function PostSeries({ slug }: { slug: string }) {
               ) : (
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="text-blue-600 underline underline-offset-2 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                  className="text-blue-600 underline underline-offset-2  dark:text-blue-400 "
                 >
                   {post.label}
                 </Link>
