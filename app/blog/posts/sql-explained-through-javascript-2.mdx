@@ -219,9 +219,8 @@ function recordComment(keys) {
 }
 ```
 
-Each comment adds to two counts: one for the user and one for the IP address. Each counter has its own
-one-hour window and starts over when a comment arrives after that window ends. Both updated counts are returned,
-so the comment can be rejected if either is above the limit.
+Each comment updates two counters: one for the user and one for the IP address.
+Both follow the same counting and reset rules as the earlier example.
 
 > Note: `ORDER BY key` helps prevent deadlocks by ensuring concurrent requests
 > process keys in the same order. Without it, two requests could lock the same
