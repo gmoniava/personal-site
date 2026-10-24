@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Note } from "app/components/note";
 
 const sqlSeries = {
   title: "SQL Explained Through JavaScript",
@@ -42,10 +43,10 @@ export function PostSeries({ slug }: { slug: string }) {
           ))}
         </ol>
       </nav>
-      <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+      <Note>
         <strong className="font-medium">Note:</strong> Familiarity with JavaScript and basic SQL-tables, rows, columns,
         and <code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>-will help you follow the examples.
-      </p>
+      </Note>
     </>
   );
 }

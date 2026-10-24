@@ -3,6 +3,7 @@ import Image from "next/image";
 import { compileMDX } from "next-mdx-remote/rsc";
 import { highlight } from "sugar-high";
 import React from "react";
+import { Note } from "app/components/note";
 import TreeWithDescriptions from "app/components/client/tree-with-descriptions";
 
 const Alert = ({ type = "info", children }) => {
@@ -133,6 +134,7 @@ let components = {
   blockquote: Blockquote,
   TreeWithDescriptions,
   Alert,
+  Note,
 };
 
 export async function CustomMDX(props: { source: string; components?: Record<string, any> }) {
