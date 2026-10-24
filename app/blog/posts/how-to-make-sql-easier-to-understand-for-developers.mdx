@@ -212,11 +212,12 @@ for (const customer of customers) {
   // SQL: ON customers.id = orders.customer_id
   const matchingOrders = orders.filter((order) => order.customer_id === customer.id);
 
-  // SQL: LEFT JOIN, keep the customer even with no orders
+  // SQL: LEFT JOIN - keep customers who have no matching orders.
   if (matchingOrders.length === 0) {
     result.push({ name: customer.name, product: null });
   }
 
+  // SQL: LEFT JOIN - pair the customer with each matching order.
   for (const order of matchingOrders) {
     result.push({ name: customer.name, product: order.product });
   }
