@@ -222,9 +222,9 @@ function recordComment(keys) {
 Each comment updates two counters: one for the user and one for the IP address.
 Both follow the same counting and reset rules as the earlier example.
 
-> Note: `ORDER BY key` helps prevent deadlocks. Without consistent ordering,
-> one request could lock the user counter and another the IP counter. Each then
-> needs the counter locked by the other, so neither can finish.
+> Note: `ORDER BY key` helps prevent a deadlock where one request locks the user counter
+> and another locks the IP counter. Each then needs the counter locked by the other,
+> so neither can finish. Sorting makes both requests update the counters in the same order.
 
 ### Using the result
 
