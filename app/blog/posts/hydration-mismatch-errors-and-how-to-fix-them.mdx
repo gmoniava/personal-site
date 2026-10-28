@@ -209,7 +209,7 @@ This is an acceptable trade-off for a small, isolated control because only the t
 while the rest of the page is still server-rendered. Using the same approach in `Layout` would also omit the page
 content wrapped by that layout. The toggle appears slightly later, but that is acceptable here.
 
- `next-themes` also helps prevent theme flickering by injecting a script near the beginning of the HTML document, similar to the approach we used for the sidebar earlier in this post. The script applies the saved theme by updating the `<html>` element's class before React hydrates. Since this changes an HTML attribute before hydration, I use `suppressHydrationWarning` on the `<html>` element to suppress the resulting warning.
+ `next-themes` also helps prevent theme flickering by injecting a script near the beginning of the HTML document, similar to the approach we used for the sidebar earlier in this post. Depending on its configuration, the script updates either the element's class or a data attribute. Since this changes an HTML attribute before hydration, I use `suppressHydrationWarning` on the `<html>` element to suppress the resulting warning.
 
 #### Another Issue: The Mobile Backdrop
 
