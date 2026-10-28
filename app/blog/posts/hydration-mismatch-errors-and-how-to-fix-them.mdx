@@ -225,11 +225,12 @@ I decided to use CSS to make the backdrop follow the sidebar’s existing `left-
 which the inline script already updates. This lets the backdrop appear together with the sidebar.
 
 The backdrop element is always present in the HTML, with its visibility controlled by CSS. Adding `group` to the sidebar
-and `hidden group-[.left-0]:block` to the backdrop makes it appear when the sidebar has `left-0`. The backdrop stays hidden
+and `hidden group-[.left-0]:block` to the backdrop makes it appear when the sidebar has `left-0`. Appropriate responsive classes keep the backdrop hidden
 on medium screens and larger, where it is not needed.
 
 This avoids a hydration mismatch because the backdrop and its `hidden group-[.left-0]:block` classes are always present.
-These CSS classes control its visibility based on whether the sidebar has `left-0`, whose hydration mismatch we already addressed above.
+These CSS classes control its visibility based on whether the sidebar has `left-0`.
+The inline script and React already keep that sidebar class in sync, as described above.
 
 You can find the rest of the implementation in [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
 
