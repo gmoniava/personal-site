@@ -65,6 +65,10 @@ However, this approach also prevents the component and all of its children (if t
 Such a trade-off can be problematic for components that have many
 children or content important for SEO, as we'll see below with the layout that manages the sidebar state.
 
+ Another option is to add `suppressHydrationWarning` to the element where you expect a hydration mismatch. However, this only suppresses the warning; it does not fix the underlying mismatch. As the [React docs](https://react.dev/reference/react-dom/components/common#suppresshydrationwarning) state:
+
+> "This only works one level deep, and is intended to be an escape hatch. Don’t overuse it."
+
 ### My Case: Sidebar State
 
 I encountered this issue while building a [full-stack movie app with Next.js and PostgreSQL](/blog/full-stack-movie-app).
@@ -205,7 +209,7 @@ This is an acceptable trade-off for a small, isolated control because only the t
 while the rest of the page is still server-rendered. Using the same approach in `Layout` would also omit the page
 content wrapped by that layout. The toggle appears slightly later, but that is acceptable here.
 
-`next-themes` also helps prevent theme flickering by injecting a script that applies the saved theme early in the page-loading process, similar to the approach described above.
+ `next-themes` also helps prevent theme flickering by injecting a script near the beginning of the HTML document, similar to the approach we used for the sidebar earlier in this post. The script applies the saved theme by updating the `<html>` element's class before React hydrates. Since this changes an HTML attribute before hydration, I use `suppressHydrationWarning` on the `<html>` element to suppress the resulting warning.
 
 #### Another Issue: The Mobile Backdrop
 
