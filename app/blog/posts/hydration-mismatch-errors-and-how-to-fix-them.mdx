@@ -205,6 +205,7 @@ React then initializes `showSidebar` to `true` and renders those same classes, s
 
 #### Another Issue: The Theme Toggle
 
+I use [next-themes](https://github.com/pacocoursey/next-themes) to manage the app's theme.
 The theme toggle had a similar issue: its checked state depends on the theme, which is not known on the server.
 Here I kept the `useIsClient()` hook, which uses the same `useEffect` approach shown in `SampleComponent` at the
 beginning of this post: rendering nothing until the component mounts,
@@ -214,7 +215,11 @@ This is an acceptable trade-off for a small, isolated control because only the t
 while the rest of the page is still server-rendered. Using the same approach in `Layout` would also omit the page
 content wrapped by that layout. The toggle appears slightly later, but that is acceptable here.
 
-`next-themes` also helps prevent theme flickering by injecting a script near the beginning of the HTML document, similar to the approach we used for the sidebar earlier in this post. Depending on the setup, the script adds a class or data attribute to the `<html>` tag. Since this can cause a hydration mismatch, I use `suppressHydrationWarning` on the `<html>` element to suppress the warning.
+`next-themes` also helps prevent theme flickering by injecting a script near the beginning of the HTML document,
+similar to the approach we used for the sidebar earlier in this post. Depending on the setup, the script adds a class
+or data attribute to the `<html>` tag before hydration. Since this changes the server-rendered HTML, I added
+`suppressHydrationWarning` to the `<html>` element, following the
+[next-themes recommendation](https://github.com/pacocoursey/next-themes#with-app).
 
 #### Another Issue: The Mobile Backdrop
 
