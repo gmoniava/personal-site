@@ -59,14 +59,16 @@ export default function BlogPosts({ blogs }: any) {
   };
 
   React.useEffect(() => {
-    // Synchronize the initial state with URL parameters
+    // Parse the URL parameters on initial load to set the state
     parseURLParams();
 
     const handlePopState = () => {
       parseURLParams();
     };
 
-    // Listen for popstate events to handle back/forward navigation
+    // Handle back/forward navigation by listening to popstate events
+    // and update the state accordingly. This ensures that when the user
+    // navigates back or forward, the component reflects the correct state based on the URL parameters.
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
@@ -116,7 +118,11 @@ export default function BlogPosts({ blogs }: any) {
       </div>
       <div className="flex flex-col gap-4 items-start">
         {postForCurrentPage.map((post: any) => (
-          <PostPreview post={post} key={post.slug} onTagClick={(tag) => handleTagChange(topics.filter((t) => t.value === tag))} />
+          <PostPreview
+            post={post}
+            key={post.slug}
+            onTagClick={(tag) => handleTagChange(topics.filter((t) => t.value === tag))}
+          />
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
