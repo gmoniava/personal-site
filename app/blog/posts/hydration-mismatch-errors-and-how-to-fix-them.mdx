@@ -226,10 +226,9 @@ or data attribute to the `<html>` tag before hydration. Since this changes the s
 The mobile sidebar also needed a dark backdrop. Conditionally rendering it based on the saved sidebar state could
 cause the same hydration mismatch described earlier.
 
-I decided to use CSS to make the backdrop follow the sidebar’s existing `left-0` class,
-which the inline script already updates. This lets the backdrop appear together with the sidebar.
+We could have used the `useIsClient` hook described earlier to avoid the hydration mismatch and added a separate class for the backdrop, which the inline script would also update. Instead, I decided to use CSS to make the backdrop follow the sidebar’s existing `left-0` class, which the inline script already updates.
 
-The backdrop element is always present in the HTML, with its visibility controlled by CSS. Adding `group` to the sidebar
+To do this, the backdrop element stays in the HTML. Adding `group` to the sidebar
 and `hidden group-[.left-0]:block` to the backdrop makes it appear when the sidebar has `left-0`. Appropriate responsive classes keep the backdrop hidden
 on medium screens and larger, where it is not needed.
 
