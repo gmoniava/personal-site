@@ -61,7 +61,7 @@ This works because `useEffect` only runs on the client. On the server
 and during the initial client render, `isClient` is `false`,
 so the component renders nothing in both cases. Because the server-rendered output and the initial
 client-rendered output are identical, React can hydrate the component without a hydration mismatch.
-However, this approach also prevents the component and all of its children (if there are any) from being server-rendered.
+However, this approach leaves the component's real content and its children out of the server-rendered HTML.
 Such a trade-off can be problematic for components that have many
 children or content important for SEO, as we'll see below with the layout that manages the sidebar state.
 
@@ -112,8 +112,8 @@ However, this approach had two issues:
 
 Also I would not be able to fix the hydration error using the fix from the
 previous section, which uses `useEffect` to render nothing until mounting,
-because it would opt out children of layout from SSR too, which is
-basically my whole app.
+because it would leave the layout's real content and its children out of the server-rendered HTML,
+which is basically my whole app.
 
 So I decided to use another approach: reading the sidebar state from `localStorage` inside `useEffect`
 instead of the `useState` initializer function. This follows the same principle as the previous approach:
@@ -249,7 +249,8 @@ You can find the rest of the implementation in [`(main)/layout.tsx`](<https://gi
 Calling `use(browser())` in a Client Component skips its server rendering and leaves the nearest
 `<Suspense>` fallback in the initial HTML. This is an alternative to the earlier approach of using
 `useEffect` to set `isClient` to `true` and rendering nothing until the component mounts.
-My understanding is that using it in the layout would prevent the layout and its children from being server-rendered, just like the earlier `useEffect` approach.
+Using it in the layout would leave the layout's real content and its children out of the
+server-rendered HTML, just like the earlier `useEffect` approach.
 
 ### Conclusion
 
