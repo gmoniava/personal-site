@@ -5,8 +5,8 @@ summary: "Understanding hydration mismatch errors and what to do about them."
 tags: ["software-development", "react", "nextjs"]
 ---
 
-In React apps that use server-side rendering, you may encounter a hydration mismatch error.
-Before explaining the error and the solutions, let's explain hydration first. We'll use Next.js as an example here.
+In this post, we'll look at hydration mismatch errors in React apps that
+use server-side rendering, how to fix them, and how to prevent UI flickering. But first, let's cover what hydration is. We'll use Next.js here.
 
 In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
 those components are pre-rendered on the server and the resulting HTML is sent to the client.
@@ -65,6 +65,9 @@ However, this approach also prevents the component and all of its children (if t
 Such a trade-off can be problematic for components that have many
 children or content important for SEO, as we'll see below with the layout that manages the sidebar state.
 
+You can also render a skeleton instead of `null`, as long as it produces the same output on the server and during the initial client render.
+However, the SSR trade-off remains: the real content and its children are still excluded from the server-rendered HTML.
+
 Another option is to add `suppressHydrationWarning` to the element where you expect a hydration mismatch.
 However, this only suppresses the warning; it does not fix the underlying mismatch.
 As the [React docs](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) for
@@ -112,9 +115,13 @@ previous section, which uses `useEffect` to render nothing until mounting,
 because it would opt out children of layout from SSR too, which is
 basically my whole app.
 
-So I decided to use another approach: reading the sidebar state from `localStorage` inside `useEffect` instead of the `useState` initializer function. This follows the same principle as the previous approach: the initial server and client renders must produce the same output to avoid a hydration mismatch.
- 
-However, instead of delaying rendering until the component mounts, this approach allows the layout and its children to be server-rendered normally using the initial `false` value. Once the component mounts, `useEffect` reads the saved sidebar state and updates it accordingly.
+So I decided to use another approach: reading the sidebar state from `localStorage` inside `useEffect`
+instead of the `useState` initializer function. This follows the same principle as the previous approach:
+the initial server and client renders must produce the same output to avoid a hydration mismatch.
+
+However, instead of delaying rendering until the component mounts, this approach allows the layout and its
+children to be server-rendered normally using the initial `false` value. Once the component mounts, `useEffect`
+reads the saved sidebar state and updates it accordingly.
 
 ```
 export default function Layout() {
@@ -133,10 +140,13 @@ export default function Layout() {
 
 ```
 
-However, this approach had another problem, it caused a brief "flicker" initially as the sidebar
-state updated from closed to open after `useEffect` was run.
+This approach can work when briefly showing the real content with a default value is acceptable. For a theme
+preference, for example, rendering the page in light mode before switching to the user's saved dark mode can
+make the visual change more noticeable and disruptive.
 
-To avoid the "flicker", I used an inline script to apply the saved sidebar state directly to the DOM as the page loads,
+Even with this approach, there was still a brief flicker as the sidebar changed from closed to open after `useEffect` ran.
+
+To avoid the flicker, I used an inline script to apply the saved sidebar state directly to the DOM as the page loads,
 without waiting for React to hydrate. The idea is to apply it early enough that the sidebar doesn’t
 briefly appear open when the user left it closed, or vice versa. React then uses the same saved sidebar state
 for its initial client render (so it matches the updated HTML and avoids a hydration mismatch).
@@ -203,7 +213,7 @@ React then uses `showSidebar` to decide whether to include `sm:ml-64` on the lay
 
 #### Another Issue: The Theme Toggle
 
- I use [next-themes](https://github.com/pacocoursey/next-themes) to manage the app's theme. The theme toggle had a similar issue because its checked state depends on the current theme, which is not known during server rendering. Here, I kept the `useIsClient()` hook, which uses the same `useEffect` approach shown earlier to determine whether the component has mounted on the client. I then render `null` until it has, following the recommendation in the [next-themes documentation](https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch) to avoid hydration mismatches.
+I use [next-themes](https://github.com/pacocoursey/next-themes) to manage the app's theme. The theme toggle had a similar issue because its checked state depends on the current theme, which is not known during server rendering. Here, I kept the `useIsClient()` hook, which uses the same `useEffect` approach shown earlier to determine whether the component has mounted on the client. I then render `null` until it has, following the recommendation in the [next-themes documentation](https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch) to avoid hydration mismatches.
 
 This is an acceptable trade-off for a small, isolated control because only the toggle is missing from the initial HTML,
 while the rest of the page is still server-rendered. Using the same approach in `Layout` would also omit the page
@@ -232,7 +242,7 @@ The inline script and React already keep that sidebar class in sync, as describe
 
 You can find the rest of the implementation in [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
 
-### A Newer Alternative: `use(browser())`
+### Another Way to Skip Server Rendering: `use(browser())`
 
 [React 19.3](https://react.dev/blog/2026/09/09/react-19-3) introduced
 [`browser`](https://react.dev/reference/react-dom/browser) from `react-dom`.
@@ -240,3 +250,19 @@ Calling `use(browser())` in a Client Component skips its server rendering and le
 `<Suspense>` fallback in the initial HTML. This is an alternative to the earlier approach of using
 `useEffect` to set `isClient` to `true` and rendering nothing until the component mounts.
 My understanding is that using it in the layout would prevent the layout and its children from being server-rendered, just like the earlier `useEffect` approach.
+
+### Conclusion
+
+A hydration mismatch happens when the server-rendered HTML and React's initial client render do not match.
+We looked at ways to avoid this with `useEffect`, as well as `suppressHydrationWarning`, which suppresses the warning without fixing the underlying mismatch.
+
+Rendering `null` or a skeleton until the component mounts keeps the server and initial client output identical,
+but leaves the real content and its children out of the server-rendered HTML.
+
+If briefly showing the content with a default value is acceptable, we can render it with that value on both the
+server and the client, then update it after mounting, as I did in the sidebar example by reading its saved state from `localStorage` in `useEffect`. This preserves SSR.
+
+Both approaches can still cause flickering as the content updates after mounting. The inline script
+helps avoid flickering by applying the saved state early, without waiting for React to hydrate. React's
+initial client render must then match the HTML updated by the script, as we ensured by having React and the
+script use the same saved sidebar state and apply the same classes.
