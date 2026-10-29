@@ -54,7 +54,7 @@ Even though filtering now happens on the client side, I still wanted our filter
 to support URL parameters. I decided to use the native History API (`history.pushState`) to update the URL
 with new filter values, instead of using `router.push` from `next/navigation`.
 The main reason for this is that `router.push` triggers a server round-trip before updating the page.
-This means the server must respond — which may involve a server component executing its logic — and only then
+This means the server must respond - which may involve a server component executing its logic - and only then
 does React update the URL and display the new page. This can create a poor user experience when a client component’s UI depends on values returned by the server in response
 to the new URL, since changes won’t be visible immediately.
 
