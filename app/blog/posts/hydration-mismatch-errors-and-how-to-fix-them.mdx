@@ -203,11 +203,7 @@ React then uses `showSidebar` to decide whether to include `sm:ml-64` on the lay
 
 #### Another Issue: The Theme Toggle
 
-I use [next-themes](https://github.com/pacocoursey/next-themes) to manage the app's theme.
-The theme toggle had a similar issue: its checked state depends on the theme, which is not known on the server.
-Here I kept the `useIsClient()` hook, which uses the same `useEffect` approach shown in `SampleComponent` at the
-beginning of this post: rendering nothing until the component mounts,
-as recommended by [next-themes](https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch).
+ I use [next-themes](https://github.com/pacocoursey/next-themes) to manage the app's theme. The theme toggle had a similar issue because its checked state depends on the current theme, which is not known during server rendering. Here, I kept the `useIsClient()` hook, which uses the same `useEffect` approach shown earlier to determine whether the component has mounted on the client. I then render `null` until it has, following the recommendation in the [next-themes documentation](https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch) to avoid hydration mismatches.
 
 This is an acceptable trade-off for a small, isolated control because only the toggle is missing from the initial HTML,
 while the rest of the page is still server-rendered. Using the same approach in `Layout` would also omit the page
