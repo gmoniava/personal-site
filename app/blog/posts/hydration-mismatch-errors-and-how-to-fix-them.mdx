@@ -200,8 +200,8 @@ const [showSidebar, setShowSideBar] = React.useState(() => {
 });
 ```
 
-For example, if the saved value is `true`, the inline script adds the open-sidebar classes before hydration.
-React then initializes `showSidebar` to `true` and renders those same classes, so its initial render matches the updated DOM.
+React then uses `showSidebar` to decide whether to include `sm:ml-64` on the layout and `left-0` and
+`opacity-100` on the sidebar, just as the inline script does, keeping its render output in sync with the updated DOM.
 
 #### Another Issue: The Theme Toggle
 
