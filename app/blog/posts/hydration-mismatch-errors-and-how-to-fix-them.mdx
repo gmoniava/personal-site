@@ -5,7 +5,7 @@ summary: "Understanding hydration mismatch errors and what to do about them."
 tags: ["software-development", "react", "nextjs"]
 ---
 
-In React apps that use server-side rendering, you may encounter hydration mismatch error.
+In React apps that use server-side rendering, you may encounter a hydration mismatch error.
 Before explaining the error and the solutions, let's explain hydration first. We'll use Next.js as an example here.
 
 In a Next.js app, when you visit a page built with Client Components using server-side rendering (SSR),
@@ -23,7 +23,7 @@ Hydration on the client mainly happens in two steps:
 
 - React uses the same component tree that was used during SSR and renders it again
   on the client in memory (no DOM nodes are generated) and then checks that this output matches the HTML sent from the server.
-  The reason why such check is performed is explained in the [docs](https://react.dev/reference/react-dom/client/hydrateRoot):
+  The reason why such a check is performed is explained in the [docs](https://react.dev/reference/react-dom/client/hydrateRoot):
 
   > This is important for the user experience. The user will spend some time looking at the server-generated HTML before your JavaScript code loads. Server rendering creates an illusion that the app loads faster by showing the HTML snapshot of its output. Suddenly showing different content breaks that illusion. This is why the server render output must match the initial render output on the client.
 
