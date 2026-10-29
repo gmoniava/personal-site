@@ -116,7 +116,7 @@ export default function BlogPosts({ blogs }: any) {
       </div>
       <div className="flex flex-col gap-4 items-start">
         {postForCurrentPage.map((post: any) => (
-          <PostPreview post={post} key={post.slug} />
+          <PostPreview post={post} key={post.slug} onTagClick={(tag) => handleTagChange(topics.filter((t) => t.value === tag))} />
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />

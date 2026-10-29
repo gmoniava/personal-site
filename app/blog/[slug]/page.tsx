@@ -4,6 +4,7 @@ import { PostSeries } from "app/components/server/post-series";
 import { getBlogPosts } from "app/server/lib";
 import { formatDate } from "app/utils";
 import { baseUrl } from "app/sitemap";
+import PostTag from "app/components/post-tag";
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()?.posts;
@@ -87,12 +88,7 @@ export default async function Blog({ params }) {
       {/* Tags */}
       <div className="flex flex-wrap gap-1 mt-1 mb-4">
         {post.metadata.tags.map((tag: string) => (
-          <span
-            key={tag}
-            className=" bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-gray-300 text-sm px-2 py-0.5 rounded"
-          >
-            {tag}
-          </span>
+          <PostTag key={tag} tag={tag} />
         ))}
       </div>
       <PostSeries slug={post.slug} />
