@@ -112,11 +112,9 @@ previous section, which uses `useEffect` to render nothing until mounting,
 because it would opt out children of layout from SSR too, which is
 basically my whole app.
 
-So I decided to use another approach, which was to read the value of the
-sidebar from local storage in `useEffect` instead of `useState` initializer
-function.
-This does not cause hydration error because `useEffect` runs _after_ hydration
-and the initial `false` value is the same during SSR and the first render during hydration.
+So I decided to use another approach: reading the sidebar state from `localStorage` inside `useEffect` instead of the `useState` initializer function. This follows the same principle as the previous approach: the initial server and client renders must produce the same output to avoid a hydration mismatch.
+ 
+However, instead of delaying rendering until the component mounts, this approach allows the layout and its children to be server-rendered normally using the initial `false` value. Once the component mounts, `useEffect` reads the saved sidebar state and updates it accordingly.
 
 ```
 export default function Layout() {
@@ -130,7 +128,7 @@ export default function Layout() {
     }
   }, []);
 
-  // ...
+  // The layout and its children render normally
 }
 
 ```
