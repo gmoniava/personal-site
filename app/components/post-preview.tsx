@@ -17,7 +17,7 @@ type BlogPostPreviewProps = {
 };
 
 // Set to true to enable a subtle 2px title shift on hover.
-const enableTitleHoverAnimation = false;
+const enableTitleHoverAnimation = true;
 const titleHoverAnimationClasses =
   "transition-transform duration-200 ease-out hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none";
 
