@@ -155,6 +155,10 @@ To store both kinds of counters in the same `comment_limits` table, we replace t
 
 We want to limit comments by both user and IP address, so switching accounts or IPs alone won't bypass the limit.
 
+We could also adapt the earlier single-counter query and run it twice, once for the user key and once for the IP key.
+Here, we'll see how to update both counters in a single query using `unnest` (which turns an array into rows). Besides learning something new, this
+saves a database call and ensures both updates succeed or fail together.
+
 Here's the SQL:
 
 ```sql
