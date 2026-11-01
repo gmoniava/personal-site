@@ -9,7 +9,7 @@ In the [first part](/blog/how-to-make-sql-easier-to-understand-for-developers),
 we looked at how SQL concepts like `GROUP BY`, `HAVING`, and `LEFT JOIN`
 can be understood through equivalent JavaScript code.
 
-Let's continue with the same approach and cover other examples.
+This time, all our examples will focus on a blog's comment system. We'll explore how to limit comments per user, extend that limit to IP addresses, and search for specific users' comments on specific posts. Along the way, we'll explain `ON CONFLICT`, `CASE WHEN`, and `unnest` through equivalent JavaScript.
 
 ## Example: Limiting Comments per Hour with UPSERT and CASE WHEN
 
@@ -242,3 +242,125 @@ if (!counts.every((count) => count <= 5)) {
   // either the user or the IP commented too much, reject
 }
 ```
+
+## Example: Searching for Comments with UNNEST and JOIN
+
+Since we've touched on `unnest`, let's also see how it can help us search for comments.
+In the previous example, it turned an array into rows to insert. This time, we'll turn two arrays into pairs of values and use those pairs to find matching rows.
+
+Imagine you're reviewing reports about comments on your blog. One report asks you to review user `42`'s comments on post `10`. Another asks you to review user `7`'s comments on post `20`.
+You want to load the comments for both reports in one query.
+
+We have a `comments` table containing each comment's ID, author (`user_id`), blog post (`post_id`), and text (`body`). For this example, we'll use integer IDs:
+
+```text
+id  | user_id | post_id | body
+----|---------|---------|---------------------
+101 | 42      | 10      | First comment
+102 | 42      | 20      | Second comment
+103 | 7       | 20      | Third comment
+104 | 7       | 10      | Fourth comment
+105 | 42      | 10      | Another comment
+```
+
+We want comments `101` and `105` for the first report, and `103` for the second.
+Comments `102` and `104` belong to the same users, but on the wrong posts for these reports.
+
+### Keeping the search pairs together
+
+We pass two arrays to the query. Values at the same position belong to the same report:
+
+```js
+const userIds = [42, 7];
+const postIds = [10, 20];
+```
+
+Here's the SQL:
+
+```sql
+SELECT c.id, c.user_id, c.post_id, c.body
+FROM comments AS c
+JOIN unnest($1::int[], $2::int[])
+  AS requested(user_id, post_id)
+  ON c.user_id = requested.user_id
+ AND c.post_id = requested.post_id;
+```
+
+`$1` is `userIds`, and `$2` is `postIds`. With two arrays, `unnest` pairs their elements by position: the first user with the first post, then the second user with the second post.
+It produces these rows:
+
+```text
+user_id | post_id
+--------|--------
+42      | 10
+7       | 20
+```
+
+`AS requested(user_id, post_id)` names this set of rows `requested` and names its two columns.
+`JOIN` (short for `INNER JOIN`) finds comments where **both** the user and the post match one of those rows.
+A pair can match several comments, as user `42` has two comments on post `10`. If a pair has no matching comments, it contributes no results.
+
+Here's the equivalent JavaScript:
+
+```js
+const comments = [
+  { id: 101, userId: 42, postId: 10, body: "First comment" },
+  { id: 102, userId: 42, postId: 20, body: "Second comment" },
+  { id: 103, userId: 7, postId: 20, body: "Third comment" },
+  { id: 104, userId: 7, postId: 10, body: "Fourth comment" },
+  { id: 105, userId: 42, postId: 10, body: "Another comment" },
+];
+
+function searchComments(userIds, postIds) {
+  // SQL: unnest($1::int[], $2::int[])
+  // Pair each user with the post at the same position.
+  const requested = userIds.map((userId, index) => ({
+    userId,
+    postId: postIds[index],
+  }));
+
+  // SQL: JOIN ... ON c.user_id = requested.user_id
+  //              AND c.post_id = requested.post_id
+  const results = [];
+
+  for (const pair of requested) {
+    for (const comment of comments) {
+      if (comment.userId === pair.userId && comment.postId === pair.postId) {
+        results.push(comment);
+      }
+    }
+  }
+
+  return results;
+}
+
+const results = searchComments([42, 7], [10, 20]);
+// Returns the comment objects with IDs 101, 105, and 103.
+```
+
+Both versions find comments `101`, `105`, and `103`: user `42`'s comments on post `10`, and user `7`'s comments on post `20`.
+
+### Why not use IN?
+
+It might look like we could write:
+
+```sql
+SELECT id, user_id, post_id, body
+FROM comments
+WHERE user_id IN (42, 7)
+  AND post_id IN (10, 20);
+```
+
+Remember what we want: user `42`'s comments on post **`10`**, and user `7`'s comments on post **`20`**.
+
+Now consider comment `102`. It was written by user `42` on post `20`. Should we include it? No: for user `42`, we only asked for comments on post `10`.
+
+But here's how the query above checks comment `102`:
+
+```text
+user_id IN (42, 7)  → Is 42 in this list? Yes.
+post_id IN (10, 20) → Is 20 in this list? Yes.
+```
+
+Both conditions are true, so the query includes comment `102`.
+The first list allows either user, and the second list allows either post. Nothing in this query says that user `42` must go with post `10`, or that user `7` must go with post `20`.
