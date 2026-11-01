@@ -191,6 +191,7 @@ function recordComment(keys) {
   const now = Date.now();
 
   // SQL: SELECT key ... FROM unnest($1::text[]) AS key ORDER BY key
+  // unnest turns the array into rows, so INSERT can process each row individually.
   return [...keys].sort().map((key) => {
     const row = table.find((row) => row.key === key);
 
