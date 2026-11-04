@@ -129,7 +129,7 @@ export default function BlogPosts({ blogs }: any) {
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
       <Note>
         <p>
-          <strong>How I use AI:</strong> I use AI tools to assist with the writing process, primarily for editing and
+          <strong>How I use AI:</strong> I may use AI tools to assist with the writing process, primarily for editing and
           proofreading, and occasionally for drafting. Any AI-generated content is based on my ideas or guidance, and I
           personally review and verify everything before publication.
         </p>
