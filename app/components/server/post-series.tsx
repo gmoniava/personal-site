@@ -44,7 +44,7 @@ export function PostSeries({ slug }: { slug: string }) {
         </ol>
       </nav>
       <Note>
-        <strong className="font-medium">Note:</strong> Familiarity with JavaScript and basic SQL-tables, rows, columns,
+        <strong>Note:</strong> Familiarity with JavaScript and basic SQL-tables, rows, columns,
         and <code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>-will help you follow the examples.
       </Note>
     </>

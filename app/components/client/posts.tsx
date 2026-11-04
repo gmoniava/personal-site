@@ -4,6 +4,7 @@ import React, { useId } from "react";
 import Select from "react-select";
 import { topics } from "app/topics";
 import constants from "app/constants";
+import { Note } from "../note";
 import PostPreview from "../post-preview";
 import Pagination from "./pagination";
 
@@ -126,6 +127,13 @@ export default function BlogPosts({ blogs }: any) {
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
+      <Note>
+        <p>
+          <strong>How I use AI:</strong> I use AI tools to assist with the writing process, primarily for editing and proofreading, and occasionally
+          for drafting. Any AI-generated content is based on my ideas and/or guidance, and I personally review and
+          verify everything before publication.
+        </p>
+      </Note>
     </div>
   );
 }

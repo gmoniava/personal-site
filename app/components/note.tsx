@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 // Override prose paragraph colors and margins to match notes outside articles.
 export function Note({ children }: { children: ReactNode }) {
   return (
-    <div className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 [&_p]:my-0! [&_p]:text-inherit!">
+    <div className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 [&_p]:my-0! [&_p]:text-inherit! [&_strong]:font-medium">
       {children}
     </div>
   );
