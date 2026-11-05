@@ -137,7 +137,7 @@ export default function BlogPosts({ blogs }: any) {
         </p>
         <p>
           In rare cases, specifically for the <em>SQL Explained Through JavaScript</em> series, I used AI to generate
-          most of the content.{" "}
+          most of the content, because I wasn’t very familiar with SQL.{" "}
           <strong>
             However, in all cases where I use AI, any AI-generated material is based on my ideas or guidance.
           </strong>
