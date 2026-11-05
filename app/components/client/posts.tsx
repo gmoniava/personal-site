@@ -129,7 +129,7 @@ export default function BlogPosts({ blogs }: any) {
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
       <Note variant="outlined" aria-labelledby="ai-disclosure-heading">
         <h2 id="ai-disclosure-heading" className="font-semibold text-neutral-900 dark:text-neutral-100">
-          How I use AI
+          How I use AI in my writing
         </h2>
         <p>
           I generally write my posts myself. I sometimes use AI tools to edit or proofread my writing, and occasionally
