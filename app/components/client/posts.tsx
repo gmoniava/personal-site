@@ -132,7 +132,7 @@ export default function BlogPosts({ blogs }: any) {
           How I use AI in my writing
         </h2>
         <p>
-          I generally write my posts myself. I sometimes use AI tools to edit or proofread my writing, and occasionally
+          I generally create my blog content myself. I sometimes use AI tools to edit or proofread it, and occasionally
           to draft some sections.
         </p>
         <p>
