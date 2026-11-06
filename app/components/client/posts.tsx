@@ -132,8 +132,8 @@ export default function BlogPosts({ blogs }: any) {
           How I use AI in my writing
         </h2>
         <p>
-          I generally create my blog content myself. I sometimes use AI tools to edit or proofread it, and occasionally
-          to help draft parts of my posts.
+          I generally create my blog content myself. I may sometimes use AI tools to edit or proofread it, and
+          occasionally to help draft parts of my posts.
         </p>
         <p>
           In rare cases, specifically for the <em>SQL Explained Through JavaScript</em> series, I used AI to generate
