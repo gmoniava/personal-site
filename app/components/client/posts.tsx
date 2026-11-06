@@ -127,7 +127,7 @@ export default function BlogPosts({ blogs }: any) {
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
-      <Note variant="outlined" aria-labelledby="ai-disclosure-heading">
+      {/* <Note variant="outlined" aria-labelledby="ai-disclosure-heading">
         <h2 id="ai-disclosure-heading" className="font-semibold text-neutral-900 dark:text-neutral-100">
           How I use AI in my writing
         </h2>
@@ -143,7 +143,7 @@ export default function BlogPosts({ blogs }: any) {
           </strong>
         </p>
         <p>I personally review and verify everything before publication.</p>
-      </Note>
+      </Note> */}
     </div>
   );
 }
