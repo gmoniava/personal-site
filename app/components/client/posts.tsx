@@ -127,23 +127,6 @@ export default function BlogPosts({ blogs }: any) {
         ))}
       </div>
       <Pagination page={page} totalFilteredPages={totalFilteredPages} handlePageChange={handlePageChange} />
-      {/* <Note variant="outlined" aria-labelledby="ai-disclosure-heading">
-        <h2 id="ai-disclosure-heading" className="font-semibold text-neutral-900 dark:text-neutral-100">
-          How I use AI in my writing
-        </h2>
-        <p>
-          I generally create my blog content myself. I may sometimes use AI tools to edit or proofread it, and
-          occasionally to help draft parts of my posts.
-        </p>
-        <p>
-          In rare cases, specifically for the <em>SQL Explained Through JavaScript</em> series, I used AI to generate
-          most of the content, because I was learning SQL.{" "}
-          <strong>
-            However, in all cases where I use AI, any AI-generated material is based on my ideas or guidance.
-          </strong>
-        </p>
-        <p>I personally review and verify everything before publication.</p>
-      </Note> */}
     </div>
   );
 }
