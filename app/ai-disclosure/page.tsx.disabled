@@ -1,0 +1,40 @@
+import type { Metadata } from "next";
+
+const title = "How I use AI in my writing";
+const description = "How AI contributes to my blog content, and what my AI-assisted labels mean.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/ai-disclosure" },
+  openGraph: { title, description, url: "/ai-disclosure" },
+};
+
+export default function Page() {
+  return (
+    <section>
+      <h1 className="mb-8 text-2xl font-semibold tracking-tight">{title}</h1>
+      <div className="prose">
+        <p>I use the following definitions to describe how AI contributes to my blog content.</p>
+        <h2>Definitions</h2>
+        <ul className="list-disc pl-6 space-y-4">
+          <li>
+            <strong>AI-assisted:</strong> I generally create my blog content myself. I may sometimes use AI
+            tools to edit my content (for example, grammar and language editing, or suggesting alternative phrasing or framing) and occasionally
+            to help draft parts of my posts based on my ideas or guidance. I personally review and verify
+            everything before publication.
+          </li>
+          <li>
+            <strong>AI-assisted (extensive drafting):</strong> The same principles as{" "}
+            <strong>AI-assisted</strong> apply, but AI is used to draft the majority of the post&apos;s content.
+          </li>
+        </ul>
+        <p>
+          Most of my articles are classified as <strong>AI-assisted</strong>, with the{" "}
+          <em>SQL Explained Through JavaScript</em> series being an exception, classified as{" "}
+          <strong>AI-assisted (extensive drafting)</strong>, because I was learning SQL.
+        </p>
+      </div>
+    </section>
+  );
+}
