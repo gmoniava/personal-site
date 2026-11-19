@@ -1,0 +1,166 @@
+---
+title: "React forms"
+date: "2025-06-16T19:00:00Z"
+lastUpdated: "2025-09-05T10:00:00Z"
+summary: "Discussing the new approach of handling forms in React."
+tags: ["react"]
+---
+
+Most of the react applications deal with forms. Traditional approach to using forms was
+based on the `onSubmit` method. However, React 19 introduced new primitives for working with
+forms such as the `action` prop. In this post we will investigate what improvements does this
+new feature bring as compared to the old approach.
+
+## The old approach using `onSubmit`
+
+First of all let's take a look how we would have implemented a simple newsletter subscription form using the
+`onSubmit` method:
+
+```
+
+import { useState } from "react";
+
+async function subscribe(email: string) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  if (email === "test@example.com") {
+    return {
+      success: false as const,
+      error: "This email is already subscribed.",
+    };
+  }
+
+  return { success: true as const };
+}
+
+export default function NewsletterForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+
+    setIsSubmitting(true);
+    setError("");
+    setSuccess(false);
+
+    try {
+      const result = await subscribe(email);
+
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+
+      setSuccess(true);
+      form.reset();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+      />
+
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Subscribing..." : "Subscribe"}
+      </button>
+
+      {error && <p role="alert">{error}</p>}
+      {success && <p>Successfully subscribed!</p>}
+    </form>
+  );
+}
+
+```
+
+Notice that we are using an uncontrolled form, that is, the values of form fields
+are not stored in state. Both controlled and uncontrolled forms are fine, it
+depends on the requirements.
+
+## First look at the `action` prop
+
+Here is the same example written using the `action` prop:
+
+```
+import { useState } from "react";
+
+export default function NewsletterForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  async function action(formData: FormData) {
+    const email = formData.get("email") as string;
+
+    setIsSubmitting(true);
+    setError("");
+    setSuccess(false);
+
+    try {
+      const result = await subscribe(email);
+
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+
+      setSuccess(true);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <form action={action}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+      />
+
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Subscribing..." : "Subscribe"}
+      </button>
+
+      {error && <p role="alert">{error}</p>}
+      {success && <p>Successfully subscribed!</p>}
+    </form>
+  );
+}
+```
+
+On the surface this does not look much different. But there are still some differences:
+
+- No `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
+- Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
+- Automatic form reset — React resets uncontrolled form fields after the action completes successfully, eliminating the manual `form.reset()` call.
+
+If this was the only improvement, it might not be enough to justify switching to the `action` prop. But `action` also integrates form
+submissions with React’s transitions: React automatically runs the function passed to `action` inside a transition.
+
+But we could achieved similar behavior with `onSubmit` by wrapping our submission logic in `startTransition`. So what does `action` offer beyond that?
+
+One important difference between using `action` and `onSubmit` with `startTransition`: progressive enhancement when working with Server Functions.
+With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
+On the other hand, when we pass a Server Function to the action prop, React can support form submissions even before JavaScript has loaded. For example,
+in Next.js, a form rendered by a Server Component can submit directly to the server using the browser's native form submission mechanism, even when JavaScript is disabled.
+This is something that `onSubmit` combined with `startTransition` cannot provide.
