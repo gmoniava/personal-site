@@ -173,6 +173,36 @@ table {
   @apply bg-neutral-50 font-medium dark:bg-neutral-800;
 }
 
+.prose .comparison-table {
+  margin-block: 1.5rem;
+  overflow-x: auto;
+}
+
+.prose .comparison-table:focus-visible {
+  outline: 2px solid #47a3f3;
+  outline-offset: 4px;
+}
+
+.prose .comparison-table table {
+  display: table;
+  width: 100%;
+  min-width: 56rem;
+  max-width: none;
+  margin: 0;
+  table-layout: fixed;
+}
+
+.prose .comparison-table code {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1024px) {
+  .prose .comparison-table {
+    width: 960px;
+    margin-inline: calc((100% - 960px) / 2);
+  }
+}
+
 .title {
   /* text-wrap: balance; */
 }

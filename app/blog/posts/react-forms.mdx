@@ -11,7 +11,7 @@ based on the `onSubmit` method. However, React 19 introduced new primitives for 
 forms such as the `action` prop. In this post we will investigate what improvements does this
 new feature bring as compared to the old approach.
 
-## The old approach using `onSubmit`
+## Handling form submissions with `onSubmit`
 
 First of all let's take a look how we would have implemented a simple newsletter subscription form using the
 `onSubmit` method:
@@ -93,22 +93,31 @@ Notice that we are using an uncontrolled form, that is, the values of form field
 are not stored in state. Both controlled and uncontrolled forms are fine, it
 depends on the requirements.
 
-## First look at the `action` prop
+## Handling form submissions with `action`
 
 Here is the same example written using the `action` prop:
 
 ```
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button type="submit" disabled={pending}>
+      {pending ? "Subscribing..." : "Subscribe"}
+    </button>
+  );
+}
 
 export default function NewsletterForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   async function action(formData: FormData) {
     const email = formData.get("email") as string;
 
-    setIsSubmitting(true);
     setError("");
     setSuccess(false);
 
@@ -123,8 +132,6 @@ export default function NewsletterForm() {
       setSuccess(true);
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   }
 
@@ -137,8 +144,82 @@ export default function NewsletterForm() {
         required
       />
 
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Subscribing..." : "Subscribe"}
+      <SubmitButton />
+
+      {error && <p role="alert">{error}</p>}
+      {success && <p>Successfully subscribed!</p>}
+    </form>
+  );
+}
+```
+
+## Comparing `action` prop with plain `onSubmit`
+
+- No `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
+- Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
+- **Automatic form reset** — React resets uncontrolled fields when the action resolves normally, eliminating the manual `form.reset()` call. This includes handled validation failures: our `action` example resets the email field even when subscription fails, whereas the `onSubmit` example resets only when `result.success` is `true`.
+
+Notice that we replaced the manual `isSubmitting` flag with [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus).
+React runs `action` inside a Transition, so setting a loading flag inside the action can defer that update until the submission finishes,
+preventing the loading state from appearing during the request. The `pending` flag from `useFormStatus` tracks the submission instead.
+We extracted `SubmitButton` because this hook reads the status of a parent form: it must be called from a component rendered inside the form.
+
+The same timing affects `setError("")` and `setSuccess(false)` at the start of our action: clearing the previous result is deferred,
+so an old error or success message can remain visible while the button says "Subscribing...".
+
+Running the submission inside a Transition also enables optimistic updates, Error Boundary integration, and non-blocking rendering for Transition updates.
+
+## Handling form submissions with `onSubmit` and `useTransition`
+
+The `action` prop runs the function passed to it inside a Transition. We can also start a Transition ourselves
+by combining `onSubmit` with `useTransition`. This hook returns `isPending` to track pending work and `startTransition` to start the Transition:
+
+```
+import { useState, useTransition } from "react";
+
+export default function NewsletterForm() {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+
+    setError("");
+    setSuccess(false);
+
+    startTransition(async () => {
+      try {
+        const result = await subscribe(email);
+
+        if (!result.success) {
+          setError(result.error);
+          return;
+        }
+
+        setSuccess(true);
+        form.reset();
+      } catch {
+        setError("Something went wrong. Please try again.");
+      }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+      />
+
+      <button type="submit" disabled={isPending}>
+        {isPending ? "Subscribing..." : "Subscribe"}
       </button>
 
       {error && <p role="alert">{error}</p>}
@@ -148,19 +229,74 @@ export default function NewsletterForm() {
 }
 ```
 
-On the surface this does not look much different. But there are still some differences:
-
-- No `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
-- Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
-- Automatic form reset — React resets uncontrolled form fields after the action completes successfully, eliminating the manual `form.reset()` call.
-
-If this was the only improvement, it might not be enough to justify switching to the `action` prop. But `action` also integrates form
-submissions with React’s transitions: React automatically runs the function passed to `action` inside a transition.
-
-But we could achieved similar behavior with `onSubmit` by wrapping our submission logic in `startTransition`. So what does `action` offer beyond that?
-
-One important difference between using `action` and `onSubmit` with `startTransition`: progressive enhancement when working with Server Functions.
+Now largely we can say that this example is close to the `action` prop. However, there is another difference: progressive enhancement when working with Server Functions.
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
 On the other hand, when we pass a Server Function to the action prop, React can support form submissions even before JavaScript has loaded. For example,
 in Next.js, a form rendered by a Server Component can submit directly to the server using the browser's native form submission mechanism, even when JavaScript is disabled.
 This is something that `onSubmit` combined with `startTransition` cannot provide.
+
+## Comparing all three approaches
+
+<div className="comparison-table" role="region" aria-label="Comparison of React form approaches" tabIndex={0}>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Behavior</th>
+      <th scope="col">Plain <code>onSubmit</code></th>
+      <th scope="col"><code>onSubmit</code> + <code>useTransition</code></th>
+      <th scope="col">Function passed to <code>action</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prevent browser navigation</td>
+      <td>Call <code>event.preventDefault()</code></td>
+      <td>Call <code>event.preventDefault()</code></td>
+      <td>Automatic</td>
+    </tr>
+    <tr>
+      <td>Obtain submitted values</td>
+      <td>Construct <code>FormData</code></td>
+      <td>Construct <code>FormData</code></td>
+      <td>Receives <code>FormData</code></td>
+    </tr>
+    <tr>
+      <td>Start a Transition</td>
+      <td>Not included</td>
+      <td>Call <code>startTransition</code></td>
+      <td>Automatic</td>
+    </tr>
+    <tr>
+      <td>Track pending state</td>
+      <td>Manage a loading flag yourself</td>
+      <td>Read <code>isPending</code>, or <code>useFormStatus().pending</code> in a child component when the Transition starts in the submit handler</td>
+      <td>Read <code>useFormStatus().pending</code> in a child component</td>
+    </tr>
+    <tr>
+      <td>Reset uncontrolled fields</td>
+      <td>Reset explicitly</td>
+      <td>Reset explicitly</td>
+      <td>Automatic when the action resolves normally</td>
+    </tr>
+    <tr>
+      <td>Optimistic updates with <code>useOptimistic</code></td>
+      <td>Requires adding a Transition</td>
+      <td>Supported inside the Transition</td>
+      <td>Supported inside the action</td>
+    </tr>
+    <tr>
+      <td>Uncaught async errors reach an Error Boundary</td>
+      <td>Not automatically</td>
+      <td>Yes, from the async Transition callback</td>
+      <td>Yes, from the action</td>
+    </tr>
+    <tr>
+      <td>Progressive enhancement with a Server Function</td>
+      <td>Client handler requires JavaScript</td>
+      <td>Client handler requires JavaScript</td>
+      <td>Supported in a compatible framework</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
