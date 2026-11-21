@@ -158,19 +158,30 @@ export default function NewsletterForm() {
 
 ## Comparing `action` prop with plain `onSubmit`
 
-As you may notice there are some changes between the two examples. Let's go through them.
+As you may notice there are some changes between the two examples. Let's go through what changes when we use `action` instead of `onSubmit`.
 
-- No `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
-- Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
-- **Automatic form reset** — React resets uncontrolled fields when the action resolves normally, eliminating the manual `form.reset()` call.
-  In our `action` example, showing an error and returning still counts as finishing normally, so React clears the email field even when the subscription fails.
-  In the `onSubmit` example, we call `form.reset()` only after a successful subscription, so the email stays in the field when something goes wrong.
+With `action`, we don't need `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
+
+The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
+
+### Automatic form reset
+
+React resets uncontrolled fields when the action completes without throwing, eliminating the manual `form.reset()` call.
+In our `action` example, since we handle the error without throwing, React clears the email field even when
+the subscription fails. In the `onSubmit` example, we call `form.reset()` only after a successful subscription, so the email stays in the field when something goes wrong.
+
+### Function passed to action runs in transition
 
 Besides these, the main difference from plain `onSubmit` is that React runs the function passed to `action` inside a Transition.
-This lets us use the capabilities that Transitions offer. However, notice that we also had to refactor the code a little
-to use `useFormStatus` for the loading indicator and to hide previous error or success messages while submitting.
-State updates made at the start of the action can be deferred until the submission finishes. As a result, a manual loading flag
-may never appear during the request, and an old error or success message can remain visible while the button says "Subscribing...".
+This lets us use the capabilities that Transitions offer.
+
+### `useFormStatus` and `FormMessages`
+
+Notice that we also had to refactor the code a little to use [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus) for the loading indicator and to hide previous error or success messages while submitting using the `FormMessages` component.
+When you pass a function to the `action` prop, React makes the pending state available to child components via `useFormStatus`.
+
+State updates made at the start of the action can be deferred until the submission finishes. As a result, a manual loading flag may never appear during the request, which is why we use `useFormStatus` for the loading indicator.
+An old error or success message can also remain visible while the button says “Subscribing...”, so `FormMessages` uses that pending state to hide previous messages during submission.
 
 ## Handling form submissions with `onSubmit` and `useTransition`
 
@@ -230,7 +241,7 @@ export default function NewsletterForm() {
 ```
 
 Here we clear the previous error and success messages _before_ calling `startTransition`, so they disappear immediately
-(they are not deferred as in the example with `action` prop).
+(they are not deferred as in the example with `action` prop so we don't use the `FormMessages` component).
 We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
 
 There is another difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement when working with Server Functions.
@@ -326,7 +337,7 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
       <tr>
         <td>Uncaught async errors reach an Error Boundary</td>
         <td>Requires a Transition</td>
-        <td>Yes, from the async Transition callback</td>
+        <td>Yes, from the Transition</td>
         <td>Yes, from the action</td>
       </tr>
       <tr>
