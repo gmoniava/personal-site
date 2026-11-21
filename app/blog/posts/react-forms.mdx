@@ -13,7 +13,7 @@ Most React applications deal with forms. Traditionally, we handle submissions wi
 First of all let's take a look how we would have implemented a simple newsletter subscription form using the
 `onSubmit` method:
 
-```
+```tsx
 
 import { useState } from "react";
 
@@ -90,7 +90,7 @@ export default function NewsletterForm() {
 
 Here is the same example written using the `action` prop:
 
-```
+```tsx
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -194,7 +194,7 @@ can remain visible while the button says "Subscribing...".
 As we said `action` prop runs the function passed to it inside a Transition. However, we can also start a Transition ourselves
 by combining `onSubmit` with `useTransition`. This hook returns `isPending` to track pending work and `startTransition` to start the Transition:
 
-```
+```tsx
 import { useState, useTransition } from "react";
 
 export default function NewsletterForm() {
