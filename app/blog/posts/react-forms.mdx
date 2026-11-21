@@ -8,15 +8,9 @@ tags: ["react"]
 
 Most React applications deal with forms. Traditionally, we handle submissions with `onSubmit`. React 19 added support for passing functions to a form’s `action` prop. In this post, we’ll compare three approaches: plain `onSubmit`, `action`, and `onSubmit` with `useTransition`.
 
-## Handling form submissions with `onSubmit`
+Throughout this post, we’ll use the following mock subscription API. It simulates a one-second request and returns an error for `test@example.com`, or success for any other email. All three form examples below refer to this same `subscribe` function.
 
-First of all let's take a look how we would have implemented a simple newsletter subscription form using the
-`onSubmit` method:
-
-```tsx
-
-import { useState } from "react";
-
+```ts
 async function subscribe(email: string) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -29,15 +23,22 @@ async function subscribe(email: string) {
 
   return { success: true as const };
 }
+```
+
+## Handling form submissions with `onSubmit`
+
+First of all let's take a look how we would have implemented a simple newsletter subscription form using the
+`onSubmit` method:
+
+```tsx
+import { useState } from "react";
 
 export default function NewsletterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -49,6 +50,7 @@ export default function NewsletterForm() {
     setSuccess(false);
 
     try {
+      // Uses the mock subscribe() API defined above.
       const result = await subscribe(email);
 
       if (!result.success) {
@@ -57,6 +59,7 @@ export default function NewsletterForm() {
       }
 
       setSuccess(true);
+      // Reset the form after a successful subscription.
       form.reset();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -67,12 +70,7 @@ export default function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        required
-      />
+      <input type="email" name="email" placeholder="Enter your email" required />
 
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Subscribing..." : "Subscribe"}
@@ -83,7 +81,6 @@ export default function NewsletterForm() {
     </form>
   );
 }
-
 ```
 
 ## Handling form submissions with `action`
@@ -94,19 +91,7 @@ Here is the same example written using the `action` prop:
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
-async function subscribe(email: string) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  if (email === "test@example.com") {
-    return {
-      success: false as const,
-      error: "This email is already subscribed.",
-    };
-  }
-
-  return { success: true as const };
-}
-
+// Track submission status to disable the button and show progress.
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -117,13 +102,8 @@ function SubmitButton() {
   );
 }
 
-function FormMessages({
-  error,
-  success,
-}: {
-  error: string;
-  success: boolean;
-}) {
+// Show success or error messages, hiding them while submitting.
+function FormMessages({ error, success }: { error: string; success: boolean }) {
   const { pending } = useFormStatus();
 
   if (pending) return null;
@@ -147,6 +127,7 @@ export default function NewsletterForm() {
     setSuccess(false);
 
     try {
+      // Uses the mock subscribe() API defined above.
       const result = await subscribe(email);
 
       if (!result.success) {
@@ -162,12 +143,7 @@ export default function NewsletterForm() {
 
   return (
     <form action={action}>
-      <input
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        required
-      />
+      <input type="email" name="email" placeholder="Enter your email" required />
 
       <SubmitButton />
       <FormMessages error={error} success={success} />
@@ -178,9 +154,12 @@ export default function NewsletterForm() {
 
 ## Comparing `action` prop with plain `onSubmit`
 
+There are quite some changes in this example and we will go through them. First let's mention the smaller ones:
+
 - No `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
 - Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
-- **Automatic form reset** — React resets uncontrolled fields when the action resolves normally, eliminating the manual `form.reset()` call. This includes handled validation failures: our `action` example resets the email field even when subscription fails, whereas the `onSubmit` example resets only when `result.success` is `true`.
+- **Automatic form reset** — React resets uncontrolled fields when the action resolves normally, eliminating the manual `form.reset()` call.
+  This includes handled validation failures: our `action` example resets the email field even when subscription fails, whereas the `onSubmit` example resets only when `result.success` is `true`.
 
 The main difference from plain `onSubmit` is that React runs the function passed to `action` inside a Transition.
 This lets us use the capabilities that Transitions offer. However, notice that we also had to refactor the code a little
@@ -213,6 +192,7 @@ export default function NewsletterForm() {
 
     startTransition(async () => {
       try {
+        // Uses the mock subscribe() API defined above.
         const result = await subscribe(email);
 
         if (!result.success) {
@@ -221,6 +201,7 @@ export default function NewsletterForm() {
         }
 
         setSuccess(true);
+        // Reset the form after a successful subscription.
         form.reset();
       } catch {
         setError("Something went wrong. Please try again.");
@@ -230,12 +211,7 @@ export default function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        required
-      />
+      <input type="email" name="email" placeholder="Enter your email" required />
 
       <button type="submit" disabled={isPending}>
         {isPending ? "Subscribing..." : "Subscribe"}
@@ -360,7 +336,7 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
 ## Next: `useActionState`
 
 There is also another option of working with the forms which works with the `action` prop: [`useActionState`](https://react.dev/reference/react/useActionState).
-It returns the action's result as state and exposes an `isPending` flag, so we don't need separate useState
+It returns the action's result as state and exposes an `isPending` flag, so we don't need separate `useState`
 calls or a `useFormStatus` child component. This is a topic maybe for another post.
 
 ## Notes
