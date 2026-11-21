@@ -1,15 +1,12 @@
 ---
-title: "React forms"
-date: "2025-06-16T19:00:00Z"
-lastUpdated: "2025-09-05T10:00:00Z"
-summary: "Discussing the new approach of handling forms in React."
+title: "React Forms Beyond onSubmit"
+date: "2026-11-23T16:00:00Z"
+lastUpdated: "2026-11-23T16:00:00Z"
+summary: "How onSubmit, action, and onSubmit with useTransition differ when handling React form submissions."
 tags: ["react"]
 ---
 
-Most of the react applications deal with forms. Traditional approach to using forms was
-based on the `onSubmit` method. However, React 19 introduced new primitives for working with
-forms such as the `action` prop. In this post we will investigate what improvements does this
-new feature bring as compared to the old approach.
+Most React applications deal with forms. Traditionally, we handle submissions with `onSubmit`. React 19 added support for passing functions to a form’s `action` prop. In this post, we’ll compare three approaches: plain `onSubmit`, `action`, and `onSubmit` with `useTransition`.
 
 ## Handling form submissions with `onSubmit`
 
@@ -89,10 +86,6 @@ export default function NewsletterForm() {
 
 ```
 
-Notice that we are using an uncontrolled form, that is, the values of form fields
-are not stored in state. Both controlled and uncontrolled forms are fine, it
-depends on the requirements.
-
 ## Handling form submissions with `action`
 
 Here is the same example written using the `action` prop:
@@ -101,6 +94,19 @@ Here is the same example written using the `action` prop:
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
+async function subscribe(email: string) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  if (email === "test@example.com") {
+    return {
+      success: false as const,
+      error: "This email is already subscribed.",
+    };
+  }
+
+  return { success: true as const };
+}
+
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -108,6 +114,25 @@ function SubmitButton() {
     <button type="submit" disabled={pending}>
       {pending ? "Subscribing..." : "Subscribe"}
     </button>
+  );
+}
+
+function FormMessages({
+  error,
+  success,
+}: {
+  error: string;
+  success: boolean;
+}) {
+  const { pending } = useFormStatus();
+
+  if (pending) return null;
+
+  return (
+    <>
+      {error && <p role="alert">{error}</p>}
+      {success && <p>Successfully subscribed!</p>}
+    </>
   );
 }
 
@@ -145,9 +170,7 @@ export default function NewsletterForm() {
       />
 
       <SubmitButton />
-
-      {error && <p role="alert">{error}</p>}
-      {success && <p>Successfully subscribed!</p>}
+      <FormMessages error={error} success={success} />
     </form>
   );
 }
@@ -159,19 +182,16 @@ export default function NewsletterForm() {
 - Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
 - **Automatic form reset** — React resets uncontrolled fields when the action resolves normally, eliminating the manual `form.reset()` call. This includes handled validation failures: our `action` example resets the email field even when subscription fails, whereas the `onSubmit` example resets only when `result.success` is `true`.
 
-Notice that we replaced the manual `isSubmitting` flag with [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus).
-React runs `action` inside a Transition, so setting a loading flag inside the action can defer that update until the submission finishes,
-preventing the loading state from appearing during the request. The `pending` flag from `useFormStatus` tracks the submission instead.
-We extracted `SubmitButton` because this hook reads the status of a parent form: it must be called from a component rendered inside the form.
-
-The same timing affects `setError("")` and `setSuccess(false)` at the start of our action: clearing the previous result is deferred,
-so an old error or success message can remain visible while the button says "Subscribing...".
-
-Running the submission inside a Transition also enables optimistic updates, Error Boundary integration, and non-blocking rendering for Transition updates.
+But the main difference now with `onSubmit` is that with `action` prop react runs the function passed to it inside a transition.
+This has several consequences. First, because of this now we are able to leverage various capabilities that transitions offer.
+However, also notice we had to refactor the code a little but to rely on `useFormStatus` to display loading indicators and
+also error messages. This is because since the function now runs inside a transition, calling a `setState` inside could defer
+the update until the submission finishes, preventing the loading state from appearing during request, or an old error or success message
+can remain visible while the button says "Subscribing...".
 
 ## Handling form submissions with `onSubmit` and `useTransition`
 
-The `action` prop runs the function passed to it inside a Transition. We can also start a Transition ourselves
+As we said `action` prop runs the function passed to it inside a Transition. However, we can also start a Transition ourselves
 by combining `onSubmit` with `useTransition`. This hook returns `isPending` to track pending work and `startTransition` to start the Transition:
 
 ```
@@ -229,7 +249,10 @@ export default function NewsletterForm() {
 }
 ```
 
-Now largely we can say that this example is close to the `action` prop. However, there is another difference: progressive enhancement when working with Server Functions.
+Here we clear the previous error and success messages _before_ calling `startTransition`, so they disappear immediately.
+We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
+
+There is another big difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement when working with Server Functions.
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
 On the other hand, when we pass a Server Function to the action prop, React can support form submissions even before JavaScript has loaded. For example,
 in Next.js, a form rendered by a Server Component can submit directly to the server using the browser's native form submission mechanism, even when JavaScript is disabled.
@@ -238,65 +261,112 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
 ## Comparing all three approaches
 
 <div className="comparison-table" role="region" aria-label="Comparison of React form approaches" tabIndex={0}>
-<table>
-  <thead>
-    <tr>
-      <th scope="col">Behavior</th>
-      <th scope="col">Plain <code>onSubmit</code></th>
-      <th scope="col"><code>onSubmit</code> + <code>useTransition</code></th>
-      <th scope="col">Function passed to <code>action</code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Prevent browser navigation</td>
-      <td>Call <code>event.preventDefault()</code></td>
-      <td>Call <code>event.preventDefault()</code></td>
-      <td>Automatic</td>
-    </tr>
-    <tr>
-      <td>Obtain submitted values</td>
-      <td>Construct <code>FormData</code></td>
-      <td>Construct <code>FormData</code></td>
-      <td>Receives <code>FormData</code></td>
-    </tr>
-    <tr>
-      <td>Start a Transition</td>
-      <td>Not included</td>
-      <td>Call <code>startTransition</code></td>
-      <td>Automatic</td>
-    </tr>
-    <tr>
-      <td>Track pending state</td>
-      <td>Manage a loading flag yourself</td>
-      <td>Read <code>isPending</code>, or <code>useFormStatus().pending</code> in a child component when the Transition starts in the submit handler</td>
-      <td>Read <code>useFormStatus().pending</code> in a child component</td>
-    </tr>
-    <tr>
-      <td>Reset uncontrolled fields</td>
-      <td>Reset explicitly</td>
-      <td>Reset explicitly</td>
-      <td>Automatic when the action resolves normally</td>
-    </tr>
-    <tr>
-      <td>Optimistic updates with <code>useOptimistic</code></td>
-      <td>Requires adding a Transition</td>
-      <td>Supported inside the Transition</td>
-      <td>Supported inside the action</td>
-    </tr>
-    <tr>
-      <td>Uncaught async errors reach an Error Boundary</td>
-      <td>Not automatically</td>
-      <td>Yes, from the async Transition callback</td>
-      <td>Yes, from the action</td>
-    </tr>
-    <tr>
-      <td>Progressive enhancement with a Server Function</td>
-      <td>Client handler requires JavaScript</td>
-      <td>Client handler requires JavaScript</td>
-      <td>Supported in a compatible framework</td>
-    </tr>
-  </tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Behavior</th>
+        <th scope="col">
+          Plain <code>onSubmit</code>
+        </th>
+        <th scope="col">
+          <code>onSubmit</code> + <code>useTransition</code>
+        </th>
+        <th scope="col">
+          Function passed to <code>action</code>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Prevent browser navigation</td>
+        <td>
+          Call <code>event.preventDefault()</code>
+        </td>
+        <td>
+          Call <code>event.preventDefault()</code>
+        </td>
+        <td>Automatic</td>
+      </tr>
+      <tr>
+        <td>Obtain submitted values</td>
+        <td>
+          Construct <code>FormData</code>
+        </td>
+        <td>
+          Construct <code>FormData</code>
+        </td>
+        <td>
+          Receives <code>FormData</code>
+        </td>
+      </tr>
+      <tr>
+        <td>Start a Transition</td>
+        <td>Not included</td>
+        <td>
+          Call <code>startTransition</code>
+        </td>
+        <td>Automatic</td>
+      </tr>
+      <tr>
+        <td>Show a loading indicator during submission</td>
+        <td>Manage a loading flag yourself</td>
+        <td>
+          Read <code>isPending</code>, or <code>useFormStatus().pending</code> in a child component when the Transition
+          starts in the submit handler
+        </td>
+        <td>
+          Read <code>useFormStatus().pending</code> in a child component
+        </td>
+      </tr>
+      <tr>
+        <td>Hide previous error or success messages when submitting again</td>
+        <td>Clear message state at the start of the handler</td>
+        <td>
+          Clear message state before calling <code>startTransition</code>
+        </td>
+        <td>
+          Hide messages while <code>useFormStatus().pending</code> is true; clearing state inside the action is deferred
+        </td>
+      </tr>
+      <tr>
+        <td>Reset uncontrolled fields</td>
+        <td>Reset explicitly</td>
+        <td>Reset explicitly</td>
+        <td>Automatic when the action resolves normally</td>
+      </tr>
+      <tr>
+        <td>
+          Optimistic updates with <code>useOptimistic</code>
+        </td>
+        <td>Requires adding a Transition</td>
+        <td>Supported inside the Transition</td>
+        <td>Supported inside the action</td>
+      </tr>
+      <tr>
+        <td>Uncaught async errors reach an Error Boundary</td>
+        <td>Not automatically</td>
+        <td>Yes, from the async Transition callback</td>
+        <td>Yes, from the action</td>
+      </tr>
+      <tr>
+        <td>Progressive enhancement with a Server Function</td>
+        <td>Client handler requires JavaScript</td>
+        <td>Client handler requires JavaScript</td>
+        <td>Supported in a compatible framework</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
+## Next: `useActionState`
+
+There is also another option of working with the forms which works with the `action` prop: [`useActionState`](https://react.dev/reference/react/useActionState).
+It returns the action's result as state and exposes an `isPending` flag, so we don't need separate useState
+calls or a `useFormStatus` child component. This is a topic maybe for another post.
+
+## Notes
+
+These examples use uncontrolled inputs, so their values are not stored in React state. All three approaches also work with controlled inputs.
+With controlled inputs, we would manage the email with `value` and `onChange`, could read it from state instead of `FormData`, and would clear it
+with `setEmail("")` rather than `form.reset()` or the automatic reset from `action`. Automatic resets only apply to uncontrolled fields;
+the pending-state and Transition behavior discussed above stays the same.
