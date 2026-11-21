@@ -160,7 +160,7 @@ export default function NewsletterForm() {
 
 As you may notice there are some changes between the two examples. Let's go through what changes when we use `action` instead of `onSubmit`.
 
-With `action`, we don't need `event.preventDefault()` — React handles the submission without triggering the browser's default navigation.
+With `action`, we don't need `event.preventDefault()` - React handles the submission without triggering the browser's default navigation.
 
 The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
 
