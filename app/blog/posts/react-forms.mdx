@@ -182,12 +182,11 @@ export default function NewsletterForm() {
 - Automatic `FormData` creation — The action receives `FormData` directly, so we don't have to access `event.currentTarget` and construct it ourselves.
 - **Automatic form reset** — React resets uncontrolled fields when the action resolves normally, eliminating the manual `form.reset()` call. This includes handled validation failures: our `action` example resets the email field even when subscription fails, whereas the `onSubmit` example resets only when `result.success` is `true`.
 
-But the main difference now with `onSubmit` is that with `action` prop react runs the function passed to it inside a transition.
-This has several consequences. First, because of this now we are able to leverage various capabilities that transitions offer.
-However, also notice we had to refactor the code a little but to rely on `useFormStatus` to display loading indicators and
-also error messages. This is because since the function now runs inside a transition, calling a `setState` inside could defer
-the update until the submission finishes, preventing the loading state from appearing during request, or an old error or success message
-can remain visible while the button says "Subscribing...".
+The main difference from plain `onSubmit` is that React runs the function passed to `action` inside a Transition.
+This lets us use the capabilities that Transitions offer. However, notice that we also had to refactor the code a little
+to use `useFormStatus` for the loading indicator and to hide previous error or success messages while submitting.
+State updates made at the start of the action can be deferred until the submission finishes. As a result, a manual loading flag
+may never appear during the request, and an old error or success message can remain visible while the button says "Subscribing...".
 
 ## Handling form submissions with `onSubmit` and `useTransition`
 
