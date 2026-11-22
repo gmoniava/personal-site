@@ -15,14 +15,12 @@ export default function PostTag({ tag, onTagClick }: { tag: string; onTagClick?:
         if (!onTagClick || event.defaultPrevented) return;
 
         // button === 0 means the main mouse button (usually left-click).
-        // Keyboard activation of a link also produces a click with button === 0.
         const isPrimaryClick = event.button === 0;
 
-        // Check whether Command (Mac), Ctrl, Shift, or Alt is held while clicking.
-        // These keys can change the browser's link behavior, such as opening a new tab.
         const hasModifierKey = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 
-        // Let the browser handle modified clicks, such as Ctrl-click to open a new tab.
+        // If a modifier key is held or this isn't a primary click, exit without
+        // calling preventDefault(), so actions like Ctrl/Cmd-click still open a new tab.
         if (!isPrimaryClick || hasModifierKey) return;
 
         // Update the Blog filter without navigating away.
