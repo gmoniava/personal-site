@@ -183,13 +183,10 @@ This lets us use features that work with Transitions, such as optimistic updates
 ### `useFormStatus` and `FormMessages`
 
 Notice that we also had to refactor the code a little to use [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus) for the loading indicator and to hide previous error or success messages while submitting using the `FormMessages` component.
-This was needed for following reasons:
 
-State updates made at the start of the action can be deferred until the submission finishes. As a result, a manual loading flag may never appear during the request,
-which is why we use `useFormStatus` for the loading indicator.
-
-An old error or success message can also remain visible while the button says “Subscribing...”, so `FormMessages` uses that pending state to hide previous messages
-during submission.
+State updates made synchronously inside the action are marked as Transition updates and can be deferred until the submission finishes. As a result, a manual loading flag may never appear during the request,
+which is why we use `useFormStatus` for the loading indicator. For the same reason, an old error or success message can remain visible while the button says “Subscribing...”.
+`FormMessages` uses that pending state to hide previous messages during submission.
 
 ## Handling form submissions with `onSubmit` and `useTransition`
 
@@ -329,20 +326,16 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
         </td>
       </tr>
       <tr>
-        <td>
-          Reset uncontrolled fields
-        </td>
+        <td>Reset uncontrolled fields</td>
         <td>
           Call <code>form.reset()</code>
         </td>
         <td>
-          Call <code>form.reset()</code>, or use{" "}
-          <a href="https://react.dev/reference/react-dom/requestFormReset"><code>requestFormReset(form)</code></a>{" "}
+          Call <code>form.reset()</code>, or use
+          [`requestFormReset(form)`](https://react.dev/reference/react-dom/requestFormReset)
           inside the Transition to reset after it completes
         </td>
-        <td>
-          Automatic when the action completes without throwing.
-        </td>
+        <td>Automatic when the action completes without throwing.</td>
       </tr>
       <tr>
         <td>
