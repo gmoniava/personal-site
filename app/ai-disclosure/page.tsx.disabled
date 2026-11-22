@@ -17,13 +17,8 @@ export default function Page() {
       <div className="prose">
         <p>
           I generally create my blog content myself. I may use AI tools to edit my content (for example, grammar and
-          language editing, or suggesting alternative phrasing or framing) and to help with drafting parts of my posts
-          based on my ideas or guidance. I try to use AI sparingly for drafting. I personally review and verify
-          everything before publication.
-        </p>
-        <p>
-          In rare cases, such as my <em>SQL Explained Through JavaScript</em> series, I used AI more extensively for
-          drafting because I was not very familair with SQL.
+          language editing, or suggesting alternative phrasing or framing) and to help with drafting based on my ideas or guidance
+          (I try to use AI sparingly for drafting though). I personally review and verify everything before publication.
         </p>
       </div>
     </section>
