@@ -188,6 +188,9 @@ State updates made synchronously inside the action are marked as Transition upda
 which is why we use `useFormStatus` for the loading indicator. For the same reason, an old error or success message can remain visible while the button says “Subscribing...”.
 `FormMessages` uses that pending state to hide previous messages during submission.
 
+Just a note: `useFormStatus` reads the status of a parent `<form>`, so we call it in components rendered inside the form.
+Calling it in `NewsletterForm` itself would not track the form that component returns.
+
 ## Handling form submissions with `onSubmit` and `useTransition`
 
 As we said `action` prop runs the function passed to it inside a Transition. However, we can also start a Transition ourselves
@@ -332,8 +335,8 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
         </td>
         <td>
           Call <code>form.reset()</code>, or use
-          [`requestFormReset(form)`](https://react.dev/reference/react-dom/requestFormReset)
-          inside the Transition to reset after it completes
+          [`requestFormReset(form)`](https://react.dev/reference/react-dom/requestFormReset) inside the Transition to
+          reset after it completes
         </td>
         <td>Automatic when the action completes without throwing.</td>
       </tr>
