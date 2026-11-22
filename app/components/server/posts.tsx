@@ -1,5 +1,6 @@
 import PostsClient from "app/components/client/posts";
 import { getBlogPosts } from "app/server/lib";
+import Link from "next/link";
 
 export const metadata = {
   title: "Blog",
@@ -48,7 +49,16 @@ export default async function Page() {
         </a>
       </div>
 
-      <p>Some of my writings.</p>
+      <p>
+        {/* To hide the AI disclosure (reverse these steps to restore it):
+            1. Comment out the Link import above and the Link element below.
+            2. Rename app/ai-disclosure/page.tsx to page.tsx.disabled.
+            3. Remove "/ai-disclosure" from the routes array in app/sitemap.ts.
+        */}
+        {/* <Link href="/ai-disclosure" className="text-blue-600 dark:text-blue-400 underline underline-offset-2">
+          How I use AI in my writing
+        </Link> */}
+      </p>
       <PostsClient blogs={simplifiedPosts} />
     </section>
   );
