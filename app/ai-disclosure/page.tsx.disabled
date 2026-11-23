@@ -16,9 +16,9 @@ export default function Page() {
       <h1 className="mb-8 text-2xl font-semibold tracking-tight">{title}</h1>
       <div className="prose">
         <p>
-          I generally create my blog content myself. I may use AI tools to help edit my content (for example, to improve grammar and clarity or 
-          suggest alternative phrasing or framing) and draft parts of my posts based on my ideas or guidance. I personally review and verify
-          everything before publication.
+          I generally try to limit my use of AI and create my blog content myself. When I do use AI, it’s to help edit my writing (for example,
+          to improve grammar and clarity or suggest alternative phrasing) or to draft parts of a post based on my ideas and guidance. I
+          personally review and verify everything before publication.
         </p>
       </div>
     </section>
