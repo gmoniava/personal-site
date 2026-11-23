@@ -95,6 +95,7 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 // Track submission status to disable the button and show progress.
+// We'll see why we need this component later.
 function SubmitButton() {
   const { pending } = useFormStatus();
 
@@ -106,6 +107,7 @@ function SubmitButton() {
 }
 
 // Show success or error messages, hiding them while submitting.
+// We'll see why we need this component later, too.
 function FormMessages({ error, success }: { error: string; success: boolean }) {
   const { pending } = useFormStatus();
 
