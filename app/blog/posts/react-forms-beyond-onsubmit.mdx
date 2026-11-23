@@ -184,9 +184,10 @@ This lets us use features that work with Transitions, such as optimistic updates
 
 Notice that we also had to refactor the code a little to use [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus) for the loading indicator and to hide previous error or success messages while submitting using the `FormMessages` component.
 
-State updates made synchronously inside the action are marked as Transition updates and can be deferred until the submission finishes. As a result, a manual loading flag may never appear during the request,
-which is why we use `useFormStatus` for the loading indicator. For the same reason, an old error or success message can remain visible while the button says “Subscribing...”.
-`FormMessages` uses that pending state to hide previous messages during submission.
+State updates made synchronously inside Transitions are marked as Transition updates and can be deferred to prioritize more urgent updates.
+As a result, a manual loading flag (set by a state update inside a transition) may never appear during the request, which is why we use
+`useFormStatus` for the loading indicator instead. Similarly, clearing a previous error or success message inside the Transition may be deferred, leaving the old message visible even while the button displays "Subscribing...".
+To prevent this we use `FormMessages` that reads pending state from `useFormStatus` and hides previous messages during submission.
 
 Just a note: `useFormStatus` reads the status of a parent `<form>`, so we call it in components rendered inside the form.
 Calling it in `NewsletterForm` itself would not track the form that component returns.
