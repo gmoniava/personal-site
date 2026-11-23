@@ -265,13 +265,13 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
       <tr>
         <th scope="col">Behavior</th>
         <th scope="col">
-          Plain <code>onSubmit</code>
+          Plain <Code>onSubmit</Code>
         </th>
         <th scope="col">
-          <code>onSubmit</code> + <code>useTransition</code>
+          <Code>onSubmit</Code> + <Code>useTransition</Code>
         </th>
         <th scope="col">
-          Function passed to <code>action</code>
+          Function passed to <Code>action</Code>
         </th>
       </tr>
     </thead>
@@ -279,30 +279,30 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
       <tr>
         <td>Prevent browser navigation</td>
         <td>
-          Call <code>event.preventDefault()</code>
+          Call <Code>event.preventDefault()</Code>
         </td>
         <td>
-          Call <code>event.preventDefault()</code>
+          Call <Code>event.preventDefault()</Code>
         </td>
         <td>Automatic</td>
       </tr>
       <tr>
         <td>Obtain submitted values</td>
         <td>
-          Construct <code>FormData</code>
+          Construct <Code>FormData</Code>
         </td>
         <td>
-          Construct <code>FormData</code>
+          Construct <Code>FormData</Code>
         </td>
         <td>
-          Receives <code>FormData</code>
+          Receives <Code>FormData</Code>
         </td>
       </tr>
       <tr>
         <td>Runs in a Transition</td>
         <td>Requires a Transition</td>
         <td>
-          Yes, through <code>startTransition</code>
+          Yes, through <Code>startTransition</Code>
         </td>
         <td>Automatic</td>
       </tr>
@@ -310,31 +310,31 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
         <td>Show a loading indicator during submission</td>
         <td>Manage a loading flag yourself</td>
         <td>
-          Read <code>isPending</code>, or <code>useFormStatus().pending</code> in a child component when the Transition
+          Read <Code>isPending</Code>, or <Code>useFormStatus().pending</Code> in a child component when the Transition
           starts in the [submit
           handler](https://react.dev/reference/react-dom/hooks/useFormStatus#display-a-pending-state-with-an-onsubmit-handler)
         </td>
         <td>
-          Read <code>useFormStatus().pending</code> in a child component
+          Read <Code>useFormStatus().pending</Code> in a child component
         </td>
       </tr>
       <tr>
         <td>Hide previous error or success messages when submitting again</td>
         <td>Clear message state at the start of the handler</td>
         <td>
-          Clear message state before calling <code>startTransition</code>
+          Clear message state before calling <Code>startTransition</Code>
         </td>
         <td>
-          Hide messages while <code>useFormStatus().pending</code> is true, as shown in <code>FormMessages</code>
+          Hide messages while <Code>useFormStatus().pending</Code> is true, as shown in <Code>FormMessages</Code>
         </td>
       </tr>
       <tr>
         <td>Reset uncontrolled fields</td>
         <td>
-          Call <code>form.reset()</code>
+          Call <Code>form.reset()</Code>
         </td>
         <td>
-          Call <code>form.reset()</code>, or use
+          Call <Code>form.reset()</Code>, or use
           [`requestFormReset(form)`](https://react.dev/reference/react-dom/requestFormReset) inside the Transition to
           reset after it completes
         </td>
@@ -342,7 +342,7 @@ This is something that `onSubmit` combined with `startTransition` cannot provide
       </tr>
       <tr>
         <td>
-          Optimistic updates with <code>useOptimistic</code>
+          Optimistic updates with <Code>useOptimistic</Code>
         </td>
         <td>Requires a Transition</td>
         <td>Supported inside the Transition</td>

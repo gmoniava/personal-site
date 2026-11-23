@@ -130,6 +130,7 @@ let components = {
   a: CustomLink,
   pre: Pre,
   code: Code,
+  Code,
   Table,
   blockquote: Blockquote,
   TreeWithDescriptions,
