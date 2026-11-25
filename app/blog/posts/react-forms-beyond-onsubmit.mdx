@@ -258,7 +258,7 @@ We use `isPending` for the loading indicator and don't need `useFormStatus` in t
 There is another difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement [when working with Server Functions](https://react.dev/reference/react-dom/components/form#handle-form-submission-with-a-server-function).
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
 On the other hand, when we pass a Server Function to the action prop, React can support form submissions even before JavaScript has loaded.
-This is something that `onSubmit` combined with `startTransition` cannot provide.
+This is something that `onSubmit` with `useTransition` cannot provide.
 
 ## Comparing all three approaches
 
