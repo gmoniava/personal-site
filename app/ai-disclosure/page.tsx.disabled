@@ -16,7 +16,7 @@ export default function Page() {
       <h1 className="mb-8 text-2xl font-semibold tracking-tight">{title}</h1>
       <div className="prose">
         <p>
-          In general I try to limit my use of AI and I view AI as a *support tool* rather than something that should
+          In general I try to limit my use of AI and I view AI as a support tool rather than something that should
           replace human judgement or expertise. When I do use AI, I use it in the following ways:
         </p>
         <ul>
