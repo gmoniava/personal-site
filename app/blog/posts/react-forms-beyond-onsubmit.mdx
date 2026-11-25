@@ -176,9 +176,9 @@ The gist is that we have to save the value in state and pass it as field's `defa
 
 For more options, see React’s documentation on [other ways to control form resets](https://react.dev/reference/react-dom/components/form#other-ways-to-control-form-resets).
 
-### Function passed to action runs in transition
+### Function passed to `action` runs in a Transition
 
-Besides these, the main difference from plain `onSubmit` is that React runs the function passed to `action` inside a Transition
+Another difference from plain `onSubmit` is that React runs the function passed to `action` inside a Transition
 (following the [action prop pattern](https://react.dev/reference/react/useTransition#exposing-action-props-from-components)).
 This lets us use features that work with Transitions, such as optimistic updates and error boundaries.
 
@@ -187,7 +187,7 @@ This lets us use features that work with Transitions, such as optimistic updates
 Notice that we also extracted the submit button and messages into `SubmitButton` and `FormMessages` so they can use [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus). `SubmitButton` disables the submit button and displays "Subscribing..." while submitting, and `FormMessages` hides previous error or success messages during submission.
 
 State updates made synchronously inside Transitions are marked as Transition updates and can be deferred to prioritize more urgent updates.
-As a result, a manual loading flag (set by a state update inside a transition) may never appear during the request, which is why we use
+As a result, a manual loading flag (set by a state update inside a Transition) may never appear during the request, which is why we use
 `useFormStatus` in `SubmitButton` for the loading indicator instead. Similarly, clearing a previous error or success message inside the Transition may be deferred, leaving the old message visible even while the button displays "Subscribing...".
 To prevent this we use `FormMessages` that reads pending state from `useFormStatus` and hides previous messages during submission.
 
