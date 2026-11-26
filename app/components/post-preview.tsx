@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatDate } from "app/utils";
 import PostTag from "./post-tag";
+import FeaturedIn, { type Publication } from "./featured-in";
 
 type Post = {
   slug: string;
@@ -8,7 +9,7 @@ type Post = {
     date: string;
     title: string;
     tags?: string[];
-    featuredIn?: { title: string; url: string }[];
+    featuredIn?: Publication[];
   };
 };
 
@@ -35,11 +36,6 @@ export default function PostPreview({ post, onTagClick }: BlogPostPreviewProps) 
         <p className="text-sm text-neutral-600 dark:text-neutral-400 w-[110px] flex-shrink-0">
           {formatDate(post.metadata.date, false)}
         </p>
-        {post.metadata.featuredIn && post.metadata.featuredIn.length > 0 && (
-          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-            Featured in {post.metadata.featuredIn.map((feature) => feature.title).join(" & ")}
-          </p>
-        )}
 
         {post.metadata.tags && post.metadata.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1">
@@ -48,6 +44,7 @@ export default function PostPreview({ post, onTagClick }: BlogPostPreviewProps) 
             ))}
           </div>
         )}
+        <FeaturedIn publications={post.metadata.featuredIn} />
       </div>
     </div>
   );

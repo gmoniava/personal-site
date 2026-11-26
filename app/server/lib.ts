@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import type { Publication } from "app/components/featured-in";
 
 type Metadata = {
   title: string;
@@ -8,7 +9,7 @@ type Metadata = {
   summary: string;
   image?: string;
   tags: string[];
-  featuredIn?: { title: string; url: string }[];
+  featuredIn?: Publication[];
 };
 
 function parseFrontmatter(fileContent: string) {

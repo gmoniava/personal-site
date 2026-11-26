@@ -4,6 +4,7 @@ import { getBlogPosts } from "app/server/lib";
 import { formatDate } from "app/utils";
 import { baseUrl } from "app/sitemap";
 import PostTag from "app/components/post-tag";
+import FeaturedIn from "app/components/featured-in";
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()?.posts;
@@ -90,6 +91,7 @@ export default async function Blog({ params }) {
           <PostTag key={tag} tag={tag} />
         ))}
       </div>
+      <FeaturedIn publications={post.metadata.featuredIn} />
       <article className="prose mt-8">
         {/* Here goes the post itself. It is written in MDX format, so we can use the CustomMDX component to render it. */}
         <CustomMDX source={post.content} />
