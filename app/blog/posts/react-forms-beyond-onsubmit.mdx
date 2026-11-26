@@ -375,7 +375,7 @@ calls or a `useFormStatus` child component. This is a topic maybe for another po
 
 ## Notes
 
-These examples use uncontrolled inputs, so their values are not stored in React state. All three approaches also work with controlled inputs.
+These examples use uncontrolled inputs, so their values are not stored in React state. All three approaches also work with [controlled](https://react.dev/reference/react-dom/components/input#controlling-an-input-with-a-state-variable) inputs.
 With controlled inputs, we would manage the email with `value` and `onChange`, could read it from state instead of `FormData`, and would clear it
 with `setEmail("")` rather than `form.reset()` or the automatic reset from `action`. Automatic resets only apply to uncontrolled fields;
 the pending-state and Transition behavior discussed above stays the same.
