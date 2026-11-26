@@ -7,17 +7,6 @@ export default function FeaturedIn({ publications }: { publications?: Publicatio
 
   return (
     <p className="mt-1 flex items-baseline gap-1 text-sm text-neutral-600 dark:text-neutral-400">
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className="h-3 w-3 shrink-0 self-start mt-1"
-      >
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m3 6 9 7 9-7" />
-      </svg>
       <span>
         Featured in{" "}
         {publications.map((feature, index) => (
