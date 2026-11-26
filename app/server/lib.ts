@@ -8,6 +8,7 @@ type Metadata = {
   summary: string;
   image?: string;
   tags: string[];
+  featuredIn?: { title: string; url: string }[];
 };
 
 function parseFrontmatter(fileContent: string) {
