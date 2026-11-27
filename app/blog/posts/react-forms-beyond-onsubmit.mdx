@@ -182,7 +182,7 @@ Another difference from plain `onSubmit` is that React runs the function passed 
 (following the [action prop pattern](https://react.dev/reference/react/useTransition#exposing-action-props-from-components)).
 This lets us use features that work with Transitions, such as optimistic updates and error boundaries.
 
-### `useFormStatus`, `SubmitButton`, and `FormMessages`
+#### `useFormStatus`, `SubmitButton`, and `FormMessages`
 
 Notice that we also extracted the submit button and messages into `SubmitButton` and `FormMessages` so they can use [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus). `SubmitButton` disables the submit button and displays "Subscribing..." while submitting, and `FormMessages` hides previous error or success messages during submission.
 
@@ -193,6 +193,12 @@ To prevent this we use `FormMessages` that reads pending state from `useFormStat
 
 Just a note: `useFormStatus` reads the status of a parent `<form>`, so we call it in `SubmitButton` and `FormMessages`, which are rendered inside the form.
 Calling it in `NewsletterForm` itself would not track the form that component returns.
+
+ #### Updates after `await` are not Transition updates
+ 
+ When you use `await` inside a Transition, the state updates after the `await` are not marked as Transition updates, as [the React docs explain](https://react.dev/reference/react/useTransition#react-doesnt-treat-my-state-update-after-await-as-a-transition). This also applies to the function we pass to `action`, because React runs it inside a Transition.
+ 
+ In our `action` example, `setError(result.error)` and `setSuccess(true)` run after `await`, so they are regular urgent updates and render right away, even while the action is still pending. That's harmless here because `FormMessages` stays hidden until `pending` becomes `false`. To make such an update part of the Transition, wrap it in its own `startTransition`.
 
 ## Handling form submissions with `onSubmit` and `useTransition`
 
@@ -254,6 +260,8 @@ export default function NewsletterForm() {
 Here we clear the previous error and success messages _before_ calling `startTransition`, so they disappear immediately
 (they are not deferred as in the example with `action` prop so we don't use the `FormMessages` component).
 We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
+
+The same caveat applies here: `setError(result.error)` and `setSuccess(true)` run after `await`, so they are regular urgent updates (see [Updates after `await` are not Transition updates](#updates-after-await-are-not-transition-updates)). 
 
 There is another difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement [when working with Server Functions](https://react.dev/reference/react-dom/components/form#handle-form-submission-with-a-server-function).
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
