@@ -79,7 +79,7 @@ As the [React docs](https://react.dev/reference/react-dom/client/hydrateRoot#sup
 
 > "This only works one level deep, and is intended to be an escape hatch. Don’t overuse it."
 
-### My Case: Sidebar State
+## My Case: Sidebar State
 
 I encountered a hydration mismatch error while building a [full-stack movie app with Next.js and PostgreSQL](/blog/full-stack-movie-app).
 In that app, I store whether the sidebar is open or closed in local storage
@@ -159,7 +159,7 @@ for its initial client render (so it matches the updated HTML and avoids a hydra
 This approach is based on this [post](https://ethanniser.dev/blog/a-clock-that-doesnt-snap).
 Here are the main parts of the solution.
 
-#### Apply the Saved State Before Hydration
+### Apply the Saved State Before Hydration
 
 The inline script reads local storage, updates the relevant classes, and saves the value
 on `window` for React to read later.
@@ -195,7 +195,7 @@ function InlineScript() {
 
 The `InlineScript` component is then rendered in `Layout`.
 
-#### Use the Same State in React
+### Use the Same State in React
 
 In `Layout`, this is how we read the initial sidebar state now:
 
@@ -217,7 +217,7 @@ const [showSidebar, setShowSideBar] = React.useState(() => {
 React then uses `showSidebar` to decide whether to include `sm:ml-64` on the layout and `left-0` and
 `opacity-100` on the sidebar, just as the inline script does, keeping its render output in sync with the updated DOM.
 
-#### Another Issue: The Theme Toggle
+### Another Issue: The Theme Toggle
 
 I use [next-themes](https://github.com/pacocoursey/next-themes) to manage the app's theme. The theme toggle had a similar issue because its checked state depends on the current theme, which is not known during server rendering. Here, I kept the `useIsClient()` hook, which uses the same `useEffect` approach shown earlier to determine whether the component has mounted on the client. I then render `null` until it has, following the recommendation in the [next-themes documentation](https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch) to avoid hydration mismatches.
 
@@ -231,7 +231,7 @@ or data attribute to the `<html>` tag before hydration. Since this changes the s
 `suppressHydrationWarning` to the `<html>` element, following the
 [next-themes recommendation](https://github.com/pacocoursey/next-themes#with-app).
 
-#### Another Issue: The Mobile Backdrop
+### Another Issue: The Mobile Backdrop
 
 The mobile sidebar also needed a dark backdrop. Conditionally rendering it based on the saved sidebar state could
 cause the same hydration mismatch described earlier.
@@ -248,7 +248,7 @@ The inline script and React already keep that sidebar class in sync, as describe
 
 You can find the rest of the implementation in [`(main)/layout.tsx`](<https://github.com/gmoniava/movie-app/blob/main/src/app/(main)/layout.tsx>).
 
-### Another Way to Skip Server Rendering: `use(browser())`
+## Another Way to Skip Server Rendering: `use(browser())`
 
 [React 19.3](https://react.dev/blog/2026/09/09/react-19-3) introduced
 [`browser`](https://react.dev/reference/react-dom/browser) from `react-dom`.
@@ -258,7 +258,7 @@ Calling `use(browser())` in a Client Component skips its server rendering and le
 Using it in the layout would leave the layout's real content and its children out of the
 server-rendered HTML, just like the earlier `useEffect` approach.
 
-### Conclusion
+## Conclusion
 
 A hydration mismatch happens when the server-rendered HTML and React's initial client render do not match.
 We looked at ways to avoid this with `useEffect`, as well as `suppressHydrationWarning`, which suppresses the warning without fixing the underlying mismatch.

@@ -105,11 +105,11 @@ html {
 }
 
 .prose h2 {
-  @apply text-2xl font-medium tracking-tight mt-6 mb-2;
+  @apply text-[26px] font-medium tracking-tight mt-6 mb-2;
 }
 
 .prose h3 {
-  @apply text-xl font-medium tracking-tight mt-6 mb-2;
+  @apply text-[22px] font-medium tracking-tight mt-6 mb-2;
 }
 
 .prose h4 {
@@ -210,5 +210,5 @@ table {
 }
 
 h1 {
-  font-size: 28px;
+  font-size: 30px;
 }
