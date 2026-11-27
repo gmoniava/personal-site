@@ -250,8 +250,8 @@ export default function NewsletterForm() {
         {isPending ? "Subscribing..." : "Subscribe"}
       </button>
 
-      {error && <p role="alert">{error}</p>}
-      {success && <p>Successfully subscribed!</p>}
+      {!isPending && error && <p role="alert">{error}</p>}
+      {!isPending && success && <p>Successfully subscribed!</p>}
     </form>
   );
 }
@@ -261,7 +261,7 @@ Here we clear the previous error and success messages _before_ calling `startTra
 (they are not deferred as in the example with `action` prop so we don't use the `FormMessages` component).
 We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
 
-The same caveat applies here: `setError(result.error)` and `setSuccess(true)` run after `await`, so they are regular urgent updates (see [Updates after `await` are not Transition updates](#note-updates-after-an-async-request-are-not-transition-updates)). 
+The same caveat applies here: `setError(result.error)` and `setSuccess(true)` run after `await`, so they are regular urgent updates (see [Updates after `await` are not Transition updates](https://www.gmoniava.com/blog/react-forms-beyond-onsubmit#note-updates-after-an-async-request-are-not-transition-updates)). This means the messages could appear while the form is still pending (while "Subscribing..." is displayed). To prevent this, we use the `!isPending` guard, just as we used `useFormStatus().pending` to hide messages in the previous example.
 
 There is another difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement [when working with Server Functions](https://react.dev/reference/react-dom/components/form#handle-form-submission-with-a-server-function).
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
