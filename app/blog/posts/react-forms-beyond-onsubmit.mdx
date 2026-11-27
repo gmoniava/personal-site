@@ -282,7 +282,7 @@ export default function NewsletterForm() {
 Here we clear the previous error and success messages _before_ calling `startTransition`, so they disappear immediately (unlike in the example with the `action` prop, where these updates are part of a Transition and may be deferred).
 We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
 
-The same caveat applies here: we need to wrap state updates after `await` in another `startTransition` call to mark them as Transition updates (see [Updates after `await` are not Transition updates](#note-updates-after-an-async-request-are-not-transition-updates)).
+The same caveat applies here: we need to wrap state updates after `await` in another `startTransition` call to mark them as Transition updates (see [Updates after `await` are not Transition updates](#note-updates-after-an-async-request-are-not-automatically-transition-updates)).
 
 There is another difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement [when working with Server Functions](https://react.dev/reference/react-dom/components/form#handle-form-submission-with-a-server-function).
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
@@ -332,7 +332,7 @@ This is something that `onSubmit` with `useTransition` cannot provide.
       </tr>
       <tr>
         <td>Runs in a Transition</td>
-        <td>Requires a Transition</td>
+        <td>No, unless explicitly started</td>
         <td>
           Yes, through <Code>startTransition</Code>
         </td>
