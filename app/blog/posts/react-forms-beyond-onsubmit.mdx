@@ -195,7 +195,9 @@ Calling it in `NewsletterForm` itself would not track the form that component re
  
 When you use `await` inside a Transition, the state updates after the `await` are not marked as Transition updates. They are regular urgent updates. As [the React docs explain](https://react.dev/reference/react/useTransition#react-doesnt-treat-my-state-update-after-await-as-a-transition), you must wrap any state updates after an async request in another `startTransition` to mark them as Transitions. It also applies to the function we pass to `action`, because React runs it inside a Transition.
  
-This is in a way the opposite of the problems with the loading indicator and with clearing previous messages in the previous section. Updates made before the `await` are Transition updates, so React can defer them while the Transition is active. That's why a manual loading flag may never appear and old messages may stay visible. An update after the `await` is the other way around: it is urgent and renders immediately (unless wrapped in another `startTransition`). So for a moment the UI can show a mix of old and new state.
+This is, in a way, the opposite of the problems we saw in the previous section with potentially setting a loading indicator and with clearing previous messages before the `await`.
+
+Since updates made before the `await` are Transition updates, React can defer them until the Transition settles. This means the loading indicator may not show up until the Transition is over, and the old messages may stay visible until then.
  
 In our `action` example, `setError(result.error)` and `setSuccess(true)` run after `await`, so they render right away, even while the action is still pending. That's harmless here because `FormMessages` hides the messages while the action is pending, so the mix of old and new state is never visible. 
 
