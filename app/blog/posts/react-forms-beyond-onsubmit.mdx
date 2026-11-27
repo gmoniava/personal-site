@@ -257,8 +257,7 @@ export default function NewsletterForm() {
 }
 ```
 
-Here we clear the previous error and success messages _before_ calling `startTransition`, so they disappear immediately
-(they are not deferred as in the example with `action` prop so we don't use the `FormMessages` component).
+ Here we clear the previous error and success messages *before* calling `startTransition`, so they disappear immediately (unlike in the example with the `action` prop, where these updates are part of a Transition and may be deferred).
 We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
 
 The same caveat applies here: `setError(result.error)` and `setSuccess(true)` run after `await`, so they are regular urgent updates (see [Updates after `await` are not Transition updates](https://www.gmoniava.com/blog/react-forms-beyond-onsubmit#note-updates-after-an-async-request-are-not-transition-updates)). This means the messages could appear while the form is still pending (while "Subscribing..." is displayed). To prevent this, we use the `!isPending` guard, just as we used `useFormStatus().pending` to hide messages in the previous example.
