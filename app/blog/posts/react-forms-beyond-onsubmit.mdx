@@ -195,9 +195,7 @@ Calling it in `NewsletterForm` itself would not track the form that component re
  
 When you use `await` inside a Transition, the state updates after the `await` are not marked as Transition updates. They are regular urgent updates. As [the React docs explain](https://react.dev/reference/react/useTransition#react-doesnt-treat-my-state-update-after-await-as-a-transition), you must wrap any state updates after an async request in another `startTransition` to mark them as Transitions.
  
-This is, in a way, the opposite of the problems we saw in the previous section with potentially setting a loading indicator and with clearing previous messages before the `await`.
-
-Since updates made before the `await` are Transition updates, React can defer them until the Transition settles. This means the loading indicator may not show up until the Transition is over, and the old messages may stay visible until then.
+This is, in a way, the opposite of the problems we saw in the previous section with potentially setting a loading indicator and clearing previous messages before the `await`, where those updates could be deferred until the Transition settles.
 
 An update after the `await` is the other way around: it is urgent and renders immediately (unless wrapped in another `startTransition`). So for a moment the UI can show a mix of old and new state.
  
