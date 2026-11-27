@@ -186,10 +186,7 @@ This lets us use features that work with Transitions, such as optimistic updates
 
 Notice that we also extracted the submit button and messages into `SubmitButton` and `FormMessages` so they can use [`useFormStatus`](https://react.dev/reference/react-dom/hooks/useFormStatus). `SubmitButton` disables the submit button and displays "Subscribing..." while submitting, and `FormMessages` hides previous error or success messages during submission.
 
-State updates made synchronously inside Transitions are marked as Transition updates and can be deferred to prioritize more urgent updates.
-As a result, a manual loading flag (set by a state update inside a Transition) may never appear during the request, which is why we use
-`useFormStatus` in `SubmitButton` for the loading indicator instead. Similarly, clearing a previous error or success message inside the Transition may be deferred, leaving the old message visible even while the button displays "Subscribing...".
-To prevent this we use `FormMessages` that reads pending state from `useFormStatus` and hides previous messages during submission.
+State updates made synchronously inside Transitions (those before the first `await`, like `setError("")` and `setSuccess(false)` in our `action` example) are marked as Transition updates and can be deferred to prioritize more urgent updates. As a result, a manual loading flag set that way may never appear during the request, which is why we use `useFormStatus` in `SubmitButton` for the loading indicator instead. Similarly, the clearing of a previous error or success message may be deferred, leaving the old message visible even while the button displays "Subscribing...". To prevent this we use `FormMessages` that reads pending state from `useFormStatus` and hides previous messages during submission.
 
 Just a note: `useFormStatus` reads the status of a parent `<form>`, so we call it in `SubmitButton` and `FormMessages`, which are rendered inside the form.
 Calling it in `NewsletterForm` itself would not track the form that component returns.
