@@ -82,7 +82,19 @@ function Pre({ children, ...props }) {
   return <pre {...props} className="" dangerouslySetInnerHTML={{ __html: highlightedHTML }} />;
 }
 
-function slugify(str) {
+function getHeadingText(children: React.ReactNode): string {
+  return React.Children.toArray(children)
+    .map((child) => {
+      if (typeof child === "string" || typeof child === "number") return String(child);
+      if (React.isValidElement<{ children?: React.ReactNode }>(child)) {
+        return getHeadingText(child.props.children);
+      }
+      return "";
+    })
+    .join("");
+}
+
+function slugify(str: string) {
   return str
     .toString()
     .toLowerCase()
@@ -95,7 +107,7 @@ function slugify(str) {
 
 function createHeading(level) {
   const Heading = ({ children }) => {
-    let slug = slugify(children);
+    let slug = slugify(getHeadingText(children));
     return React.createElement(
       `h${level}`,
       { id: slug },
