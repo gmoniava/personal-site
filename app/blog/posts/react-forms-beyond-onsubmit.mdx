@@ -6,6 +6,8 @@ summary: "How onSubmit, action, and onSubmit with useTransition differ when hand
 tags: ["software-development", "react"]
 ---
 
+<Note>**Note:** Familiarity with React Transitions will help you better follow this post.</Note>
+
 Most React applications deal with forms. Traditionally, we handle submissions with `onSubmit`.
 React 19 added support for passing functions to a form’s `action` prop.
 In this post, we’ll compare three approaches: plain `onSubmit`, `action`, and `onSubmit` with `useTransition`.
@@ -91,7 +93,7 @@ export default function NewsletterForm() {
 Here is the same example written using the `action` prop:
 
 ```tsx
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 // Track submission status to disable the button and show progress.
@@ -136,13 +138,19 @@ export default function NewsletterForm() {
       const result = await subscribe(email);
 
       if (!result.success) {
-        setError(result.error);
+        startTransition(() => {
+          setError(result.error);
+        });
         return;
       }
 
-      setSuccess(true);
+      startTransition(() => {
+        setSuccess(true);
+      });
     } catch {
-      setError("Something went wrong. Please try again.");
+      startTransition(() => {
+        setError("Something went wrong. Please try again.");
+      });
     }
   }
 
@@ -191,15 +199,22 @@ State updates made synchronously inside Transitions (those before the first `awa
 Just a note: `useFormStatus` reads the status of a parent `<form>`, so we call it in `SubmitButton` and `FormMessages`, which are rendered inside the form.
 Calling it in `NewsletterForm` itself would not track the form that component returns.
 
-#### Note: Updates after an async request are not Transition updates
- 
-When you use `await` inside a Transition, the state updates after the `await` are not marked as Transition updates. They are regular urgent updates. As [the React docs explain](https://react.dev/reference/react/useTransition#react-doesnt-treat-my-state-update-after-await-as-a-transition), you must wrap any state updates after an async request in another `startTransition` to mark them as Transitions.
- 
-This is, in a way, the opposite of the problems we saw in the previous section with potentially setting a loading indicator and clearing previous messages before the `await`, where those updates could be deferred until the Transition settles.
+#### Note: Updates after an async request are not automatically Transition updates
 
-An update after the `await` is the other way around: it is urgent and renders immediately (unless wrapped in another `startTransition`). So for a moment the UI can show a mix of old and new state.
- 
-In our `action` example, `setError(result.error)` and `setSuccess(true)` run after `await`, so they render right away, even while the action is still pending. That's harmless here because `FormMessages` hides the messages while the action is pending, so the mix of old and new state is never visible. 
+Currently, when you use `await` inside a Transition, the state updates after the `await` are not marked as Transition updates.
+They are regular urgent updates.
+As [the React docs explain](https://react.dev/reference/react/useTransition#starttransition-caveats):
+
+> You must wrap any state updates after any async requests in another `startTransition` to mark them as Transitions. This is a known limitation that we will fix in the future (see [Troubleshooting](https://react.dev/reference/react/useTransition#react-doesnt-treat-my-state-update-after-await-as-a-transition)).
+
+This is, in a way, the opposite of the problems we discussed in the previous section: if we had set a loading flag
+before `await`, or when we cleared previous messages before `await`, those updates could be deferred until the Transition settles.
+
+An update after `await`, however, is urgent and can render while the Transition is still pending
+(unless wrapped in another `startTransition`). So for a moment the UI can show a mix of old and new state.
+
+In our `action` example, we wrap `setError(result.error)`, `setSuccess(true)`, and the error update in `catch` in additional `startTransition` calls so
+they remain Transition updates after `await`.
 
 ## Handling form submissions with `onSubmit` and `useTransition`
 
@@ -230,15 +245,21 @@ export default function NewsletterForm() {
         const result = await subscribe(email);
 
         if (!result.success) {
-          setError(result.error);
+          startTransition(() => {
+            setError(result.error);
+          });
           return;
         }
 
-        setSuccess(true);
+        startTransition(() => {
+          setSuccess(true);
+        });
         // Reset the form after a successful subscription.
         form.reset();
       } catch {
-        setError("Something went wrong. Please try again.");
+        startTransition(() => {
+          setError("Something went wrong. Please try again.");
+        });
       }
     });
   }
@@ -251,17 +272,17 @@ export default function NewsletterForm() {
         {isPending ? "Subscribing..." : "Subscribe"}
       </button>
 
-      {!isPending && error && <p role="alert">{error}</p>}
-      {!isPending && success && <p>Successfully subscribed!</p>}
+      {error && <p role="alert">{error}</p>}
+      {success && <p>Successfully subscribed!</p>}
     </form>
   );
 }
 ```
 
- Here we clear the previous error and success messages *before* calling `startTransition`, so they disappear immediately (unlike in the example with the `action` prop, where these updates are part of a Transition and may be deferred).
+Here we clear the previous error and success messages _before_ calling `startTransition`, so they disappear immediately (unlike in the example with the `action` prop, where these updates are part of a Transition and may be deferred).
 We use `isPending` for the loading indicator and don't need `useFormStatus` in this example.
 
-The same caveat applies here: `setError(result.error)` and `setSuccess(true)` run after `await`, so they are regular urgent updates (see [Updates after `await` are not Transition updates](#note-updates-after-an-async-request-are-not-transition-updates)). This means the messages could appear while the form is still pending (while "Subscribing..." is displayed). To prevent this, we use the `!isPending` guard, just as we used `useFormStatus().pending` to hide messages in the previous example.
+The same caveat applies here: we need to wrap state updates after `await` in another `startTransition` call to mark them as Transition updates (see [Updates after `await` are not Transition updates](#note-updates-after-an-async-request-are-not-transition-updates)).
 
 There is another difference now between using `action` prop and `onSubmit` with `useTransition`: progressive enhancement [when working with Server Functions](https://react.dev/reference/react-dom/components/form#handle-form-submission-with-a-server-function).
 With `onSubmit`, our submission handler runs on the client, meaning JavaScript must be loaded and the component hydrated before the handler can execute.
