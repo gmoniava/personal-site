@@ -403,7 +403,7 @@ This is something that `onSubmit` with `useTransition` cannot provide.
 
 There is also another option of working with the forms which works with the `action` prop: [`useActionState`](https://react.dev/reference/react/useActionState).
 It returns the action's result as state and exposes an `isPending` flag, so we don't need separate `useState`
-calls or a `useFormStatus` child component. This is a topic maybe for another post.
+calls or a child component that calls `useFormStatus` just to read the pending state. This is a topic maybe for another post.
 
 ## Notes
 
